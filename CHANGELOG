@@ -1,3 +1,8 @@
+24/04/29 Combo box to select geometries in plugin input.
+
+24/04/28 Movement and rotation of selections.
+	Ctrl + mouse left button allows now to move selection, Ctrl + mouse right button allows to rotate it
+	
 24/04/25 Python plugins - browse  button for filenames and checkboxes for boolean parameters,
 	processing return values including addition of new geometries to ws.
 	Creation of arrow array from xgeometry fields.

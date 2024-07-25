@@ -10,9 +10,9 @@ def read_cell(l, line, cell, fields, l_cell):
                 cell[i,j] = fields[k]
                 k += 1
 
-def read_xgeom(filename, field_names, field_types, l_geom, read_cell, l_cell):
+def read_xgeom(filename, field_names, field_types, l_geom, do_read_cell, l_cell):
 
-    cell = pq.periodic_cell_f(3 if read_cell else 0)
+    cell = pq.periodic_cell_f(3 if do_read_cell else 0)
     for i in range(len(field_types)):
         if (field_types[i] =='float'):
             field_types[i] = 'real'
@@ -25,7 +25,7 @@ def read_xgeom(filename, field_names, field_types, l_geom, read_cell, l_cell):
     
     for line in f:
         l += 1
-        if read_cell and len(ready_fields) < 9 :
+        if do_read_cell and len(ready_fields) < 9 :
             read_cell(l, line, geom.cell, ready_fields, l_cell)
         if l >= l_geom:
             fields = []
