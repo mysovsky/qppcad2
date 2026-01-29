@@ -24,16 +24,17 @@ void arrow_array_view_t::create_zero_vectors()
 }
 
 //------------------------------------
-void arrow_array_view_t::create_vectors_from_frames(int f1, int f2)
+void arrow_array_view_t::create_vectors_from_frames(int f1, int f2, bool subtr_comass)
 {
   //  if (!m_is_visible) return;
   if (!m_binded_gv) return;  
   if (!m_binded_gv -> m_geom) return;  
   
   auto geom = m_binded_gv -> m_geom;
+  std::cout<< "Arrow array " << geom->nat() << "\n";
   // Create zero vectors
   m_binded_vectors = std::make_shared<geom_atom_vectors<float> >(&(*geom));
-   
+  
   if (!m_binded_gv->m_anim->animable()) return;
      
   auto cur_anim = m_binded_gv->m_anim->get_current_anim();
@@ -42,9 +43,20 @@ void arrow_array_view_t::create_vectors_from_frames(int f1, int f2)
     return;
   if (cur_anim->frames.size() <= f1 || cur_anim->frames.size() <= f2) return;
 
+  // ------------asm -------------------
+  // Subtract Center of mass (COMASS) displacement. Useful for periodic calculations  
+  
+  qpp::vector3<float> rcm(0e0);
+
   for (size_t i = 0; i < geom -> nat(); i++) {
     
     m_binded_vectors -> vectors[i] = cur_anim -> frames[f2].atom_pos[i] - cur_anim -> frames[f1].atom_pos[i];
+    rcm += m_binded_vectors -> vectors[i];
+  }
+  if (subtr_comass){
+    rcm /= geom -> nat();
+    for (size_t i = 0; i < geom -> nat(); i++)
+      m_binded_vectors -> vectors[i] -= rcm;
   }
 
   /* WTF is all this? I can't understand - asm
@@ -118,13 +130,14 @@ void arrow_array_view_t::render() {
 
   ws_item_t::render();
 
-      
+  astate -> log("Geom_atom_vectors:--------");
+  astate -> log(fmt::format("Vectors:----------------- {}", m_binded_gv->m_geom->nat()));
   //-------------------------------------------
   astate->dp->begin_render_general_mesh();
   for (size_t i = 0; i < m_binded_gv->m_geom->nat(); i++) {
 
     if (m_affected_by_sv && m_binded_gv->m_geom->xfield<bool>(xgeom_sel_vis_hide, i)) continue;
-    
+  
       vector3<float> start_pos = m_binded_vectors->start_pos(i);
       vector3<float> end = m_binded_vectors->end_pos(i,m_unf_arrow_len - m_unf_arrow_cap_len);
       vector3<float> dir = (end - start_pos).normalized();
@@ -152,8 +165,10 @@ void arrow_array_view_t::render() {
       mat_arrow.block<3,1>(0,1) = veca_axis_norm.cross(mat_arrow.block<3,1>(0,0));
       mat_arrow.block<3,1>(0,3) = start_ar ;
 
-      astate->dp->render_general_mesh(mat_body, m_color, astate->mesh_cylinder);
-      astate->dp->render_general_mesh(mat_arrow, m_color, astate->mesh_unit_cone);
+      //astate->dp->render_general_mesh(mat_body, m_color, astate->mesh_cylinder);
+      //astate->dp->render_general_mesh(mat_arrow, m_color, astate->mesh_unit_cone);
+      astate->dp->render_general_mesh(mat_body, m_binded_vectors->colors[i], astate->mesh_cylinder);
+      astate->dp->render_general_mesh(mat_arrow,m_binded_vectors->colors[i], astate->mesh_unit_cone);
 
     }
 

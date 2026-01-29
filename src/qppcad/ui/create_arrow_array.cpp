@@ -94,6 +94,7 @@ create_arrow_array_widget_t::create_arrow_array_widget_t() {
   rb_zero =  new QRadioButton(tr("zero vectors"));
   rb_field = new QRadioButton(tr("xgeometry fields"));
   rb_frame = new QRadioButton(tr("geometry frames"));
+  cb_comass = new QCheckBox(tr("Subtract COMASS displ"));
 
   rb_frame -> setEnabled(anim_exists);
   
@@ -160,6 +161,7 @@ create_arrow_array_widget_t::create_arrow_array_widget_t() {
   frame_selector_lt -> addWidget(rb_frame_firstlast);
   frame_selector_lt -> addWidget(rb_frame_currnext);
   frame_selector_lt -> addWidget(rb_frame_numbers);
+  frame_selector_lt -> addWidget(cb_comass);
   frame_selector_lt -> addLayout(frames_lt);
   frame_selector -> add_content_layout(frame_selector_lt);
 
@@ -291,56 +293,56 @@ void create_arrow_array_widget_t::control_top_type_parameters_visibility() {
 void create_arrow_array_widget_t::ok_button_clicked() {
 
   if (type_param_name->text() == "") {
-      int ret = QMessageBox::warning(this,
-                                     tr("Missing name!"),
-                                     tr("Name is empty! Do something!"));
-    } else {
-
-      app_state_t *astate = app_state_t::get_inst();
-
-      auto cur_ws = astate->ws_mgr->get_cur_ws();
-      if (!cur_ws) return;
-      auto nt =
-	astate->ws_mgr->m_bhv_mgr->fbr_ws_item_by_type(arrow_array_view_t::get_type_static());
-      auto aa_ap = nt->cast_as<arrow_array_view_t>();
-      if (!aa_ap) return;
-      aa_ap->m_name = type_param_name->text().toStdString();
-      cur_ws->add_item_to_ws(nt);
-
-      auto cur_it = cur_ws->get_selected_sp();
-      if (cur_it && cur_it->get_type() == geom_view_t::get_type_static()) {
-	aa_ap->m_src = cur_it;
-	aa_ap->updated_externally(ws_item_updf_generic);
+    int ret = QMessageBox::warning(this,
+				   tr("Missing name!"),
+				   tr("Name is empty! Do something!"));
+  } else {
+    
+    app_state_t *astate = app_state_t::get_inst();
+    
+    auto cur_ws = astate->ws_mgr->get_cur_ws();
+    if (!cur_ws) return;
+    auto nt =
+      astate->ws_mgr->m_bhv_mgr->fbr_ws_item_by_type(arrow_array_view_t::get_type_static());
+    auto aa_ap = nt->cast_as<arrow_array_view_t>();
+    if (!aa_ap) return;
+    aa_ap->m_name = type_param_name->text().toStdString();
+    cur_ws->add_item_to_ws(nt);
+    
+    auto cur_it = cur_ws->get_selected_sp();
+    if (cur_it && cur_it->get_type() == geom_view_t::get_type_static()) {
+      aa_ap->m_src = cur_it;
+      aa_ap->updated_externally(ws_item_updf_generic);
+    }
+    
+    if (rb_zero -> isChecked()){
+      aa_ap -> create_zero_vectors();
+    }
+    
+    if (rb_frame -> isChecked()){
+      int f1=0, f2=0;
+      if (rb_frame_firstlast -> isChecked() ) {
+	f1 = 0; f2 = frame_count - 1;
       }
-
-      if (rb_zero -> isChecked()){
-	aa_ap -> create_zero_vectors();
+      if (rb_frame_currnext -> isChecked() ) {
+	f1 = cur_frame; f2 = f1+1;
+	if (f2 >= frame_count ) f2 = 0;
       }
-      
-      if (rb_frame -> isChecked()){
-	int f1=0, f2=0;
-	if (rb_frame_firstlast -> isChecked() ) {
-	  f1 = 0; f2 = frame_count - 1;
-	}
-	if (rb_frame_currnext -> isChecked() ) {
-	  f1 = cur_frame; f2 = f1+1;
-	  if (f2 >= frame_count ) f2 = 0;
-	}
-	if (rb_frame_numbers -> isChecked() ) {
-	  f1 = sb_frame1 -> value();
-	  f2 = sb_frame2 -> value();
-	}
-	astate -> log(fmt::format("frame1 = {} frame2 = {}",f1,f2));
-	aa_ap -> create_vectors_from_frames(f1,f2);
+      if (rb_frame_numbers -> isChecked() ) {
+	f1 = sb_frame1 -> value();
+	f2 = sb_frame2 -> value();
       }
-
-      if (rb_field -> isChecked()){
-	int
-	  f1 = ix_fields[fs_combo[0] -> currentIndex()],
-	  f2 = ix_fields[fs_combo[1] -> currentIndex()],
-	  f3 = ix_fields[fs_combo[2] -> currentIndex()];
-	aa_ap -> create_vectors_from_fields(f1,f2,f3);
-      }
+      astate -> log(fmt::format("frame1 = {} frame2 = {}",f1,f2));
+      aa_ap -> create_vectors_from_frames(f1,f2,cb_comass-> isChecked());
+    }
+    
+    if (rb_field -> isChecked()){
+      int
+	f1 = ix_fields[fs_combo[0] -> currentIndex()],
+	f2 = ix_fields[fs_combo[1] -> currentIndex()],
+	f3 = ix_fields[fs_combo[2] -> currentIndex()];
+      aa_ap -> create_vectors_from_fields(f1,f2,f3);
+    }
 
       /*
       if (rb_ctor_geom0d->isChecked()) {

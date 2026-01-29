@@ -44,6 +44,7 @@ namespace qpp {
         QRadioButton *rb_field{nullptr};
         QRadioButton *rb_frame{nullptr};
 
+      QCheckBox *cb_comass{nullptr};
         qspoiler_widget_t * zero_descr, * field_selector, * frame_selector;
 
         QRadioButton *rb_frame_firstlast, *rb_frame_currnext, *rb_frame_numbers;

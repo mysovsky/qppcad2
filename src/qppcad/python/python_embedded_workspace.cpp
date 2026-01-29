@@ -11,6 +11,7 @@
 #include <qppcad/core/workspace.hpp>
 
 #include <qppcad/ws_item/geom_view/python_geom_view.hpp>
+#include <qppcad/ws_item/arrow_array/python_arrow_array.hpp>
 #include <qppcad/ws_item/ccd_view/python_ccd_view.hpp>
 #include <qppcad/ws_item/psg_view/python_psg_view.hpp>
 #include <qppcad/ws_item/pdos_view/python_pdos_view.hpp>
@@ -217,6 +218,7 @@ PYBIND11_EMBEDDED_MODULE(cad, m) {
 
   /* per ws_item_t types pybindings */
   py_geom_view_reg_helper_t::reg(m, py_ws_item_t);
+  py_arrow_array_view_reg_helper_t::reg(m, py_ws_item_t);
   py_ccd_view_reg_helper_t::reg(m, py_ws_item_t);
   py_psg_view_reg_helper_t::reg(m, py_ws_item_t);
   py_pdos_view_reg_helper_t::reg(m, py_ws_item_t);

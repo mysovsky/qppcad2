@@ -1267,15 +1267,20 @@ void geom_view_obj_insp_widget_t::update_from_ws_item() {
       gb_current_anim->blockSignals(true);
       gb_current_anim->clear();
 
-      for (size_t i = 0; i < b_al->m_anim->get_total_anims(); i++)
+      size_t anidx=b_al->m_anim->m_cur_anim;
+      for (size_t i = 0; i < b_al->m_anim->get_total_anims(); i++){
         gb_current_anim->addItem(
               QString::fromStdString(fmt::format("[{}] {}",
                                                  i,
                                                  b_al->m_anim->m_anim_data[i].m_anim_name))
               );
-
-      gb_current_anim->setCurrentIndex(b_al->m_anim->m_cur_anim);
+	if (b_al->m_anim-> get_anim_type_by_idx(i) == qpp::geom_anim_t::anim_geo_opt )
+	  anidx = i;
+      }
+      
+      gb_current_anim->setCurrentIndex(anidx);
       gb_current_anim->blockSignals(false);
+      gb_current_anim->currentIndexChanged(anidx);
       update_anim_tab();
 
       anim_play->blockSignals(true);
