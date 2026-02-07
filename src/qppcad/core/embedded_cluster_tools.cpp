@@ -26,10 +26,10 @@ void embedded_cluster_tools::find_high_symmetry_qm_cluster(geom_view_t *uc,
 
   for (size_t i = 0; i < total_steps; i++) {
 
-      xgeometry<float, periodic_cell<float> > g_all_m(0);
+      xgeometry<float > g_all_m(0);
       g_all_m.set_format({"charge"},{type_real});
       g_all_m.additive(xgeom_charge) = true;
-      g_all_m.tol_geom = 0.01f;
+      *g_all_m.tol_geom = 0.01f;
 
       float cluster_r = qm_r_start_scan + dr * i;
       shape_sphere<float> sp(cluster_r, sphere_center);
@@ -119,13 +119,13 @@ void embedded_cluster_tools::gen_spherical_cluster(geom_view_t *uc,
   shape_sphere<float> sp(cluster_r, displ);
 
   //copy uc to intermediate
-  xgeometry<float, periodic_cell<float> > gd_uc(3);
+  xgeometry<float> gd_uc(3);
   gd_uc.set_format({"charge"},{type_real});
-  gd_uc.DIM = 3;
-  gd_uc.cell.DIM = 3;
-  gd_uc.cell.v[0] = uc->m_geom->cell.v[0];
-  gd_uc.cell.v[1] = uc->m_geom->cell.v[1];
-  gd_uc.cell.v[2] = uc->m_geom->cell.v[2];
+  gd_uc.cell->DIM = 3;
+  //gd_uc.cell.DIM = 3;
+  gd_uc.cell->v[0] = uc->m_geom->cell->v[0];
+  gd_uc.cell->v[1] = uc->m_geom->cell->v[1];
+  gd_uc.cell->v[2] = uc->m_geom->cell->v[2];
 
   for (int i = 0 ; i < uc->m_geom->nat(); i++) {
       gd_uc.add(uc->m_geom->atom(i), uc->m_geom->pos(i));
@@ -133,18 +133,18 @@ void embedded_cluster_tools::gen_spherical_cluster(geom_view_t *uc,
     }
 
   //initialize result xgeometries
-  xgeometry<float, periodic_cell<float> > gd_chg(0);
+  xgeometry<float > gd_chg(0);
 
   //initialize intermidiates for charge counting
-  xgeometry<float, periodic_cell<float> > g_all_m(0);
+  xgeometry<float > g_all_m(0);
 
   g_all_m.set_format({"charge"},{type_real});
   g_all_m.additive(xgeom_charge) = true;
-  g_all_m.tol_geom = 0.01f;
+  *g_all_m.tol_geom = 0.01f;
 
   gd_chg.set_format({"charge"},{type_real});
   gd_chg.additive(xgeom_charge) = true;
-  gd_chg.tol_geom = 0.01f;
+  *gd_chg.tol_geom = 0.01f;
 
   int mode_m = crowd_ignore | fill_cells;
 
@@ -158,14 +158,14 @@ void embedded_cluster_tools::gen_spherical_cluster(geom_view_t *uc,
   for (int i = 0 ; i < g_all_m.nat(); i++) g_all_m.coord(i) -= displ;
 
   //performing charge addition
-  tws_tree_t<float, periodic_cell<float> > sum_tree(g_all_m);
+  tws_tree_t<float> sum_tree(g_all_m);
   sum_tree.do_action(act_unlock | act_rebuild_tree);
 
   const float equality_dist = 0.01f;
 
   for (int i = 0; i < g_all_m.nat(); i++) {
 
-      std::vector<tws_node_content_t<float> > res;
+      std::vector<tws_node_cnt_t<float> > res;
       sum_tree.query_sphere(equality_dist, g_all_m.pos(i), res);
       float accum_chg = 0;
 
@@ -184,8 +184,8 @@ void embedded_cluster_tools::gen_spherical_cluster(geom_view_t *uc,
     }
 
   //time to assign atoms to clusters
-  auto add_atom_to_xgeom = [](xgeometry<float, periodic_cell<float> > &g1,
-      xgeometry<float, periodic_cell<float> > &g2, int atom_id ) {
+  auto add_atom_to_xgeom = [](xgeometry<float > &g1,
+      xgeometry<float > &g2, int atom_id ) {
     g2.add(g1.atom(atom_id), g1.pos(atom_id));
     g2.xfield<float>(xgeom_charge, g2.nat()-1) = g1.xfield<float>(xgeom_charge, atom_id);
   };
@@ -318,7 +318,7 @@ void embedded_cluster_tools::set_qm_cluster_r(std::shared_ptr<geom_view_t> qm,
 
   //phase 1 : move atoms from cls to qm
 
-  std::vector<tws_node_content_t<float> > redu_cls;
+  std::vector<tws_node_cnt_t<float> > redu_cls;
 
   cls->m_tws_tr->query_sphere(new_r, vector3<float>(0), redu_cls);
   std::set<int> redu_cls_set; //set for fast search
@@ -333,7 +333,7 @@ void embedded_cluster_tools::set_qm_cluster_r(std::shared_ptr<geom_view_t> qm,
   cls->delete_atoms(redu_cls_set);
 
   //phase 2 : move atoms from qm to cls
-  std::vector<tws_node_content_t<float> > redu_qm;
+  std::vector<tws_node_cnt_t<float> > redu_qm;
   std::set<int> redu_qm_inside, redu_qm_outside;
 
   //construct direct set - atoms inside sphere with r = new_r
@@ -511,18 +511,18 @@ void embedded_cluster_tools::generate_molcas_embc_sp_input(std::string outdir) {
   fmt::print(embc_inp, "&GATEWAY\n");
 
   //printing qm atoms
-  for (int i = 0; i < qm->m_geom->n_types(); i++) {
+  for (int i = 0; i < qm->m_geom->typetable()->n_types(); i++) {
 
       fmt::print(embc_inp, "Basis set\n");
-      fmt::print(embc_inp, "{}.ANO-RCC-VDZP.\n", qm->m_geom->atom_of_type(i));
+      fmt::print(embc_inp, "{}.ANO-RCC-VDZP.\n", qm->m_geom->typetable()->atomic_type(i));
 
       int local_type_c = 0;
       for (int q = 0; q < qm->m_geom->nat(); q++)
-        if (qm->m_geom->type_table(q) == i) {
+        if (qm->m_geom->typetable()->type(q) == i) {
             local_type_c +=1 ;
             fmt::print(
                   embc_inp, "{}{} {} {} {}\n",
-                  qm->m_geom->atom_of_type(i),
+                  qm->m_geom->typetable()->atomic_type(i),
                   local_type_c,
                   qm->m_geom->pos(q)[0],
                   qm->m_geom->pos(q)[1],
@@ -537,14 +537,14 @@ void embedded_cluster_tools::generate_molcas_embc_sp_input(std::string outdir) {
   //printing mm atoms
   std::array<std::string, 7> map_type_to_sn = {"X", "Y", "L", "J", "M", "T", "E"};
 
-  for (int i = 0; i < cls->m_geom->n_types(); i++) {
+  for (int i = 0; i < cls->m_geom->typetable()->n_types(); i++) {
 
       fmt::print(embc_inp, "Basis set\n");
-      fmt::print(embc_inp, "{}.ECP.Pascual.0s.0s.0e-AIMP-CaF2.\n", cls->m_geom->atom_of_type(i));
+      fmt::print(embc_inp, "{}.ECP.Pascual.0s.0s.0e-AIMP-CaF2.\n", cls->m_geom->typetable()->atomic_type(i));
       int local_type_c = 0;
 
       for (int q = 0; q < cls->m_geom->nat(); q++)
-        if (cls->m_geom->type_table(q) == i) {
+        if (cls->m_geom->typetable()->type(q) == i) {
             local_type_c +=1 ;
             fmt::print(
                   embc_inp, "{}{} {} {} {}\n",
@@ -616,7 +616,7 @@ void embedded_cluster_tools::generate_orca_embc_sp_input(std::string outdir,
   for (int i = 0; i < qm->m_geom->nat(); i++)
     fmt::print(
           embc_inp, "{0} {1} {2} {3}\n",
-          qm->m_geom->atom_name(i),
+          qm->m_geom->typetable()->atomic_type(i),
           qm->m_geom->pos(i)[0],
           qm->m_geom->pos(i)[1],
           qm->m_geom->pos(i)[2]
@@ -626,12 +626,12 @@ void embedded_cluster_tools::generate_orca_embc_sp_input(std::string outdir,
   if (!merge_cls_and_chg) {
       //fmt::print(embc_inp, "{}\n", cls->m_geom->nat());
       for (int i = 0; i < cls->m_geom->nat(); i++) {
-          bool add_ecp = cls->m_geom->atom_name(i).find("F") == std::string::npos;
+	bool add_ecp = cls->m_geom->typetable()->atomic_type(i).find("F") == std::string::npos;
           fmt::print(
                 embc_inp,
                 add_ecp ? "{0}> {1} {2} {3} {4} NewECP \"{0}_emb\" end\n" :
                           "{0}> {1} {2} {3} {4} \n",
-                cls->m_geom->atom_name(i),
+                cls->m_geom->typetable()->atomic_type(i),
                 cls->m_geom->xfield<float>(xgeom_charge, i),
                 cls->m_geom->pos(i)[0],
                 cls->m_geom->pos(i)[1],

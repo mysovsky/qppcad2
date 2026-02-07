@@ -57,7 +57,7 @@ void geom_view_labels_subsys_t::render_labels(QPainter &painter) {
       if (!p_owner->m_geom->xfield<bool>(xgeom_label_show, i) && m_selective_lbl) continue;
 
       if (!p_owner->m_atom_type_to_hide.empty()) {
-          auto it = p_owner->m_atom_type_to_hide.find(p_owner->m_geom->type_table(i));
+	auto it = p_owner->m_atom_type_to_hide.find(p_owner->m_geom->typetable()->type(i));
           if (it != p_owner->m_atom_type_to_hide.end()) return;
         }
 
@@ -125,8 +125,8 @@ void geom_view_labels_subsys_t::render_in_place_overlay(QPainter &painter) {
   int sh = 70;
   int max_types = 10;
   int hidden_type = p_owner->m_atom_type_to_hide.size();
-  int ntypes = std::min(p_owner->m_geom->n_atom_types(), max_types);
-  int ntypes_wh = std::min(p_owner->m_geom->n_atom_types() - hidden_type, max_types);
+  int ntypes = std::min(p_owner->m_geom->typetable()->n_atom_types(), max_types);
+  int ntypes_wh = std::min(p_owner->m_geom->typetable()->n_atom_types() - hidden_type, max_types);
   int w_h = 80;
   int padding_h = 16;
   int sph_padding = 5;
@@ -161,7 +161,7 @@ void geom_view_labels_subsys_t::render_in_place_overlay(QPainter &painter) {
             sh,
             sh);
 
-      auto ap_idx = ptable::number_by_symbol(p_owner->m_geom->atom_of_type(i));
+      auto ap_idx = ptable::number_by_symbol(p_owner->m_geom->typetable()->atomic_type(i));
 
       if (ap_idx) {
           vector3<float> color = ptable::get_inst()->arecs[*ap_idx - 1].m_color_jmol;
@@ -173,7 +173,7 @@ void geom_view_labels_subsys_t::render_in_place_overlay(QPainter &painter) {
       painter.setBrush(fill_color);
       painter.drawEllipse(sph);
 
-      text = QString::fromStdString(p_owner->m_geom->atom_of_type(i));
+      text = QString::fromStdString(p_owner->m_geom->typetable()->atomic_type(i));
 
       painter.setBrush(text_fill_color);
       painter.setPen(rectpen2);
@@ -201,7 +201,7 @@ void geom_view_labels_subsys_t::labelize_sel_by_neighbours_count() {
   for (auto &rec : p_owner->m_atom_idx_sel) {
       p_owner->m_geom->xfield<std::string>(xgeom_label_text, rec.m_atm) =
           fmt::format("{}_{}",
-                      p_owner->m_geom->atom_name(rec.m_atm),
+                      p_owner->m_geom->typetable()->atom_name(rec.m_atm),
                       p_owner->m_tws_tr->n(rec.m_atm));
       p_owner->m_geom->xfield<bool>(xgeom_label_show, rec.m_atm) = true;
     }

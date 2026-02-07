@@ -6,7 +6,7 @@
 
 #include <qppcad/core/app_state.hpp>
 #include <qppcad/ws_item/geom_view/geom_view.hpp>
-#include <qpp/modules/pyqpp/pyqpp.hpp>
+#include <pyqpp/pyqpp.hpp>
 
 using namespace qpp;
 using namespace qpp::cad;
@@ -23,7 +23,7 @@ void pyqpp_ccd_export(py::module m);
 void pyqpp_neighbours_export(py::module m);
 */
 
-qpp::xgeometry<float, qpp::periodic_cell<float>  >* claim_xgeom() {
+qpp::xgeometry<float >* claim_xgeom() {
 
   app_state_t *astate = app_state_t::get_inst();
   if (astate->ws_mgr->has_wss()) {

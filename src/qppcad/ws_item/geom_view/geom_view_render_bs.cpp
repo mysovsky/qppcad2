@@ -7,7 +7,7 @@ using namespace qpp::cad;
 void geom_view_render_bs::render(geom_view_t &al) {
 
   app_state_t* astate = app_state_t::get_inst();
-  index all_null = index::D(al.m_geom->DIM).all(0);
+  index all_null = index::D(al.m_geom->DIM()).all(0);
 
   float spec = al.m_draw_specular ? 1.0f : 0.0f;
 
@@ -16,14 +16,14 @@ void geom_view_render_bs::render(geom_view_t &al) {
   // draw {0,..} atoms
   for (uint32_t i = 0; i < al.m_geom->nat(); i++)
     if (al.m_draw_atoms &&
-        al.m_atom_type_to_hide.find(al.m_geom->type_table(i)) ==
+        al.m_atom_type_to_hide.find(al.m_geom->typetable()->type(i)) ==
         al.m_atom_type_to_hide.end())
       render_atom(al, i, all_null);
 
   // draw imaginary atoms
-  if (al.m_geom->DIM > 0 && al.m_draw_atoms && al.m_draw_img_atoms)
+  if (al.m_geom->DIM() > 0 && al.m_draw_atoms && al.m_draw_img_atoms)
     for (const auto &at_img : al.m_tws_tr->m_img_atoms)
-      if (al.m_atom_type_to_hide.find(al.m_geom->type_table(at_img.m_atm)) ==
+      if (al.m_atom_type_to_hide.find(al.m_geom->typetable()->type(at_img.m_atm)) ==
           al.m_atom_type_to_hide.end())
         render_atom(al, at_img.m_atm, at_img.m_idx);
 
@@ -50,7 +50,7 @@ void geom_view_render_bs::render(geom_view_t &al) {
         }
 
   //pure imaginary bond
-  if (al.m_geom->DIM > 0 && al.m_draw_img_bonds && al.m_draw_bonds)
+  if (al.m_geom->DIM() > 0 && al.m_draw_img_bonds && al.m_draw_bonds)
     for (const auto &img_atom : al.m_tws_tr->m_img_atoms)
       for (const auto &img_bond : img_atom.m_img_bonds) {
           uint32_t id1 = img_atom.m_atm;
@@ -71,7 +71,7 @@ void geom_view_render_bs::render(geom_view_t &al) {
 void geom_view_render_bs::render_suprematic(geom_view_t &al) {
 
   app_state_t* astate = app_state_t::get_inst();
-  index all_null = index::D(al.m_geom->DIM).all(0);
+  index all_null = index::D(al.m_geom->DIM()).all(0);
 
   float spec = al.m_draw_specular ? 1.0f : 0.0f;
 
@@ -89,14 +89,14 @@ void geom_view_render_bs::render_suprematic(geom_view_t &al) {
       // draw {0,..} atoms
       for (uint32_t i = 0; i < al.m_geom->nat(); i++)
         if (al.m_draw_atoms &&
-            al.m_atom_type_to_hide.find(al.m_geom->type_table(i)) ==
+            al.m_atom_type_to_hide.find(al.m_geom->typetable()->type(i)) ==
             al.m_atom_type_to_hide.end())
           render_atom_suprematic(al, i, all_null, is_backpass);
 
       // draw imaginary atoms
-      if (al.m_geom->DIM > 0 && al.m_draw_atoms && al.m_draw_img_atoms)
+      if (al.m_geom->DIM() > 0 && al.m_draw_atoms && al.m_draw_img_atoms)
         for (const auto &at_img : al.m_tws_tr->m_img_atoms)
-          if (al.m_atom_type_to_hide.find(al.m_geom->type_table(at_img.m_atm)) ==
+          if (al.m_atom_type_to_hide.find(al.m_geom->typetable()->type(at_img.m_atm)) ==
               al.m_atom_type_to_hide.end())
             render_atom_suprematic(al, at_img.m_atm, at_img.m_idx, is_backpass);
 
@@ -134,7 +134,7 @@ void geom_view_render_bs::render_suprematic(geom_view_t &al) {
             }
 
       //pure imaginary bond
-      if (al.m_geom->DIM > 0 && al.m_draw_img_bonds && al.m_draw_bonds)
+      if (al.m_geom->DIM() > 0 && al.m_draw_img_bonds && al.m_draw_bonds)
         for (const auto &img_atom : al.m_tws_tr->m_img_atoms)
           for (const auto &img_bond : img_atom.m_img_bonds) {
               uint32_t id1 = img_atom.m_atm;
@@ -179,12 +179,12 @@ void geom_view_render_bs::render_atom (geom_view_t &al,
     }
 
   if (!al.m_type_color_override.empty()) {
-      auto it = al.m_type_color_override.find(al.m_geom->type_table(at_num));
+      auto it = al.m_type_color_override.find(al.m_geom->typetable()->type(at_num));
       if (it != al.m_type_color_override.end()) color = it->second;
     }
   
   if (!al.m_type_radius_override.empty()) {
-      auto it = al.m_type_radius_override.find(al.m_geom->type_table(at_num));
+      auto it = al.m_type_radius_override.find(al.m_geom->typetable()->type(at_num));
       if (it != al.m_type_radius_override.end()) pre_rad = it->second;
     }
 
@@ -232,13 +232,13 @@ void geom_view_render_bs::render_atom_suprematic(geom_view_t &al,
     }
 
   if (!al.m_type_color_override.empty()) {
-      auto it = al.m_type_color_override.find(al.m_geom->type_table(at_num));
+      auto it = al.m_type_color_override.find(al.m_geom->typetable()->type(at_num));
       if (it != al.m_type_color_override.end())
         color = it->second;
     }
 
   if (!al.m_type_radius_override.empty()) {
-      auto it = al.m_type_radius_override.find(al.m_geom->type_table(at_num));
+      auto it = al.m_type_radius_override.find(al.m_geom->typetable()->type(at_num));
       if (it != al.m_type_radius_override.end()) pre_rad = it->second;
     }
 
@@ -276,9 +276,9 @@ void geom_view_render_bs::render_bond (geom_view_t &al,
       (al.m_geom->xfield<bool>(al.xgeom_hide, at_num1) ||
        al.m_geom->xfield<bool>(al.xgeom_hide, at_num2) )) return;
 
-  if (al.m_atom_type_to_hide_bond.find(al.m_geom->type_table(at_num1)) !=
+  if (al.m_atom_type_to_hide_bond.find(al.m_geom->typetable()->type(at_num1)) !=
       al.m_atom_type_to_hide_bond.end() ||
-      al.m_atom_type_to_hide_bond.find(al.m_geom->type_table(at_num2)) !=
+      al.m_atom_type_to_hide_bond.find(al.m_geom->typetable()->type(at_num2)) !=
       al.m_atom_type_to_hide_bond.end()) return;
 
   auto ap_idx1 = ptable::number_by_symbol(atomic_name_to_symbol((al.m_geom->atom(at_num1))));
@@ -294,10 +294,10 @@ void geom_view_render_bs::render_bond (geom_view_t &al,
     }
 
   if (!al.m_type_color_override.empty()) {
-      auto it1 = al.m_type_color_override.find(al.m_geom->type_table(at_num1));
+      auto it1 = al.m_type_color_override.find(al.m_geom->typetable()->type(at_num1));
       if (it1 != al.m_type_color_override.end())
         bcolor1 = it1->second;
-      auto it2 = al.m_type_color_override.find(al.m_geom->type_table(at_num2));
+      auto it2 = al.m_type_color_override.find(al.m_geom->typetable()->type(at_num2));
       if (it2 != al.m_type_color_override.end())
         bcolor2 = it2->second;
     }
@@ -346,9 +346,9 @@ void geom_view_render_bs::render_bond_suprematic(geom_view_t &al,
       (al.m_geom->xfield<bool>(al.xgeom_hide, at_num1) ||
        al.m_geom->xfield<bool>(al.xgeom_hide, at_num2) )) return;
 
-  if (al.m_atom_type_to_hide_bond.find(al.m_geom->type_table(at_num1)) !=
+  if (al.m_atom_type_to_hide_bond.find(al.m_geom->typetable()->type(at_num1)) !=
       al.m_atom_type_to_hide_bond.end() ||
-      al.m_atom_type_to_hide_bond.find(al.m_geom->type_table(at_num2)) !=
+      al.m_atom_type_to_hide_bond.find(al.m_geom->typetable()->type(at_num2)) !=
       al.m_atom_type_to_hide_bond.end()) return;
 
   auto ap_idx1 = ptable::number_by_symbol(atomic_name_to_symbol((al.m_geom->atom(at_num1))));
@@ -365,10 +365,10 @@ void geom_view_render_bs::render_bond_suprematic(geom_view_t &al,
     }
 
   if (!al.m_type_color_override.empty()) {
-      auto it1 = al.m_type_color_override.find(al.m_geom->type_table(at_num1));
+      auto it1 = al.m_type_color_override.find(al.m_geom->typetable()->type(at_num1));
       if (it1 != al.m_type_color_override.end())
         bcolor1 = it1->second;
-      auto it2 = al.m_type_color_override.find(al.m_geom->type_table(at_num2));
+      auto it2 = al.m_type_color_override.find(al.m_geom->typetable()->type(at_num2));
       if (it2 != al.m_type_color_override.end())
         bcolor2 = it2->second;
     }

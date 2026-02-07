@@ -51,7 +51,7 @@ namespace qpp {
 
         geom_view_t *b_gv{nullptr};
         std::vector<STRING_EX> b_fn;
-        std::vector<basic_types> b_ft;
+        std::vector<int> b_ft;
 
         void build_xfield();
         colorize_by_xfield_widget_t();

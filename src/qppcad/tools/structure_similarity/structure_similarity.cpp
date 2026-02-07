@@ -156,10 +156,10 @@ void structure_similarity_widget_t::compute_structure_similarity_naive(geom_view
                                                                        geom_view_t *g2) {
 
   //Checking dimensions
-  if (g1->m_geom->DIM != g2->m_geom->DIM) {
+  if (g1->m_geom->DIM() != g2->m_geom->DIM()) {
       str_sim_output->insertPlainText(tr("Dim1(%1) != Dim2(%2). Aborting\n")
-                                      .arg(g1->m_geom->DIM)
-                                      .arg(g2->m_geom->DIM));
+                                      .arg(g1->m_geom->DIM())
+                                      .arg(g2->m_geom->DIM()));
       return;
     }
 
@@ -172,10 +172,10 @@ void structure_similarity_widget_t::compute_structure_similarity_naive(geom_view
     }
 
   //Checking n_types
-  if (g1->m_geom->n_types() != g2->m_geom->n_types()) {
+  if (g1->m_geom->typetable()->n_types() != g2->m_geom->typetable()->n_types()) {
       str_sim_output->insertPlainText(tr("Warning! ntypes1(%1) != ntypes2(%2).\n")
-                                      .arg(g1->m_geom->n_types())
-                                      .arg(g2->m_geom->n_types()));
+                                      .arg(g1->m_geom->typetable()->n_types())
+                                      .arg(g2->m_geom->typetable()->n_types()));
     }
 
   //All checks passed
@@ -234,15 +234,15 @@ void structure_similarity_widget_t::set_out_table_data(geom_view_t *g1,
   atom_id->setTextAlignment(Qt::AlignCenter);
   str_sim_table->setItem(table_idx, 0, atom_id);
 
-  bool types_are_different = g1->m_geom->type_table(atom_idx) != g2->m_geom->type_table(atom_idx);
+  bool types_are_different = g1->m_geom->typetable()->type(atom_idx) != g2->m_geom->typetable()->type(atom_idx);
   QTableWidgetItem *atype_g1 =
-      new QTableWidgetItem(QString::fromStdString(g1->m_geom->atom_name(atom_idx)));
+    new QTableWidgetItem(QString::fromStdString(g1->m_geom->typetable()->atom_name(atom_idx)));
   atype_g1->setTextAlignment(Qt::AlignCenter);
   if (types_are_different) atype_g1->setBackground(Qt::red);
   str_sim_table->setItem(table_idx, 1, atype_g1);
 
   QTableWidgetItem *atype_g2 =
-      new QTableWidgetItem(QString::fromStdString(g2->m_geom->atom_name(atom_idx)));
+    new QTableWidgetItem(QString::fromStdString(g2->m_geom->typetable()->atom_name(atom_idx)));
   atype_g2->setTextAlignment(Qt::AlignCenter);
   if (types_are_different) atype_g2->setBackground(Qt::red);
   str_sim_table->setItem(table_idx, 2, atype_g2);
@@ -318,8 +318,8 @@ void structure_similarity_widget_t::copy_to_cb_btn_clck() {
       vector3<float> dp = p2 - p1;
        //                     0   1   2   3   4   5   6   7   8   9   10  11  12
       out_str += fmt::format("{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}\n",
-                             g1->m_geom->atom_name(i),
-                             g2->m_geom->atom_name(i),
+                             g1->m_geom->typetable()->atom_name(i),
+                             g2->m_geom->typetable()->atom_name(i),
                              i,
                              p1[0], p1[1], p1[2],
                              p2[0], p2[1], p2[2],

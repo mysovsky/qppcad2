@@ -110,7 +110,7 @@ void main_window_t::init_base_shortcuts() {
 
 std::shared_ptr<ws_item_t> construct_from_geom1(
     workspace_t &ws,
-    std::shared_ptr<xgeometry<float, periodic_cell<float> > > geom,
+    std::shared_ptr<xgeometry<float > > geom,
     const std::string &name) {
 
     auto new_item = ws.m_owner->m_bhv_mgr->fbr_ws_item_by_type(geom_view_t::get_type_static());
@@ -120,8 +120,8 @@ std::shared_ptr<ws_item_t> construct_from_geom1(
     if(!as_gv) return nullptr;
 
     if (as_gv->m_geom) {
-        as_gv->m_geom->remove_observer(*as_gv->m_ext_obs);
-        as_gv->m_geom->remove_observer(*as_gv->m_tws_tr);
+        as_gv->m_geom->remove_observer_byref(*as_gv->m_ext_obs);
+        as_gv->m_geom->remove_observer_byref(*as_gv->m_tws_tr);
       }
 
     as_gv->m_geom = geom;
@@ -130,8 +130,8 @@ std::shared_ptr<ws_item_t> construct_from_geom1(
     as_gv->m_tws_tr->geom = as_gv->m_geom.get();
 
     as_gv->m_tws_tr->do_action(act_lock | act_clear_all);
-    as_gv->m_geom->add_observer(*as_gv->m_ext_obs);
-    as_gv->m_geom->add_observer(*as_gv->m_tws_tr);
+    as_gv->m_geom->add_observer_byref(*as_gv->m_ext_obs);
+    as_gv->m_geom->add_observer_byref(*as_gv->m_tws_tr);
     as_gv->m_tws_tr->do_action(act_unlock | act_rebuild_tree);
     as_gv->m_tws_tr->do_action(act_rebuild_ntable);
     as_gv->m_name = name;
@@ -148,7 +148,7 @@ bool consider_ws_add(py::object & obj){
   py::object tp = py::eval("type");
   ss <<  py::cast<std::string>(py::str(tp(obj)));
   if (ss.str() == "<class 'pyqpp.xgeometry_f'>"){    
-    auto g = py::cast<std::shared_ptr<xgeometry<float, periodic_cell<float> > > >(obj);
+    auto g = py::cast<std::shared_ptr<xgeometry<float > > >(obj);
     construct_from_geom1(*(astate -> ws_mgr -> get_cur_ws()), g, g->name );
     return true;
   }
@@ -1344,7 +1344,7 @@ void main_window_t::cur_ws_selected_item_changed() {
 
     if (as_al) {
 
-        bool al_is_3d = as_al->m_geom->DIM == 3;
+      bool al_is_3d = as_al->m_geom->DIM() == 3;
         //tp_camera_tool_act_a->setVisible(al_is_3d)
         tp_camera_tool_act_a->setVisible(al_is_3d);
         tp_camera_tool_act_b->setVisible(al_is_3d);

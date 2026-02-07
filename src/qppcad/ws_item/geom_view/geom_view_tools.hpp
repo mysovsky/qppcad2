@@ -72,8 +72,8 @@ namespace qpp {
                                                             int s_a, int e_a,
                                                             int s_b, int e_b,
                                                             int s_c, int e_c);
-        static void generate_supercell(geometry<float, periodic_cell<float> > *src,
-                                       geometry<float, periodic_cell<float> > *dst,
+        static void generate_supercell(geometry<float > *src,
+                                       geometry<float> *dst,
                                        index sc_dim,
                                        std::optional<geom_view_role_e> role = std::nullopt);
 

@@ -43,7 +43,7 @@ bool plugin_param_t::fromString(const std::string & s){
   switch (type){
   case type_qpp_geometry: {
     try{
-      auto g = std::get<std::shared_ptr<xgeometry<float, periodic_cell<float> > > >(value);
+      auto g = std::get<std::shared_ptr<xgeometry<float > > >(value);
       astate -> tlog("geometry {} {}",g->name, g->nat());
     }
     catch (const std::bad_variant_access& ex){

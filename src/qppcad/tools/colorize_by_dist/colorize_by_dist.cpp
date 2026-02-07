@@ -56,8 +56,8 @@ void colorize_by_dist_widget_t::init_data() {
 
   if (!b_gv) return;
 
-  for (size_t i = 0; i < b_gv->m_geom->n_atom_types(); i++) {
-      QString atom_type = QString::fromStdString(b_gv->m_geom->atom_of_type(i));
+  for (size_t i = 0; i < b_gv->m_geom->typetable()->n_types(); i++) {
+    QString atom_type = QString::fromStdString(b_gv->m_geom->typetable()->atomic_type(i));
       atom1_type->addItem(atom_type);
       atom2_type->addItem(atom_type);
     }

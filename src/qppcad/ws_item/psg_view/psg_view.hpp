@@ -54,7 +54,7 @@ namespace qpp {
 
         psg_view_t();
 
-        void gen_from_geom(xgeometry<float, periodic_cell<float> > &geom,
+        void gen_from_geom(xgeometry<float > &geom,
                            float tolerance,
                            bool nested);
 

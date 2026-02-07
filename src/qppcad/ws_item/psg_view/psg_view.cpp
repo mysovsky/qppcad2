@@ -26,7 +26,7 @@ psg_view_t::psg_view_t() {
 
 }
 
-void psg_view_t::gen_from_geom(xgeometry<float, periodic_cell<float> > &geom,
+void psg_view_t::gen_from_geom(xgeometry<float> &geom,
                                float tolerance,
                                bool nested) {
 

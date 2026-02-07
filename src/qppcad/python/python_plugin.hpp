@@ -30,7 +30,7 @@ namespace qpp {
     typedef std::variant<double, float, int, bool, std::string,
 			 std::vector<double>, std::vector<float>, std::vector<int>,
 			 std::vector<char>,  std::vector<std::string >,
-			 std::shared_ptr<xgeometry<float, periodic_cell<float> > > > plugin_param_value_t;
+			 std::shared_ptr<xgeometry<float > > > plugin_param_value_t;
     
     // --------------------------------------------------------------
     

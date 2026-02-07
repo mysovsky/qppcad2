@@ -31,10 +31,11 @@ QVariant xgeom_table_model_t::data(const QModelIndex &index, int role) const {
 
   int xfield_index = index.column();
   int atom_id = index.row();
-  basic_types field_type = m_gv->m_geom->field_type(xfield_index);
+  //basic_types field_type = m_gv->m_geom->field_type(xfield_index);
+  int field_type = m_gv->m_geom->field_type(xfield_index);
 
   if (role == Qt::BackgroundRole &&
-      m_gv->m_atom_idx_sel.find({atom_id, index::D(m_gv->m_geom->DIM).all(0)}) !=
+      m_gv->m_atom_idx_sel.find({atom_id, index::D(m_gv->m_geom->DIM()).all(0)}) !=
       m_gv->m_atom_idx_sel.end()) {
 
       return QVariant(QColor(Qt::gray));
@@ -47,12 +48,12 @@ QVariant xgeom_table_model_t::data(const QModelIndex &index, int role) const {
        case basic_types::type_bool : {
            return QVariant();
          }
-
+	 /*
        case basic_types::type_double : {
            double field_val = m_gv->m_geom->xfield<double>(xfield_index, atom_id);
            return QVariant(field_val);
          }
-
+	 */
        case basic_types::type_float : {
            float field_val = m_gv->m_geom->xfield<float>(xfield_index, atom_id);
            return QVariant(field_val);
@@ -124,7 +125,7 @@ Qt::ItemFlags xgeom_table_model_t::flags(const QModelIndex &index) const {
   if (m_gv->m_geom) {
       int xfield_index = index.column();
       int atom_id = index.row();
-      basic_types field_type = m_gv->m_geom->field_type(xfield_index);
+      int field_type = m_gv->m_geom->field_type(xfield_index);
       if (field_type == basic_types::type_bool)
         flags = flags | Qt::ItemFlag::ItemIsUserCheckable;
     }
@@ -141,7 +142,8 @@ bool xgeom_table_model_t::setData(const QModelIndex &index, const QVariant &valu
 
       int xfield_index = index.column();
       int atom_id = index.row();
-      basic_types field_type = m_gv->m_geom->field_type(xfield_index);
+      //basic_types field_type = m_gv->m_geom->field_type(xfield_index);
+      int field_type = m_gv->m_geom->field_type(xfield_index);
 
       if (role == Qt::CheckStateRole && field_type == basic_types::type_bool) {
           m_gv->m_geom->xfield<bool>(xfield_index, atom_id) = value == Qt::Checked;
@@ -155,12 +157,13 @@ bool xgeom_table_model_t::setData(const QModelIndex &index, const QVariant &valu
               return QAbstractTableModel::setData(index, value, role);
               break;
             }
+	    /*
           case basic_types::type_double : {
               m_gv->m_geom->xfield<double>(xfield_index, atom_id) = value.toDouble();
               astate->make_viewport_dirty();
               return true;
               break;
-            }
+	      }*/
           case basic_types::type_float : {
               m_gv->m_geom->xfield<float>(xfield_index, atom_id) = value.toDouble();
               astate->make_viewport_dirty();

@@ -541,7 +541,7 @@ qbinded_xgeom_color3_input_t::qbinded_xgeom_color3_input_t(QWidget *parent) : QF
 }
 
 void qbinded_xgeom_color3_input_t::bind_value(
-    xgeometry<float, periodic_cell<float> > *binded_xgeom,
+    xgeometry<float > *binded_xgeom,
     std::array<int, 3> binding_indicies,
     std::set<size_t> &&binded_atom_id) {
 
@@ -609,7 +609,7 @@ void qbinded_xgeom_color3_input_t::mousePressEvent(QMouseEvent *event) {
 }
 
 void qbinded_xgeom_float_spinbox_t::bind_value(
-    xgeometry<float, periodic_cell<float> > *binded_xgeom,
+    xgeometry<float > *binded_xgeom,
     int binding_index,
     std::set<size_t> &&binded_atom_id) {
 

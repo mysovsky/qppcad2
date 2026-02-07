@@ -26,7 +26,7 @@ QVariant qatomic_dist_table_model_t::data(const QModelIndex &index, int role) co
 
         case 0 :
           return QString::fromStdString(
-                m_al->m_geom->atom_name(m_al->m_measure->m_dist_recs[index.row()].m_at1));
+	m_al->m_geom->typetable()->atom_name(m_al->m_measure->m_dist_recs[index.row()].m_at1));
           break;
 
         case 1 :
@@ -41,7 +41,7 @@ QVariant qatomic_dist_table_model_t::data(const QModelIndex &index, int role) co
 
         case 3 :
           return QString::fromStdString(
-                m_al->m_geom->atom_name(m_al->m_measure->m_dist_recs[index.row()].m_at2));
+					m_al->m_geom->typetable()->atom_name(m_al->m_measure->m_dist_recs[index.row()].m_at2));
           break;
 
         case 4 :

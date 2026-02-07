@@ -77,7 +77,7 @@ std::vector<displ_proj_mapping_t> displ_proj_package_t::gen_mapping(std::shared_
       auto &rec = m_recs[i];
       auto ps_infr = apply_point + rec.m_start_pos;
 
-      std::vector<tws_node_content_t<float> > qs_res;
+      std::vector<tws_node_cnt_t<float> > qs_res;
       gv->m_tws_tr->query_sphere(eps_sr, ps_infr, qs_res);
 
       py::print(fmt::format("rec_id = {}, an = \"{}\", qs_res.sz = {}, spc = [{}, {}, {}]",
@@ -86,10 +86,10 @@ std::vector<displ_proj_mapping_t> displ_proj_package_t::gen_mapping(std::shared_
 
       std::vector<size_t> candidates;
       for (auto &elem : qs_res)
-        if (gv->m_geom->atom_name(elem.m_atm).find(rec.m_atom_name) != std::string::npos) {
+        if (gv->m_geom->typetable()->atomic_type(elem.m_atm).find(rec.m_atom_name) != std::string::npos) {
 
             py::print(fmt::format("   id = {}, an_m = \"{}\", pc = [{}, {}, {}]",
-                      elem.m_atm, gv->m_geom->atom_name(elem.m_atm),
+				  elem.m_atm, gv->m_geom->typetable()->atomic_type(elem.m_atm),
                       gv->m_geom->pos(elem.m_atm)[0],
                       gv->m_geom->pos(elem.m_atm)[1],
                       gv->m_geom->pos(elem.m_atm)[2]));
@@ -155,7 +155,7 @@ displ_proj_package_t::displ_proj_package_t(std::shared_ptr<geom_view_t> gs,
       auto d_s = exp_cnt ? gs->m_geom->pos(elem) - *exp_cnt : gs->m_geom->pos(elem);
       auto d_e = exp_cnt ? ge->m_geom->pos(elem) - *exp_cnt : ge->m_geom->pos(elem);
 
-      displ_proj_record_t rec(d_s, d_e, gs->m_geom->atom_name(elem));
+      displ_proj_record_t rec(d_s, d_e, gs->m_geom->typetable()->atomic_type(elem));
 
       m_recs.push_back(std::move(rec));
 

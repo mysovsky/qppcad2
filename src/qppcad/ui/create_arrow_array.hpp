@@ -66,7 +66,7 @@ namespace qpp {
         int frame_count{0}, cur_frame{0};
         bool anim_exists{false};
 
-        std::shared_ptr<xgeometry<float, periodic_cell<float> > > geom;
+        std::shared_ptr<xgeometry<float> > geom;
       
         create_arrow_array_widget_t();
 

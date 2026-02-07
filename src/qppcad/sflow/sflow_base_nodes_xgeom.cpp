@@ -57,7 +57,7 @@ bool sf_xgeom_ntypes_node_t::execute_ex() {
   auto inp0 = get_pars_as<sflow_parameter_xgeom_t>(0, m_inps);
 
   if (out0 && inp0) {
-      out0->m_value = inp0->m_value.n_atom_types();
+    out0->m_value = inp0->m_value.typetable()->n_atom_types();
     } else {
       return false;
     }

@@ -60,18 +60,18 @@ void pgf_producer_t::compose_from_array_group() {
   app_state_t* astate = app_state_t::get_inst();
 
   m_imd.clear();
-  m_imd.clear_type_table();
-  if (m_sg_psg) m_imd.cell = gen_cell<float, qpp::matrix3<float> >(m_sg_psg->m_ag->group);
-  m_imd.cell.auto_orders();
+  m_imd.typetable()->clear();
+  if (m_sg_psg) m_imd.cell = std::shared_ptr<periodic_cell<float>>(new gen_cell<float, qpp::matrix3<float> >(m_sg_psg->m_ag->group));
+  m_imd.cell->auto_orders();
 
   //m_orders_range.clear();
-  m_orders_range.resize(m_imd.cell.DIM);
+  m_orders_range.resize(m_imd.cell->DIM);
 
   astate->tlog("pgf_producer_t::compose_from_array_group() ->");
   for (size_t i = 0; i < m_orders_range.size(); i++) {
       m_orders_range[i][0] = 0;
       m_orders_range[i][1] = 0;
-      m_orders_range[i][2] = m_imd.cell.end()(i);
+      m_orders_range[i][2] = m_imd.cell->end()(i);
       astate->tlog(" m_orders_range[{}] = [0] = {}, [1] = {}, [2] = {}",
                    i,
                    m_orders_range[i][0],
@@ -122,21 +122,21 @@ void pgf_producer_t::generate_geom() {
   m_dst_gv->m_tws_tr->do_action(act_clear_all);
 
   m_dst_gv->m_geom->clear();
-  m_dst_gv->m_geom->clear_type_table();
+  m_dst_gv->m_geom->typetable()->clear();
 
   //print out cell dimensions
   astate->tlog("pgf_producer_t::generate_geom() info:");
-  astate->tlog("m_imd.cell.DIM = {}", m_imd.cell.DIM);
+  astate->tlog("m_imd.cell.DIM = {}", m_imd.cell->DIM);
   astate->tlog("m_orders_range.size() = {}", m_orders_range.size());
-  astate->tlog("m_imd.cell._begin = {}", m_imd.cell._begin);
-  astate->tlog("m_imd.cell._end = {}", m_imd.cell._end);
+  astate->tlog("m_imd.cell._begin = {}", m_imd.cell->begin());
+  astate->tlog("m_imd.cell._end = {}", m_imd.cell->end());
 
   //generate geom
-  if (m_orders_range.size() == m_imd.DIM) {
+  if (m_orders_range.size() == m_imd.DIM()) {
 
       astate->tlog("pgf_producer_t::generate_geom() entering in generation process");
 
-      size_t DIM = m_imd.DIM;
+      size_t DIM = m_imd.DIM();
 
       index gen_begin = index::D(DIM);
       index gen_end = index::D(DIM);
@@ -148,14 +148,15 @@ void pgf_producer_t::generate_geom() {
 
       astate->tlog("pgf_producer_t::generate_geom() copying atoms to intermediate");
       for (size_t i = 0; i < m_src_gv->m_geom->nat(); i++)
-        m_imd.add(m_src_gv->m_geom->atom_name(i), m_src_gv->m_geom->pos(i));
+        m_imd.add(m_src_gv->m_geom->typetable()->atom_name(i), m_src_gv->m_geom->pos(i));
 
       astate->tlog("pgf_producer_t::generate_geom() replicate");
-      replicate(*(m_dst_gv->m_geom.get()),
+      xgeometry<float> *dst = m_dst_gv->m_geom.get();
+      replicate(*dst,
                 m_imd,
-                m_imd.cell,
-                m_imd.cell._begin,
-                m_imd.cell._end);
+                *m_imd.cell.get(),
+                m_imd.cell->begin(),
+                m_imd.cell->end());
 
       astate->tlog("pgf_producer_t::generate_geom() exiting in generation process");
 

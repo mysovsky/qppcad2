@@ -252,13 +252,13 @@ namespace qpp {
 
       public:
 
-        xgeometry<float, periodic_cell<float>> *m_binded_xgeom{nullptr};
+        xgeometry<float> *m_binded_xgeom{nullptr};
         std::array<int, 3> m_binding_indicies;
         std::set<size_t> m_binded_atom_id;
         QColor m_stored_color;
         bool m_apply_to_selected{false};
         explicit qbinded_xgeom_color3_input_t(QWidget *parent = nullptr);
-        void bind_value(xgeometry<float, periodic_cell<float> > *binded_xgeom,
+        void bind_value(xgeometry<float > *binded_xgeom,
                         std::array<int, 3> binding_indicies,
                         std::set<size_t> &&binded_atom_id);
         void load_value();
@@ -273,11 +273,11 @@ namespace qpp {
 
       public:
 
-        xgeometry<float, periodic_cell<float> > *m_binded_xgeom{nullptr};
+        xgeometry<float > *m_binded_xgeom{nullptr};
         int m_binding_index;
         std::set<size_t> m_binded_atom_id;
         bool m_apply_to_selected{false};
-        void bind_value(xgeometry<float, periodic_cell<float> > *binded_xgeom,
+        void bind_value(xgeometry<float > *binded_xgeom,
                         int binding_index,
                         std::set<size_t> &&binded_atom_id);
         void load_value();

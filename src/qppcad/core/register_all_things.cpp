@@ -202,19 +202,18 @@ void registration_helper_t::reg_ws_item_io_bhv(ws_item_behaviour_manager_t *bhv_
   auto xyz_s_ff_mgr =
       std::make_shared<
       geom_view_io_saver_t<
-      write_xyz<float, periodic_cell<float> > >
-      >();
+      write_xyz<float> > >();
 
   auto xyzq_mgf =
       std::make_shared<
       geom_view_io_loader_t<
-      read_xyzq_wrp_def<float, periodic_cell<float> >, geom_view_role_e::r_uc >
+      read_xyzq_wrp_def<float>, geom_view_role_e::r_uc >
       >();
 
   auto xyzq_s_mgf =
       std::make_shared<
       geom_view_io_saver_t<
-      write_xyzq<float, periodic_cell<float> >, true, 3 >
+      write_xyzq<float> >
       >();
 
   auto ff_output_mgf =
@@ -232,46 +231,41 @@ void registration_helper_t::reg_ws_item_io_bhv(ws_item_behaviour_manager_t *bhv_
   auto cp2k_cs_mgf =
       std::make_shared<
       geom_view_io_saver_t<
-      write_cp2k_coord_section<float, periodic_cell<float> >, true, 3 >
+      write_cp2k_coord_section<float>, geom_view_role_e::r_generic, 3 >
       >();
 
   auto vasp_poscar_mgf =
       std::make_shared<
       geom_view_io_loader_t<
-      read_vasp_poscar<float, periodic_cell<float> >, geom_view_role_e::r_generic, 3 >
+      read_vasp_poscar<float>,geom_view_role_e::r_generic , 3 >
       >();
 
   auto vasp_poscar_s_mgf =
-      std::make_shared<
-      geom_view_io_saver_t<
-      write_vasp_poscar<
-      float, periodic_cell<float> >, true, 3 >
-      >();
-
+    std::make_shared<
+      geom_view_io_saver_t<write_vasp_poscar<float>, true, 3>>();
+  
   auto vasp_chgcar_mgf = std::make_shared<geom_view_vasp_chgcar_t>();
 
   auto write_raw_coord_mgf =
       std::make_shared<
-      geom_view_io_saver_t<write_raw_coord<float, periodic_cell<float> >, false, 0 > >();
+      geom_view_io_saver_t<write_raw_coord<float >, false, 0 > >();
 
   auto write_adme_ewald_uc_mgf =
       std::make_shared<
-      geom_view_io_saver_t<write_adme_ewald_uc<float, periodic_cell<float> >, false, 0 > >();
+      geom_view_io_saver_t<write_adme_ewald_uc<float>, false, 0 > >();
 
   auto write_atoms_with_coord_mgf =
       std::make_shared<
-      geom_view_io_saver_t<write_atoms_with_coord<float, periodic_cell<float> >, false, 0 > >();
+      geom_view_io_saver_t<write_atoms_with_coord<float>, false, 0 > >();
 
   auto write_atoms_with_coord_and_chg_mgf =
       std::make_shared<
-      geom_view_io_saver_t<write_atoms_with_coord_and_chg<float, periodic_cell<float> >,
+      geom_view_io_saver_t<write_atoms_with_coord_and_chg<float>,
       false, 0 > >();
 
   auto vasp_outcar_mgf =
       std::make_shared<
-      geom_view_io_anim_loader_t<
-      read_vasp_outcar_md_with_frames<float, periodic_cell<float> >, 3 >
-      >();
+      geom_view_io_anim_loader_t<read_vasp_outcar_md_with_frames<float>, 3 > >();
 
   auto generic_cube_mgf = std::make_shared<geom_view_io_cube_t>();
 

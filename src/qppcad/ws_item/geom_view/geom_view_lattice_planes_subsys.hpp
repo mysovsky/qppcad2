@@ -23,18 +23,18 @@ namespace qpp {
         int m_k{0};
         int m_l{0};
 
-        void update(geometry<REAL, periodic_cell<REAL> > *geom, int _h, int _k, int _l) {
+        void update(geometry<REAL> *geom, int _h, int _k, int _l) {
 
           m_h = _h;
           m_k = _k;
           m_l = _l;
 
-          vector3<REAL> pp1 = geom->cell.v[0] / m_h;
-          vector3<REAL> pp2 = geom->cell.v[1] / m_k;
-          vector3<REAL> pp3 = geom->cell.v[2] / m_l;
+          vector3<REAL> pp1 = geom->cell->v[0] / m_h;
+          vector3<REAL> pp2 = geom->cell->v[1] / m_k;
+          vector3<REAL> pp3 = geom->cell->v[2] / m_l;
 
-          m_size = std::max(geom->cell.v[0].norm(),
-              std::max(geom->cell.v[1].norm(), geom->cell.v[2].norm()));
+          m_size = std::max(geom->cell->v[0].norm(),
+              std::max(geom->cell->v[1].norm(), geom->cell->v[2].norm()));
 
           //  norm = cross(p1-p0,p2-p0);
           //    norm.normalize();
@@ -53,7 +53,7 @@ namespace qpp {
 
         }
 
-        lattice_plane_record_t(geometry<REAL, periodic_cell<REAL> > *geom, int _h, int _k, int _l) {
+        lattice_plane_record_t(geometry<REAL> *geom, int _h, int _k, int _l) {
 
           update(geom, _h, _k, _l);
 

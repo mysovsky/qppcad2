@@ -24,7 +24,7 @@ void geom_view_colorizer_helper::colorize_by_distance(geom_view_t *al,
 
       geom_anim_record_t<float> anim;
 
-      anim.m_anim_type = geom_anim_t::anim_static;
+      anim.m_anim_type = geom_anim_e::anim_static;
       anim.m_anim_name = "static";
       anim.frames.resize(1);
       anim.frames[0].atom_pos.resize(al->m_geom->nat());
@@ -36,16 +36,16 @@ void geom_view_colorizer_helper::colorize_by_distance(geom_view_t *al,
     }
 
   //intermediate geometry
-  xgeometry<float, periodic_cell<float> > g(al->m_geom->DIM);
+  xgeometry<float > g(al->m_geom->DIM());
 
-  g.DIM = al->m_geom->DIM;
-  g.cell.DIM = al->m_geom->cell.DIM;
+  //  g.DIM = al->m_geom->DIM;
+  g.cell->DIM = al->m_geom->cell->DIM;
 
   //initialize tws_tree
-  tws_tree_t<float, periodic_cell<float> > g_t(g);
+  tws_tree_t<float> g_t(g);
   g_t.do_action(act_lock | act_lock_img);
 
-  index zero = index::D(al->m_geom->DIM).all(0);
+  index zero = index::D(al->m_geom->DIM()).all(0);
 
   //copy initial geometry
   al->copy_to_xgeom(g);
@@ -64,13 +64,13 @@ void geom_view_colorizer_helper::colorize_by_distance(geom_view_t *al,
         g_t.do_action(act_build_tree);
         g_t.do_action(act_lock | act_lock_img);
 
-        if (al->m_anim->m_anim_data[a_id].frames[f_id].atom_color.size() !=
+        if (al->m_anim->m_anim_data[a_id].frames[f_id].atom_colors.size() !=
             al->m_geom->nat())
-          al->m_anim->m_anim_data[a_id].frames[f_id].atom_color.resize(al->m_geom->nat());
+          al->m_anim->m_anim_data[a_id].frames[f_id].atom_colors.resize(al->m_geom->nat());
 
         for (int i = 0; i < g.nat(); i++) {
 
-            std::vector<tws_node_content_t<float> > res;
+            std::vector<tws_node_cnt_t<float> > res;
             g_t.query_sphere(min_dist + 0.05f, g.coord(i), res);
 
             vector3<float> final_color = over_dist_color;
@@ -101,7 +101,7 @@ void geom_view_colorizer_helper::colorize_by_distance(geom_view_t *al,
 
               }
 
-            al->m_anim->m_anim_data[a_id].frames[f_id].atom_color[i] = final_color;
+            al->m_anim->m_anim_data[a_id].frames[f_id].atom_colors[i] = final_color;
 
           }
 

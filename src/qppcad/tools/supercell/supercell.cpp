@@ -25,7 +25,7 @@ void supercell_tool_t::exec(ws_item_t *item, uint32_t _error_ctx) {
       return;
     }
 
-  if (al->m_geom->DIM != 3) {
+  if (al->m_geom->DIM() != 3) {
       QMessageBox::warning(nullptr, QObject::tr("Supercell generation"),
                            QObject::tr("al->m_geom->DIM != 3"));
       return;
@@ -55,7 +55,7 @@ void supercell_tool_t::make_super_cell(geom_view_t *al,
                                        const int b_steps,
                                        const int c_steps) {
 
-  if (al->m_geom->DIM != 3) {
+  if (al->m_geom->DIM() != 3) {
       QMessageBox::warning(nullptr, QObject::tr("Supercell generation"),
                            QObject::tr("al->m_geom->DIM != 3"));
       return;
@@ -68,8 +68,8 @@ void supercell_tool_t::make_super_cell(geom_view_t *al,
     }
 
   std::shared_ptr<geom_view_t> sc_al = std::make_shared<geom_view_t>();
-  sc_al->m_geom->DIM = 3;
-  sc_al->m_geom->cell.DIM = 3;
+  sc_al->m_geom->cell->DIM = 3;
+  // sc_al->m_geom->cell.DIM = 3;
 
   //sc_al->set_parent_workspace(parent_ws);
   sc_al->begin_structure_change();
@@ -83,7 +83,7 @@ void supercell_tool_t::make_super_cell(geom_view_t *al,
 
   geom_view_tools_t::generate_supercell(al->m_geom.get(), sc_al->m_geom.get(), sc_dim, al->m_role);
 
-  sc_al->m_pos = al->m_pos + al->m_geom->cell.v[0] * 1.4f;
+  sc_al->m_pos = al->m_pos + al->m_geom->cell->v[0] * 1.4f;
   sc_al->m_name = al->m_name + fmt::format("_sc_{}_{}_{}", a_steps, b_steps, c_steps);
 
   al->m_parent_ws->add_item_to_ws(sc_al);
@@ -99,25 +99,25 @@ void supercell_tool_t::make_super_cell(geom_view_t *al,
   if (al->m_role == geom_view_role_e::r_uc) {
 
       sc_al->m_tws_tr->do_action(act_lock);
-      xgeometry<float, periodic_cell<float> > g(3); //intermediate xgeom
+      xgeometry<float > g(3); //intermediate xgeom
       g.set_format({"charge"},{type_real});
-      g.DIM = 3;
-      g.cell.DIM = 3;
-      g.cell.v[0] = sc_al->m_geom->cell.v[0];
-      g.cell.v[1] = sc_al->m_geom->cell.v[1];
-      g.cell.v[2] = sc_al->m_geom->cell.v[2];
+      g.cell->DIM = 3;
+      //g.cell.DIM = 3;
+      g.cell->v[0] = sc_al->m_geom->cell->v[0];
+      g.cell->v[1] = sc_al->m_geom->cell->v[1];
+      g.cell->v[2] = sc_al->m_geom->cell->v[2];
 
       const float equality_dist = 0.01f;
 
       for (int i = 0; i < sc_al->m_geom->nat(); i++) {
 
-          std::vector<tws_node_content_t<float> > res;
+          std::vector<tws_node_cnt_t<float> > res;
           sc_al->m_tws_tr->query_sphere(equality_dist, sc_al->m_geom->pos(i), res);
           float accum_chg = 0;
 
           bool need_to_add{true};
           for (auto &elem : res)
-            if (elem.m_idx == index::D(sc_al->m_geom->DIM).all(0)) {
+            if (elem.m_idx == index::D(sc_al->m_geom->DIM()).all(0)) {
                 accum_chg += sc_al->m_geom->xfield<float>(xgeom_charge, elem.m_atm);
                 if (i > elem.m_atm) need_to_add = false;
               }

@@ -157,7 +157,7 @@ void simple_query::sel_cnt_parity() {
 
   auto [cur_ws, cur_it, al] = astate->ws_mgr->get_sel_tpl_itm<geom_view_t>(error_ctx_throw);
 
-  index zero = index::D(al->m_geom->DIM).all(0);
+  index zero = index::D(al->m_geom->DIM()).all(0);
   for (auto &elem : al->m_atom_idx_sel)
     if (elem.m_idx == zero) {
         std::array<int, 2> parity_d{-1,1};
@@ -168,7 +168,7 @@ void simple_query::sel_cnt_parity() {
                 new_pos[0] = al->m_geom->coord(elem.m_atm)[0] * p_x;
                 new_pos[1] = al->m_geom->coord(elem.m_atm)[1] * p_y;
                 new_pos[2] = al->m_geom->coord(elem.m_atm)[2] * p_z;
-                std::vector<tws_node_content_t<float> > res;
+                std::vector<tws_node_cnt_t<float> > res;
                 const float eps_dist = 0.01;
                 al->m_tws_tr->query_sphere(eps_dist, new_pos, res);
                 for (auto &res_elem : res)
@@ -216,7 +216,7 @@ void simple_query::sel_cnt_type(pybind11::str sel_type) {
   auto [cur_ws, cur_it, al] = astate->ws_mgr->get_sel_tpl_itm<geom_view_t>(error_ctx_throw);
 
   std::string type_name = py::cast<std::string>(sel_type);
-  int type_id = al->m_geom->type_of_atom(type_name);
+  int type_id = al->m_geom->typetable()->type_of_atom(type_name);
   if (type_id != -1) al->sel_by_type(type_id);
 
   astate->make_viewport_dirty();
@@ -229,11 +229,11 @@ void simple_query::sel_cnt_sphere(vector3<float> sph_center, float sph_rad) {
 
   auto [cur_ws, cur_it, al] = astate->ws_mgr->get_sel_tpl_itm<geom_view_t>(error_ctx_throw);
 
-  std::vector<tws_node_content_t<float> > cnt;
+  std::vector<tws_node_cnt_t<float> > cnt;
   al->m_tws_tr->query_sphere(sph_rad, sph_center, cnt);
 
   for (auto &item : cnt)
-    if (item.m_idx == index::D(al->m_geom->DIM).all(0))
+    if (item.m_idx == index::D(al->m_geom->DIM()).all(0))
       al->sel_atom(item.m_atm);
 
   astate->make_viewport_dirty();
@@ -334,7 +334,7 @@ void simple_query::unsel_cnt_type(pybind11::str sel_type) {
   auto [cur_ws, cur_it, al] = astate->ws_mgr->get_sel_tpl_itm<geom_view_t>(error_ctx_throw);
 
   std::string type_name = py::cast<std::string>(sel_type);
-  int type_id = al->m_geom->type_of_atom(type_name);
+  int type_id = al->m_geom->typetable()->type_of_atom(type_name);
   if (type_id != -1) al->unsel_by_type(type_id);
 
   astate->make_viewport_dirty();
@@ -351,7 +351,7 @@ pybind11::list simple_query::get_sel() {
   if (!al) return py::none();
 
   for (auto &elem : al->m_atom_idx_sel)
-    if (elem.m_idx == index::D(al->m_geom->DIM).all(0)) res.append(elem.m_atm);
+    if (elem.m_idx == index::D(al->m_geom->DIM()).all(0)) res.append(elem.m_atm);
 
   return res;
 
@@ -504,7 +504,7 @@ std::tuple<std::string, vector3<float> > simple_query::get_point_sym_group(float
   if (!cur_ws) return ret_empty();
   if (!al) return ret_empty();
 
-  if (al && al->m_geom->DIM == 0) {
+  if (al && al->m_geom->DIM() == 0) {
       array_group<matrix3<float> > G;
       vector3<float> new_center;
       find_point_symm(G, *(al->m_geom), new_center, tolerance);
@@ -611,7 +611,7 @@ void simple_query::make_psg_view(float tolerance) {
 
   if (al && al->m_parent_ws && cur_ws) {
 
-      if (cur_ws->m_edit_type == ws_edit_e::edit_item && al->m_geom->DIM == 0) {
+    if (cur_ws->m_edit_type == ws_edit_e::edit_item && al->m_geom->DIM() == 0) {
           auto ws_pg = astate->ws_mgr->m_bhv_mgr->fbr_ws_item_by_type(
                          psg_view_t::get_type_static());
           auto ws_pg_c = ws_pg->cast_as<psg_view_t>();
@@ -633,7 +633,7 @@ void simple_query::make_psg_view(float tolerance) {
           if (ws_pg_partial_c) {
               al->add_follower(ws_pg_partial);
               ws_pg_partial_c->set_bounded_to_leader(true);
-              xgeometry<float, periodic_cell<float> > buffer{0};
+              xgeometry<float> buffer{0};
               al->copy_to_xgeom(buffer, true, false);
               ws_pg_partial_c->gen_from_geom(buffer, tolerance, true);
               al->m_parent_ws->add_item_to_ws(ws_pg_partial);
@@ -749,7 +749,7 @@ void simple_query::set_charge(float charge) {
   auto [cur_ws, cur_it, al] = astate->ws_mgr->get_sel_tpl_itm<geom_view_t>(error_ctx_throw);
 
   if (al && cur_ws->m_edit_type == ws_edit_e::edit_content) {
-      index zero = index::D(al->m_geom->DIM).all(0);
+    index zero = index::D(al->m_geom->DIM()).all(0);
       for (auto &elem : al->m_atom_idx_sel)
         if (elem.m_idx == zero)
           al->m_geom->xfield<float>(xgeom_charge, elem.m_atm) = charge;
@@ -833,7 +833,7 @@ void simple_query::convert_selected_units(spatial_units_e new_unit) {
   al->m_ext_obs->first_data = true;
 
   //transform cell
-  for (int i = 0; i < al->m_geom->DIM; i++) al->m_geom->cell.v[i] *= mod;
+  for (int i = 0; i < al->m_geom->DIM(); i++) al->m_geom->cell->v[i] *= mod;
 
   //transform content
   for (int i = 0; i < al->m_geom->nat(); i++) al->m_geom->coord(i) *= mod;
@@ -861,11 +861,11 @@ void simple_query::set_sel_color(float r, float g, float b) {
 
   if (al->m_anim->get_total_anims() > 0 &&
       !al->m_anim->m_anim_data[0].frames.empty() &&
-      al->m_anim->m_anim_data[0].frames[0].atom_color.size() ==
+      al->m_anim->m_anim_data[0].frames[0].atom_colors.size() ==
       al->m_geom->nat()) {
-      al->m_anim->m_anim_data[0].frames[0].atom_color[elem.m_atm][0] = r;
-      al->m_anim->m_anim_data[0].frames[0].atom_color[elem.m_atm][1] = g;
-      al->m_anim->m_anim_data[0].frames[0].atom_color[elem.m_atm][2] = b;
+      al->m_anim->m_anim_data[0].frames[0].atom_colors[elem.m_atm][0] = r;
+      al->m_anim->m_anim_data[0].frames[0].atom_colors[elem.m_atm][1] = g;
+      al->m_anim->m_anim_data[0].frames[0].atom_colors[elem.m_atm][2] = b;
     }
 
   }

@@ -374,8 +374,8 @@ void add_new_ws_item_widget_t::ok_button_clicked() {
           auto nt_gv = nt->cast_as<geom_view_t>();
           if (!nt_gv) return;
           nt_gv->m_tws_tr->do_action(act_lock | act_clear_all);
-          nt_gv->m_geom->DIM = 3;
-          nt_gv->m_geom->cell.DIM = 3;
+          //nt_gv->m_geom->DIM = 3;
+          nt_gv->m_geom->cell->DIM = 3;
 
           switch (ccm) {
 
@@ -383,9 +383,7 @@ void add_new_ws_item_widget_t::ok_button_clicked() {
                 vector3<float> cubic_a{float(type_cell_ctor_cubic_size->value()), 0, 0};
                 vector3<float> cubic_b{0, float(type_cell_ctor_cubic_size->value()), 0};
                 vector3<float> cubic_c{0, 0, float(type_cell_ctor_cubic_size->value())};
-                nt_gv->m_geom->cell = periodic_cell<float>(cubic_a,
-                                                           cubic_b,
-                                                           cubic_c);
+                nt_gv->m_geom->cell = std::make_shared<periodic_cell<float> >(cubic_a, cubic_b, cubic_c);
                 break;
               }
 
@@ -394,14 +392,12 @@ void add_new_ws_item_widget_t::ok_button_clicked() {
                 vector3<float> ortho_b{0, m_ortho_g3d_cell[1], 0};
                 vector3<float> ortho_c{0, 0, m_ortho_g3d_cell[2]};
 
-                nt_gv->m_geom->cell = periodic_cell<float>(ortho_a,
-                                                           ortho_b,
-                                                           ortho_c);
+                nt_gv->m_geom->cell =  std::make_shared<periodic_cell<float> >(ortho_a,ortho_b,ortho_c);
                 break;
               }
 
             case cell_construct_mode::construct_3angles_3len : {
-                nt_gv->m_geom->cell = periodic_cell<float>(m_l3_g3d_cell[0],
+	      nt_gv->m_geom->cell =  std::make_shared<periodic_cell<float> >(m_l3_g3d_cell[0],
                                                            m_l3_g3d_cell[1],
                                                            m_l3_g3d_cell[2],
                                                            m_a3_g3d_cell[0],
@@ -411,7 +407,7 @@ void add_new_ws_item_widget_t::ok_button_clicked() {
               }
 
             case cell_construct_mode::construct_9el : {
-                nt_gv->m_geom->cell = periodic_cell<float>(m_a_g3d_cell,
+                nt_gv->m_geom->cell = std::make_shared<periodic_cell<float> >(m_a_g3d_cell,
                                                            m_b_g3d_cell,
                                                            m_c_g3d_cell);
                 break;

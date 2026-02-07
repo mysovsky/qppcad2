@@ -33,10 +33,10 @@ QVariant qbonding_table_model_t::data(const QModelIndex &index, int role) const 
 
           switch (index.column()) {
             case 0 :
-              return QString::fromStdString(m_al->m_geom->atom_of_type(brec->first.m_a));
+              return QString::fromStdString(m_al->m_geom->typetable()->atomic_type(brec->first.m_a));
               break;
             case 1 :
-              return QString::fromStdString(m_al->m_geom->atom_of_type(brec->first.m_b));
+              return QString::fromStdString(m_al->m_geom->typetable()->atomic_type(brec->first.m_b));
               break;
             case 2 :
               return QVariant(brec->second.m_bonding_dist);

@@ -8,7 +8,7 @@ using namespace qpp::cad;
 int qtype_summary_model_t::rowCount(const QModelIndex &parent) const {
 
   if (m_al) 
-    return m_al->m_geom->n_atom_types();
+    return m_al->m_geom->typetable()->n_types();
   else 
     return 0;    
 }
@@ -27,17 +27,17 @@ QVariant qtype_summary_model_t::data(const QModelIndex &index, int role) const {
 
     int i = index.row();
 
-    if (i>=0 && i<=m_al->m_geom->n_atom_types()) {
+    if (i>=0 && i<=m_al->m_geom->typetable()->n_types()) {
       
-          auto ap_idx = ptable::number_by_symbol(atomic_name_to_symbol(m_al->m_geom->atom_of_type(i)));
+      auto ap_idx = ptable::number_by_symbol(atomic_name_to_symbol(m_al->m_geom->typetable()->atomic_type(i)));
 	  //          switch (index.column()) {
 	  //case 0 :
 	  if (index.column()==0)
-	    return QString::fromStdString(m_al->m_geom->atom_of_type(i));
+	    return QString::fromStdString(m_al->m_geom->typetable()->atomic_type(i));
 	  //break;
 	  else if (index.column()==1)
 	    //case 1 :
-	    return tr("%1").arg(m_al->m_geom->get_atom_count_by_type(i));
+	    return tr("%1").arg(m_al->m_geom->typetable()->atom_count_by_type(i));
 	    //break;
 	  //case 2 :
 	  else if (index.column()==2){

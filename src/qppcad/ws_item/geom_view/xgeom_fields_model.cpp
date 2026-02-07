@@ -26,7 +26,8 @@ QVariant qxgeom_fields_model_t::data(const QModelIndex &index, int role) const {
 
   if (role == Qt::DisplayRole) {
 
-      auto conv_basic_types = [](basic_types btype) {
+    //      auto conv_basic_types = [](basic_types btype) {
+      auto conv_basic_types = [](int btype) {
 
         switch (btype) {
 

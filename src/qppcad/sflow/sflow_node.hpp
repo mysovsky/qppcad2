@@ -199,7 +199,7 @@ namespace qpp {
 
     template<>
     constexpr sflow_parameter_e
-    type_to_sflow_parameter<xgeometry<float, periodic_cell<float> > > {
+    type_to_sflow_parameter<xgeometry<float > > {
       sflow_parameter_e::sfpar_xgeom
     };
 

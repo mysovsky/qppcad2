@@ -59,7 +59,7 @@ void ccd_view_t::update_connected_items() {
         for (auto con_itm : m_connected_items)
           if (auto as_gv = con_itm->cast_as<geom_view_t>(); as_gv && as_gv->m_anim->animable()) {
               for (size_t i = 0; i < as_gv->m_anim->get_total_anims(); i++)
-                if (as_gv->m_anim->m_anim_data[i].m_anim_type == geom_anim_t::anim_geo_opt) {
+                if (as_gv->m_anim->m_anim_data[i].m_anim_type == geom_anim_e::anim_geo_opt) {
                     as_gv->m_anim->update_and_set_anim(i, m_cur_step);
                     as_gv->m_anim->m_play_anim = false;
 
@@ -82,7 +82,7 @@ void ccd_view_t::update_connected_items() {
               as_gv &&
               as_gv->m_anim->animable() &&
               as_gv->m_anim->get_total_anims() == m_ccd->m_vibs.size() + 1 &&
-              as_gv->m_anim->m_anim_data[m_cur_vib+1].m_anim_type == geom_anim_t::anim_vib) {
+              as_gv->m_anim->m_anim_data[m_cur_vib+1].m_anim_type == geom_anim_e::anim_vib) {
               as_gv->m_anim->update_and_set_anim(m_cur_vib+1, 0);
               as_gv->m_anim->m_play_anim = true;
             }

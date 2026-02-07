@@ -6,7 +6,7 @@ using namespace qpp::cad;
 
 int qtype_specific_rendering_model_t::rowCount(const QModelIndex &parent) const {
   if (m_al) {
-      return m_al->m_geom->n_atom_types();
+    return m_al->m_geom->typetable()->n_types();
     }
   else {
       return 0;
@@ -25,7 +25,7 @@ QVariant qtype_specific_rendering_model_t::data(const QModelIndex &index,
 
       switch (index.column()) {
         case 0 :
-          return QString::fromStdString(m_al->m_geom->atom_of_type(index.row()));
+          return QString::fromStdString(m_al->m_geom->typetable()->atomic_type(index.row()));
           break;
         default:
           return QVariant();

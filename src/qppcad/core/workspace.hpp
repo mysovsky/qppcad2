@@ -334,7 +334,7 @@ namespace qpp {
     /*
     std::shared_ptr<ws_item_t>
     construct_from_geom(workspace_t &ws,
-			std::shared_ptr<xgeometry<float, periodic_cell<float> > > geom,
+			std::shared_ptr<xgeometry<float > > geom,
 			const std::string &name);
 
     std::shared_ptr<ws_item_t>

@@ -25,19 +25,19 @@ void geom_view_anim_subsys_t::update_geom_to_anim(const int anim_id,
   if (anim_id > m_anim_data.size()) return;
 
   bool is_variable_cell_anim =
-      m_anim_data[anim_id].m_variable_cell_anim && p_owner->m_geom->DIM > 0;
+    m_anim_data[anim_id].m_variable_cell_anim && p_owner->m_geom->DIM() > 0;
 
   // tws_tree setup before modification the geometry
   if (is_variable_cell_anim) {
       p_owner->m_tws_tr->do_action(act_lock | act_clear_all | act_clear_img);
       // update cell
-      for (size_t vc_i = 0; vc_i < p_owner->m_geom->DIM; vc_i++)
-        p_owner->m_geom->cell.v[vc_i] =
+      for (size_t vc_i = 0; vc_i < p_owner->m_geom->DIM(); vc_i++)
+        p_owner->m_geom->cell->v[vc_i] =
             m_anim_data[anim_id].frames[start_frame_n].m_cell[vc_i] * (frame_delta) +
             m_anim_data[anim_id].frames[end_frame_n].m_cell[vc_i]  * (1-frame_delta);
     } else {
       if (!m_rebuild_bonds_in_anim) p_owner->m_tws_tr->do_action(act_lock);
-      else if (p_owner->m_geom->DIM > 0) p_owner->m_tws_tr->do_action(act_lock_img);
+      else if (p_owner->m_geom->DIM() > 0) p_owner->m_tws_tr->do_action(act_lock_img);
     }
 
   //asm
@@ -75,11 +75,11 @@ void geom_view_anim_subsys_t::update_geom_to_anim(const int anim_id,
       if (p_owner->m_color_mode == geom_view_color_e::color_from_xgeom) {
 
           // check that colors in frame_data are avaiable
-          if (m_anim_data[anim_id].frames[start_frame_n].atom_color.size() == nat &&
-              m_anim_data[anim_id].frames[end_frame_n].atom_color.size() == nat) {
+          if (m_anim_data[anim_id].frames[start_frame_n].atom_colors.size() == nat &&
+              m_anim_data[anim_id].frames[end_frame_n].atom_colors.size() == nat) {
               vector3<float> new_color =
-                  m_anim_data[anim_id].frames[start_frame_n].atom_color[i] * (frame_delta) +
-                  m_anim_data[anim_id].frames[end_frame_n].atom_color[i] * (1-frame_delta);
+                  m_anim_data[anim_id].frames[start_frame_n].atom_colors[i] * (frame_delta) +
+                  m_anim_data[anim_id].frames[end_frame_n].atom_colors[i] * (1-frame_delta);
               p_owner->m_geom->xfield<float>(xgeom_ccr, i) = new_color[0];
               p_owner->m_geom->xfield<float>(xgeom_ccg, i) = new_color[1];
               p_owner->m_geom->xfield<float>(xgeom_ccb, i) = new_color[2];
@@ -100,7 +100,7 @@ void geom_view_anim_subsys_t::update_geom_to_anim(const int anim_id,
       p_owner->m_tws_tr->do_action(act_rebuild_all);
     } else {
       if (!m_rebuild_bonds_in_anim) p_owner->m_tws_tr->do_action(act_unlock);
-      else if (p_owner->m_geom->DIM > 0) p_owner->m_tws_tr->do_action(act_unlock_img);
+      else if (p_owner->m_geom->DIM() > 0) p_owner->m_tws_tr->do_action(act_unlock_img);
     }
 
   p_owner->call_followers();
@@ -132,7 +132,7 @@ void geom_view_anim_subsys_t::update_current_frame_to(const int new_frame) {
 
   if (!animable()) return;
   if (m_cur_anim >= m_anim_data.size()) return;
-  if (get_current_anim()->m_anim_type == geom_anim_t::anim_static) return;
+  if (get_current_anim()->m_anim_type == geom_anim_e::anim_static) return;
 
   m_cur_anim_time = new_frame;
   update_geom_to_anim();
@@ -170,7 +170,7 @@ void geom_view_anim_subsys_t::update(const float delta_time) {
     }
 
   //if current anim type equals static -> update to static and switch m_cur_anim_time = 0
-  if (m_anim_data[m_cur_anim].m_anim_type == geom_anim_t::anim_static) {
+  if (m_anim_data[m_cur_anim].m_anim_type == geom_anim_e::anim_static) {
       m_cur_anim_time = 0.0f;
       m_play_anim = false;
       //m_play_cyclic = false;
@@ -186,7 +186,7 @@ bool geom_view_anim_subsys_t::animable() const {
 
 //  TODO: check everything is good
 //  if (m_anim_data.size() == 1)
-//    if (m_anim_data[0].m_anim_type == geom_anim_t::anim_static) return false;
+//    if (m_anim_data[0].m_anim_type == geom_anim_e::anim_static) return false;
 
   bool has_empty_anims = std::any_of(m_anim_data.cbegin(), m_anim_data.cend(),
                                      [](const geom_anim_record_t<float> &rec) -> bool
@@ -298,7 +298,7 @@ void geom_view_anim_subsys_t::make_interpolated_anim(std::string new_anim_name,
 
   geom_anim_record_t<float> new_anim;
   new_anim.m_anim_name = new_anim_name;
-  new_anim.m_anim_type = geom_anim_t::anim_generic;
+  new_anim.m_anim_type = geom_anim_e::anim_generic;
 
   new_anim.frames.resize(num_frames);
 
@@ -332,7 +332,7 @@ void geom_view_anim_subsys_t::make_animable() {
 
   if (m_anim_data.empty()) {
       geom_anim_record_t<float> new_static_rec;
-      new_static_rec.m_anim_type = geom_anim_t::anim_generic;
+      new_static_rec.m_anim_type = geom_anim_e::anim_generic;
       new_static_rec.m_anim_name = "static";
       m_anim_data.emplace_back(std::move(new_static_rec));
     }
@@ -359,7 +359,7 @@ void geom_view_anim_subsys_t::make_animable() {
 }
 
 void geom_view_anim_subsys_t::make_anim(const std::string &anim_name,
-                                        const geom_anim_t anim_type,
+                                        const geom_anim_e anim_type,
                                         const size_t num_frames) {
 
   geom_anim_record_t<float> new_anim_rec;
@@ -377,13 +377,13 @@ void geom_view_anim_subsys_t::make_static_anim(bool do_it_anyway) {
 
   auto static_it = std::find_if(std::cbegin(m_anim_data), std::cend(m_anim_data),
                                 [](const geom_anim_record_t<float> &rec)
-                                {return rec.m_anim_type == geom_anim_t::anim_static;});
+                                {return rec.m_anim_type == geom_anim_e::anim_static;});
 
   if (static_it != std::cend(m_anim_data) && !do_it_anyway) return;
 
   geom_anim_record_t<float> new_anim_rec;
   new_anim_rec.m_anim_name = fmt::format("static{}", m_anim_data.size());
-  new_anim_rec.m_anim_type = geom_anim_t::anim_static;
+  new_anim_rec.m_anim_type = geom_anim_e::anim_static;
 
   new_anim_rec.frames.resize(1);
   new_anim_rec.frames[0].atom_pos.resize(p_owner->m_geom->nat());
@@ -479,17 +479,17 @@ geom_anim_record_t<float> *geom_view_anim_subsys_t::get_current_anim() {
   else return nullptr;
 }
 
-geom_anim_t geom_view_anim_subsys_t::get_cur_anim_type() const {
+geom_anim_e geom_view_anim_subsys_t::get_cur_anim_type() const {
   return m_anim_data[m_cur_anim].m_anim_type;
 }
 
-geom_anim_t geom_view_anim_subsys_t::get_anim_type_by_idx(size_t anim_idx) const {
+geom_anim_e geom_view_anim_subsys_t::get_anim_type_by_idx(size_t anim_idx) const {
 
   if (anim_idx < m_anim_data.size())
     return m_anim_data[anim_idx].m_anim_type;
   else {
       throw std::out_of_range("invalid animation index");
-      return geom_anim_t::anim_generic;
+      return geom_anim_e::anim_generic;
     }
 
 }
@@ -520,8 +520,8 @@ vector3<float> geom_view_anim_subsys_t::get_cell_vectors(size_t anim_id,
   if (is_cell_animable(anim_id, frame_id))
     return m_anim_data[anim_id].frames[frame_id].m_cell[cell_id];
 
-  if (p_owner->m_geom->DIM >= cell_id)
-    return p_owner->m_geom->cell.v[cell_id];
+  if (p_owner->m_geom->DIM() >= cell_id)
+    return p_owner->m_geom->cell->v[cell_id];
 
   return vector3<float>{0};
 

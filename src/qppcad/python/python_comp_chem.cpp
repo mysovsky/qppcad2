@@ -71,7 +71,7 @@ std::string orca_helper_t::gen_multijob_from_anim(geom_view_t *gv, size_t anim_i
 
       for (size_t q = 0; q < gv->m_geom->nat(); q++) {
           rets += fmt::format("{} {:>16.5f} {:>16.5f} {:>16.5f}\n",
-                              gv->m_geom->atom_name(q),
+                              gv->m_geom->typetable()->atom_name(q),
                               gv->m_anim->m_anim_data[anim_id].frames[i].atom_pos[q][0],
                               gv->m_anim->m_anim_data[anim_id].frames[i].atom_pos[q][1],
                               gv->m_anim->m_anim_data[anim_id].frames[i].atom_pos[q][2]);
@@ -114,7 +114,7 @@ std::string orca_helper_t::gen_coord_section(geom_view_t *gv,
       bool has_blc_ecp = has_blc_ecp_it != ecp_name.end();
 
       rets += fmt::format("{}{} {} {:>16.5f} {:>16.5f} {:>16.5f} {}\n",
-                          is_pc ? "Q" : gv->m_geom->atom_name(q),
+                          is_pc ? "Q" : gv->m_geom->typetable()->atom_name(q),
                           is_blc ? ">" : "",
                           !is_pc && !is_blc ? "" : "   "+std::to_string(gv->m_geom->charge(q)),
                           pos[0], pos[1], pos[2],

@@ -138,7 +138,7 @@ void geom_view_extended_editor_t::header_horizontal_clicked(int logical_index) {
 
   app_state_t *astate = app_state_t::get_inst();
 
-  basic_types field_type = m_binded_gv->m_geom->field_type(logical_index);
+  basic_types field_type = (basic_types)m_binded_gv->m_geom->field_type(logical_index);
 
   switch (field_type) {
     case basic_types::type_bool : {

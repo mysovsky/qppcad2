@@ -35,8 +35,10 @@ add_subdirectory(deps/qpp)
 
 include_directories(src/)
 include_directories(data/)
-include_directories(deps/qpp/modules)
+include_directories(deps/qpp/src/modules)
 include_directories(deps/qpp/deps/pybind11/include)
+include_directories(deps/qpp/deps/pybind11_eigen_wrp)
+include_directories(deps/qpp/deps)
 include_directories(deps/qpp/deps/fmtlib/include)
 include_directories(deps/qpp/deps/pugixml/src)
 include_directories(deps/qpp/deps/CppNumericalSolvers/include)
@@ -100,7 +102,7 @@ include_directories(deps/qpp/tests)
 qt5_add_resources(QRCS data/resources.qrc)
 
 #gather ws_item src
-file(GLOB_RECURSE SRC_WS_ITEM "src/qppcad/ws_item/*.cpp")
+file(GLOB_RECURSE SRC_WS_ITEM "src/qppcad/ws_item/*/*.cpp")
 
 #gather ui src
 file(GLOB_RECURSE SRC_UI "src/qppcad/ui/*.cpp")
@@ -163,17 +165,17 @@ add_executable(
     src/qppcad/sflow/sflow_base_nodes_ws_item.cpp
     src/qppcad/sflow/sflow_parameter.cpp
     src/qppcad/sflow/sflow_parameter_ws_item.cpp
-
-    deps/qpp/modules/pyqpp/pyqpp_linalg.cpp
-    deps/qpp/modules/pyqpp/pyqpp_geom.cpp
-    deps/qpp/modules/pyqpp/pyqpp_xgeom.cpp
-    deps/qpp/modules/pyqpp/pyqpp_cell.cpp
-    deps/qpp/modules/pyqpp/pyqpp_autosymm.cpp
-    deps/qpp/modules/pyqpp/pyqpp_builders.cpp
-    deps/qpp/modules/pyqpp/pyqpp_ccd.cpp
-    deps/qpp/modules/pyqpp/pyqpp_opaque_types.cpp
-    deps/qpp/modules/pyqpp/pyqpp_neighbours.cpp
-    deps/qpp/modules/data/errors.cpp
+    
+    deps/qpp/src/modules/pyqpp/pyqpp_linalg.cpp
+    deps/qpp/src/modules/pyqpp/pyqpp_geom.cpp
+    deps/qpp/src/modules/pyqpp/pyqpp_xgeom.cpp
+    deps/qpp/src/modules/pyqpp/pyqpp_cell.cpp
+    deps/qpp/src/modules/pyqpp/pyqpp_autosymm.cpp
+    deps/qpp/src/modules/pyqpp/pyqpp_builders.cpp
+    deps/qpp/src/modules/pyqpp/pyqpp_ccd.cpp
+    deps/qpp/src/modules/pyqpp/pyqpp_opaque_types.cpp
+    deps/qpp/src/modules/pyqpp/pyqpp_neighbours.cpp
+    deps/qpp/src/modules/data/errors.cpp
 
     ${SRC_RENDER}
     ${SRC_WS_ITEM}

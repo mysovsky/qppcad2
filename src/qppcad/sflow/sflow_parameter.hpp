@@ -87,7 +87,7 @@ namespace qpp {
 
       public:
 
-        xgeometry<float, periodic_cell<float> > m_value{3};
+        xgeometry<float> m_value{3};
         sflow_parameter_e get_param_meta() override ;
         std::shared_ptr<sflow_parameter_t> clone() override;
 

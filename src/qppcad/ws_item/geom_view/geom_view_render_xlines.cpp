@@ -8,7 +8,7 @@ namespace qpp {
     void geom_view_render_xlines::render(geom_view_t &al) {
 
       app_state_t* astate = app_state_t::get_inst();
-      index all_null = index::D(al.m_geom->DIM).all(0);
+      index all_null = index::D(al.m_geom->DIM()).all(0);
       astate->sp_line_mesh->begin_shader_program();
       astate->mesh_xline_mesh->begin_render_batch();
 
@@ -23,7 +23,7 @@ namespace qpp {
 
       for (uint32_t i = 0; i < al.m_geom->nat(); i++)
         if (al.m_draw_atoms &&
-            al.m_atom_type_to_hide.find(al.m_geom->type_table(i)) ==
+            al.m_atom_type_to_hide.find(al.m_geom->typetable()->type(i)) ==
             al.m_atom_type_to_hide.end()) {
             vector3<float> color(0.0, 0.0, 1.0);
             auto ap_idx = ptable::number_by_symbol(al.m_geom->atom(i));

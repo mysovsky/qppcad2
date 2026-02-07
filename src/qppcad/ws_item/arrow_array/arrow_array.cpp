@@ -39,7 +39,7 @@ void arrow_array_view_t::create_vectors_from_frames(int f1, int f2, bool subtr_c
      
   auto cur_anim = m_binded_gv->m_anim->get_current_anim();
 
-  if (cur_anim && cur_anim->m_anim_type == geom_anim_t::anim_static)
+  if (cur_anim && cur_anim->m_anim_type == geom_anim_e::anim_static)
     return;
   if (cur_anim->frames.size() <= f1 || cur_anim->frames.size() <= f2) return;
 
