@@ -102,7 +102,9 @@ include_directories(deps/qpp/tests)
 qt5_add_resources(QRCS data/resources.qrc)
 
 #gather ws_item src
-file(GLOB_RECURSE SRC_WS_ITEM "src/qppcad/ws_item/*/*.cpp")
+file(GLOB_RECURSE SRC_WS_ITEM_ROOT "src/qppcad/ws_item/*.cpp")
+file(GLOB_RECURSE SRC_WS_ITEM_SUB  "src/qppcad/ws_item/*/*.cpp")
+set(SRC_WS_ITEM ${SRC_WS_ITEM_ROOT} ${SRC_WS_ITEM_SUB})
 
 #gather ui src
 file(GLOB_RECURSE SRC_UI "src/qppcad/ui/*.cpp")
@@ -175,7 +177,9 @@ add_executable(
     deps/qpp/src/modules/pyqpp/pyqpp_ccd.cpp
     deps/qpp/src/modules/pyqpp/pyqpp_opaque_types.cpp
     deps/qpp/src/modules/pyqpp/pyqpp_neighbours.cpp
+
     deps/qpp/src/modules/data/errors.cpp
+	deps/qpp/src/modules/data/data.cpp
 
     ${SRC_RENDER}
     ${SRC_WS_ITEM}

@@ -1614,9 +1614,10 @@ void geom_view_obj_insp_widget_t::update_modify_tab() {
 
                   tm_single_atom_info->setText(
                         QString::fromStdString(fmt::format("№{} {}", it->m_atm, it->m_idx)));
+		  int atm_tp = b_al->m_geom->typetable()->type(it->m_atm);
 
                   tm_single_atom_combo->setCurrentText(
-						       QString::fromStdString(b_al->m_geom->typetable()->atom_name(it->m_atm)));
+						       QString::fromStdString(b_al->m_geom->typetable()->atom_name(atm_tp)));
 
                   tm_single_atom_vec3->sb_x->setValue(double(b_al->m_geom->pos(it->m_atm)[0]));
                   tm_single_atom_vec3->sb_y->setValue(double(b_al->m_geom->pos(it->m_atm)[1]));
@@ -1644,12 +1645,14 @@ void geom_view_obj_insp_widget_t::update_modify_tab() {
 
                   tm_pair_dist_atom1->setText(
                         QString::fromStdString(fmt::format("{}{} {}",
-                                                           b_al->m_geom->typetable()->atom_name(it1->m_atm),
+                                                           b_al->m_geom->typetable()->
+							   atom_name(b_al->m_geom->typetable()->type(it1->m_atm)),
                                                            it1->m_atm,
                                                            it1->m_idx)));
                   tm_pair_dist_atom2->setText(
                         QString::fromStdString(fmt::format("{}{} {}",
-                                                           b_al->m_geom->typetable()->atom_name(it2->m_atm),
+                                                           b_al->m_geom->typetable()->
+							   atom_name(b_al->m_geom->typetable()->type(it2->m_atm)),
                                                            it2->m_atm,
                                                            it1->m_idx)));
 
@@ -1766,10 +1769,10 @@ void geom_view_obj_insp_widget_t::update_measurement_tab() {
           bool at2_img = b_al->m_measure->m_dist_recs[i].m_idx2 != zero;
           std::string item_name = fmt::format("[{}] {}{}{} - {}{}{}",
                                               i,
-                                              b_al->m_geom->typetable()->atom_name(at1),
+                                              b_al->m_geom->typetable()->atom_name(b_al->m_geom->typetable()->type(at1)),
                                               at1,
                                               at1_img ? "*" : "",
-                                              b_al->m_geom->typetable()->atom_name(at2),
+                                              b_al->m_geom->typetable()->atom_name( b_al->m_geom->typetable()->type(at2)),
                                               at2,
                                               at2_img ? "*" : "");
           tms_pair_cur_msr->addItem(QString::fromStdString(item_name));
@@ -1795,13 +1798,13 @@ void geom_view_obj_insp_widget_t::update_measurement_tab() {
 
           std::string item_name = fmt::format("[{}] {}{}{} - {}{}{} - {}{}{}",
                                               i,
-                                              b_al->m_geom->typetable()->atom_name(at1),
+                                              b_al->m_geom->typetable()->atom_name_by_idx(at1),
                                               at1,
                                               at1_img ? "*" : "",
-                                              b_al->m_geom->typetable()->atom_name(at2),
+                                              b_al->m_geom->typetable()->atom_name_by_idx(at2),
                                               at2,
                                               at2_img ? "*" : "",
-                                              b_al->m_geom->typetable()->atom_name(at3),
+                                              b_al->m_geom->typetable()->atom_name_by_idx(at3),
                                               at3,
                                               at3_img ? "*" : "");
 
@@ -1837,13 +1840,13 @@ void geom_view_obj_insp_widget_t::update_dist_measurement_tab_info() {
           auto &rec = b_al->m_measure->m_dist_recs[cur_dist_msr];
 
           QString atom1_info = tr("%1 [%2] %3")
-                               .arg(QString::fromStdString(b_al->m_geom->typetable()->atom_name(rec.m_at1)))
+                               .arg(QString::fromStdString(b_al->m_geom->typetable()->atom_name_by_idx(rec.m_at1)))
                                .arg(rec.m_at1)
                                .arg(QString::fromStdString(fmt::format("{}",rec.m_idx1)));
           tms_pair_at1_info->setText(atom1_info);
 
           QString atom2_info = tr("%1 [%2] %3")
-                               .arg(QString::fromStdString(b_al->m_geom->typetable()->atom_name(rec.m_at2)))
+                               .arg(QString::fromStdString(b_al->m_geom->typetable()->atom_name_by_idx(rec.m_at2)))
                                .arg(rec.m_at2)
                                .arg(QString::fromStdString(fmt::format("{}",rec.m_idx2)));
           tms_pair_at2_info->setText(atom2_info);
@@ -1875,19 +1878,19 @@ void geom_view_obj_insp_widget_t::update_angle_measurement_tab_info()  {
           auto &rec = b_al->m_measure->m_angle_recs[cur_angle_msr];
 
           QString atom1_info = tr("%1 [%2] %3")
-                               .arg(QString::fromStdString(b_al->m_geom->typetable()->atom_name(rec.m_at1)))
+                               .arg(QString::fromStdString(b_al->m_geom->typetable()->atom_name_by_idx(rec.m_at1)))
                                .arg(rec.m_at1)
                                .arg(QString::fromStdString(fmt::format("{}",rec.m_idx1)));
           tms_angle_at1_info->setText(atom1_info);
 
           QString atom2_info = tr("%1 [%2] %3")
-                               .arg(QString::fromStdString(b_al->m_geom->typetable()->atom_name(rec.m_at2)))
+                               .arg(QString::fromStdString(b_al->m_geom->typetable()->atom_name_by_idx(rec.m_at2)))
                                .arg(rec.m_at2)
                                .arg(QString::fromStdString(fmt::format("{}",rec.m_idx2)));
           tms_angle_at2_info->setText(atom2_info);
 
           QString atom3_info = tr("%1 [%2] %3")
-                               .arg(QString::fromStdString(b_al->m_geom->typetable()->atom_name(rec.m_at3)))
+                               .arg(QString::fromStdString(b_al->m_geom->typetable()->atom_name_by_idx(rec.m_at3)))
                                .arg(rec.m_at3)
                                .arg(QString::fromStdString(fmt::format("{}",rec.m_idx3)));
           tms_angle_at3_info->setText(atom3_info);

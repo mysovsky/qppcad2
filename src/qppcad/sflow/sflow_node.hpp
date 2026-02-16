@@ -175,30 +175,30 @@ namespace qpp {
     };
 
     template<class T>
-    constexpr sflow_parameter_e type_to_sflow_parameter{sflow_parameter_e::sfpar_none};
+    inline constexpr sflow_parameter_e type_to_sflow_parameter{sflow_parameter_e::sfpar_none};
 
     template<>
-    constexpr sflow_parameter_e type_to_sflow_parameter<float>{sflow_parameter_e::sfpar_float};
+    inline constexpr sflow_parameter_e type_to_sflow_parameter<float>{sflow_parameter_e::sfpar_float};
 
     template<>
-    constexpr sflow_parameter_e type_to_sflow_parameter<double>{sflow_parameter_e::sfpar_float};
+    inline constexpr sflow_parameter_e type_to_sflow_parameter<double>{sflow_parameter_e::sfpar_float};
 
     template<>
-    constexpr sflow_parameter_e type_to_sflow_parameter<int>{sflow_parameter_e::sfpar_int};
+    inline constexpr sflow_parameter_e type_to_sflow_parameter<int>{sflow_parameter_e::sfpar_int};
 
     template<>
-    constexpr sflow_parameter_e type_to_sflow_parameter<bool>{sflow_parameter_e::sfpar_bool};
+    inline constexpr sflow_parameter_e type_to_sflow_parameter<bool>{sflow_parameter_e::sfpar_bool};
 
 #ifdef EXTENDED_SFLOW
 
     template<>
-    constexpr sflow_parameter_e
+    inline constexpr sflow_parameter_e
     type_to_sflow_parameter<ws_item_t> {
       sflow_parameter_e::sfpar_ws_item
     };
 
     template<>
-    constexpr sflow_parameter_e
+    inline constexpr sflow_parameter_e
     type_to_sflow_parameter<xgeometry<float > > {
       sflow_parameter_e::sfpar_xgeom
     };

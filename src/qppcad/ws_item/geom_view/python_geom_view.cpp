@@ -152,6 +152,8 @@ void py_geom_view_reg_helper_t::reg(
   py::class_<geom_view_t, std::shared_ptr<geom_view_t> >
   py_gv_t(module, "geom_view_t", ws_item_base);
   py_gv_t.def_readwrite("geom", &geom_view_t::m_geom)
+    // ASM
+    .def_readwrite("color_mode", &geom_view_t::m_color_mode)
          .def_property("atom_scale",
                        [](geom_view_t &src)
                        {return src.m_atom_scale_factor;},
