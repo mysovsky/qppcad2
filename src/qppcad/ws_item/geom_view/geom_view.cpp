@@ -89,7 +89,7 @@ geom_view_t::geom_view_t(): ws_item_t() {
   //m_geom->DIM = 0;
   m_geom->cell->DIM = 0;
   m_geom->build_typetable();
-  m_geom->typetable()->auto_update = true;
+  m_geom->typetable()->set_auto_update( true);
 
   m_ext_obs = std::make_unique<extents_observer_t<float> >(*m_geom);
   m_tws_tr  = std::make_unique<tws_tree_t<float> >(*m_geom);

@@ -120,8 +120,8 @@ std::shared_ptr<ws_item_t> construct_from_geom1(
     if(!as_gv) return nullptr;
 
     if (as_gv->m_geom) {
-        as_gv->m_geom->remove_observer_byref(*as_gv->m_ext_obs);
-        as_gv->m_geom->remove_observer_byref(*as_gv->m_tws_tr);
+        as_gv->m_geom->remove_observer(*as_gv->m_ext_obs);
+        as_gv->m_geom->remove_observer(*as_gv->m_tws_tr);
       }
 
     as_gv->m_geom = geom;
@@ -130,8 +130,8 @@ std::shared_ptr<ws_item_t> construct_from_geom1(
     as_gv->m_tws_tr->geom = as_gv->m_geom.get();
 
     as_gv->m_tws_tr->do_action(act_lock | act_clear_all);
-    as_gv->m_geom->add_observer_byref(*as_gv->m_ext_obs);
-    as_gv->m_geom->add_observer_byref(*as_gv->m_tws_tr);
+    as_gv->m_geom->add_observer(*as_gv->m_ext_obs);
+    as_gv->m_geom->add_observer(*as_gv->m_tws_tr);
     as_gv->m_tws_tr->do_action(act_unlock | act_rebuild_tree);
     as_gv->m_tws_tr->do_action(act_rebuild_ntable);
     as_gv->m_name = name;
