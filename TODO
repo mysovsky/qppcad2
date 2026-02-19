@@ -1,3 +1,11 @@
+26/02/19
+DONE: Qppcad migrated to new qpp, which is now called qpp2. The CELL templates are
+      eliminated. It somehow works, still having segfault sometimes.
+TODO: Saving all colors and other settings for the scene, saving entire scene
+TODO: Show more than one unit cell.
+TODO: Add alpha-channel to atomic colors, allow atoms to be transparent.
+TODO: Coloriztion scheme with color dependent on distance to selevted atoms.
+
 24/04/25
 TODO: I/O plugins for general xgeometry and for saving POSCAR w fractional coordintes.
 
@@ -25,4 +33,4 @@ TODO: Add the possibility to manually edit visible atomic radius (DONE)
 24/03/24
 TODO: Creation of arrow array from eXtended geometry fields. (DONE)
 TODO: "Geometry", "Symmetry group", "Graphic primitives" items.
-TODO: Replace "+" button in Object Inspector with new menu. ???
+TODO: Replace "+" button in Object Inspector with new menu. (DONE)
