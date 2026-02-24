@@ -145,7 +145,80 @@ bool plugin_param_t::fromString(const std::string & s){
   }
   return true;
 }
-      
+
+py::object  plugin_param_t::get_pyval(){
+  app_state_t *astate = app_state_t::get_inst();
+  switch (type){
+  case type_qpp_geometry: {
+    try{
+      auto g = std::get<std::shared_ptr<xgeometry<float > > >(value);
+      //   astate -> tlog("geometry {} {}",g->name, g->nat());
+      return py::cast(g);
+    }
+    catch (const std::bad_variant_access& ex){
+      astate -> tlog("value error {}",ex.what());
+      return py::none();
+    }
+    break;
+  }
+  case type_qpp_atom_vectors:{
+    try{
+      auto v = std::get<std::shared_ptr<geom_atom_vectors<float > > >(value);
+      return py::cast(v);      
+    }
+    catch (const std::bad_variant_access& ex){
+      astate -> tlog("value error {}",ex.what());
+      return py::none();      
+    }
+    break;
+  }
+  case type_float: {
+    float f;
+    if (value.index()==1)
+      f= std::get<float>(value);
+    else if (value.index()==0)
+      f = std::get<double>(value);
+    return py::cast(f);
+    break;
+  }
+  case type_int: {
+    int i = std::get<int>(value);
+    return py::cast(i);
+    break;
+  }
+  case type_bool: {
+    bool b = std::get<bool>(value);
+    return py::cast(b);
+    break;
+  }
+  case type_string: {
+    std::string s=std::get<std::string>(value);
+    return py::cast(s);
+    break;
+  }
+  case type_array + type_string: {
+    auto ss = std::get<std::vector<std::string>>(value);
+    return py::cast(ss);
+    break;
+  }
+  case type_array + type_float: {
+    auto ff = std::get<std::vector<float>>(value);
+    return py::cast(ff);
+    break;
+  }
+  case type_array + type_int: {
+    auto ii = std::get<std::vector<int>>(value);
+    return py::cast(ii);
+    break;
+  }
+  case type_array + type_bool: {
+    std::vector<char> bb = std::get<std::vector<char>>(value);
+    return py::cast(bb);
+    break;
+  }
+  }
+}
+
 // --------------------------------------------------------------
 
 python_plugin_t::python_plugin_t(const std::string & _name,
@@ -251,14 +324,13 @@ py::object python_plugin_t::run(){
       error_msg = "Value error in parameter " + p -> name;
       return py::cast(error_msg);
     }
-    args.append( p -> value );    
+    args.append( p -> get_pyval() );    
   }
   py::object func = mod.attr(func_call.c_str());
   py::object results = func(*args);
   app_state_t::get_inst() -> make_viewport_dirty();
   return results;
 }
-      
 // ----------------------------
 
 plugin_tree_t::plugin_tree_t(const std::string & _name){

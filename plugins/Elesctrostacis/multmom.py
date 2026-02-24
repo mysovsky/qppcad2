@@ -1,16 +1,18 @@
 import pyqpp
 
 def multmom(geom, Lmax):
-
     found = False
-    for iq in range(geom.nfields()):
-        if geom.field_name(iq) == "charge":
+    iq=0
+    hd=geom.header()
+    for k in hd:
+        if k=="charge" or k=="q":
             found = True
             break
+        iq +=1
 
     if not found:
-        raise TypeError("Target geometry has no charges")
-
+        raise TypeError("Target geometry has no field for charges")
+       
     C = 0e0
     D = pyqpp.vector3f(0e0)
     Q = pyqpp.matrix3f(0e0)

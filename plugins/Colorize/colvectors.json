@@ -1,0 +1,45 @@
+{
+    "name"       : "colvectors",
+    "file"       : "colvectors",
+    "menu name"  : "Colorize atoms by vector field absolute values",
+    "description": "Set partial atomic charges for each of atomic species.\nThis might be useful if this information somehow is not loaded from input file",
+    "function"   : "colvectors",
+    "parameters" : {
+	"geom" : {
+	    "type" : "qpp.geometry",
+	    "description" : "Target geometry",
+	    "default" : "current",	    
+	    "position" : 1
+	},
+	"vectors" : {
+	    "type" : "qpp.atom_vectors",
+	    "description" : "Vector field - the source of colorization",
+	    "default" : "current",
+	    "position" : 2
+	},
+	"color1" : {
+	    "type" : "list(float)",
+	    "description" : "Color 1 as list of rgba floats",
+	    "default" : "",
+	    "position" : 3
+	},
+	"color2" : {
+	    "type" : "list(float)",
+	    "description" : "Color 1 as list of rgba floats",
+	    "default" : "",
+	    "position" : 4
+	},
+	"scheme" : {
+	    "type" : "int",
+	    "description" : "Colorization scheme: 0 - linear, 1 - sqrt, 2  - tanh. For 1 or 2 specify the next paameter",
+	    "default" : "0",
+	    "position" : 5
+	},
+	"xaux" : {
+	    "type" : "list(float)",
+	    "description" : "Auxirlary real parameters for nonlinear colorization schemes",
+	    "default" : "0.0",
+	    "position" : 6
+	}
+    }
+}

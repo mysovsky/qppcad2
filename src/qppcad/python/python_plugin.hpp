@@ -1,6 +1,7 @@
 #ifndef QPPCAD_PYTHON_PLUGIN_H
 #define QPPCAD_PYTHON_PLUGIN_H
-
+#include <assert.h>
+#include <cassert>
 #pragma push_macro("slots")
 #undef slots
 #include <pybind11/pybind11.h>
@@ -12,9 +13,11 @@
 #include <variant>
 #include <map>
 #include <data/types.hpp>
+#include <geom/atom_vectors.hpp>
 
 #include <qppcad/core/json_adapter.hpp>
 #include <qppcad/ws_item/geom_view/geom_view.hpp>
+#include <qppcad/ws_item/arrow_array/arrow_array.hpp>
 
 //#include <nlohmann/json.hpp>
 //using json = nlohmann::json;
@@ -30,7 +33,8 @@ namespace qpp {
     typedef std::variant<double, float, int, bool, std::string,
 			 std::vector<double>, std::vector<float>, std::vector<int>,
 			 std::vector<char>,  std::vector<std::string >,
-			 std::shared_ptr<xgeometry<float > > > plugin_param_value_t;
+			 std::shared_ptr<xgeometry<float > >,
+			 std::shared_ptr<qpp::geom_atom_vectors<float> > >plugin_param_value_t;
     
     // --------------------------------------------------------------
     
@@ -48,6 +52,8 @@ namespace qpp {
       plugin_param_t(basic_types t, const std::string & n, const std::string & d);
 
       bool fromString(const std::string & s);
+
+      py::object get_pyval();
       
     };
 

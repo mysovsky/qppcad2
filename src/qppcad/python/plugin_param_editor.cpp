@@ -151,23 +151,24 @@ void plugin_param_model_t::unbind(){
   plugin = nullptr;
 }
 
-std::vector<std::shared_ptr<geom_view_t> > plugin_param_editor_t::list_ws_items(){
+std::vector<std::shared_ptr<ws_item_t> > plugin_param_editor_t::list_ws_items(){
   app_state_t *astate = app_state_t::get_inst();
   auto cur_ws = astate -> ws_mgr ->  get_cur_ws();
-  std::vector<std::shared_ptr<geom_view_t> > list;
+  std::vector<std::shared_ptr<ws_item_t> > list;
   for (auto it : cur_ws -> m_ws_items){
-    auto gv = std::static_pointer_cast<geom_view_t>(it);
-    if (!gv || !gv->m_geom) continue;
-    list.push_back(gv);
+    //auto gv = std::static_pointer_cast<geom_view_t>(it);
+    //if (!gv || !gv->m_geom) continue;
+    list.push_back(it);
   }
-  return list;
+  //  return list;
+  return  cur_ws -> m_ws_items;
 }
 
 plugin_param_editor_t::plugin_param_editor_t(std::shared_ptr<python_plugin_t> p){
 
   plugin = p;
   app_state_t *astate = app_state_t::get_inst();
-  
+  astate -> tlog("plug param editor ");
   setWindowTitle(tr(plugin -> plug_name.c_str()));
     
   main_lt = new QVBoxLayout;
@@ -200,24 +201,64 @@ plugin_param_editor_t::plugin_param_editor_t(std::shared_ptr<python_plugin_t> p)
   //param_tbl->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
   for (int i=0; i < plugin -> params.size(); i++)
-    if (plugin -> params[i] -> type == type_qpp_geometry){
-
-      auto cmb_itm = new QComboBox;
-      auto geoms = list_ws_items();
-      for (auto g:geoms)
-	cmb_itm -> addItem(tr(g->m_name.c_str()));
+    astate -> tlog("param {} type {}", plugin -> params[i] -> name,plugin -> params[i] -> type);
+   auto ws_items = list_ws_items();
+   for (auto g:ws_items){
+     astate -> tlog("cmb_itm {}",(g->m_name.c_str()));
+   }
+  
+   for (int i=0; i < plugin -> params.size(); i++)
+     if (plugin -> params[i] -> type == type_qpp_geometry){
+       auto cmb_itm = new QComboBox;
+       
+       astate -> tlog("n ws items={}",ws_items.size());
+       for (auto g:ws_items){
+	 auto gv =  std::static_pointer_cast<geom_view_t>(g);
+	 if (!gv || !gv->m_geom)
+	   continue;
+	 cmb_itm -> addItem(tr(g->m_name.c_str()));
+	 astate -> tlog("cmb_itm {}",(g->m_name.c_str()));
+	 
+       }
+       
       QObject::connect( cmb_itm,
 			static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-			[this, i, geoms](int idx){
-			  this -> plugin -> params[i] -> value = geoms[idx] -> m_geom;
-			  //astate -> tlog("plug param edit combo : {}",
-			  //		 std::get<std::shared_ptr<xgeometry<float, periodic_cell<float> > > >(this -> plugin -> params[i] -> value) -> nat());
+			[this, i, ws_items, astate](int idx){
+			  this -> plugin -> params[i] -> value = std::static_pointer_cast<geom_view_t>(ws_items[idx]) -> m_geom;
+			  astate -> tlog("plug param edit combo : {}",
+			  		 std::get<std::shared_ptr<xgeometry<float> > >(this -> plugin -> params[i] -> value) -> nat());
 			});
-      plugin -> params[i] -> value = geoms[0] -> m_geom;
+      plugin -> params[i] -> value = std::static_pointer_cast<geom_view_t>(ws_items[0]) -> m_geom;
       
       auto I = param_mdl -> index(i,2);
       param_tbl -> setIndexWidget(I, cmb_itm);
-    }
+     }
+     else if (plugin -> params[i] -> type == type_qpp_atom_vectors){
+       auto cmb_itm = new QComboBox;
+       
+       astate -> tlog("n ws items={}",ws_items.size());
+       for (auto g:ws_items){
+	 auto gv =  std::static_pointer_cast<arrow_array_view_t>(g);
+	 if (!gv || !gv->m_binded_vectors)
+	   continue;
+	 cmb_itm -> addItem(tr(g->m_name.c_str()));
+	 astate -> tlog("cmb_itm {}",(g->m_name.c_str()));
+	 
+       }
+       
+      QObject::connect( cmb_itm,
+			static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+			[this, i, ws_items, astate](int idx){
+			  this -> plugin -> params[i] -> value =
+			    std::static_pointer_cast<arrow_array_view_t>(ws_items[idx]) -> m_binded_vectors;
+			  astate -> tlog("plug param edit combo : {}",
+			  		 std::get<std::shared_ptr<geom_atom_vectors<float> > >(this -> plugin -> params[i] -> value) -> vectors.size());
+			});
+      plugin -> params[i] -> value = std::static_pointer_cast<geom_view_t>(ws_items[0]) -> m_geom;
+      
+      auto I = param_mdl -> index(i,2);
+      param_tbl -> setIndexWidget(I, cmb_itm);
+      }
   
   ifile = -1;
   for (int ii = 0; ii < plugin -> params.size(); ii++)
