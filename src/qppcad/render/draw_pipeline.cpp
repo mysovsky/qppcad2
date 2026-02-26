@@ -88,9 +88,15 @@ void draw_pipeline_t::render_atom (const vector3<float> &color,
 
   app_state_t* astate = app_state_t::get_inst();
 
+  float alpha = 0.5;
+  GLfloat my_color[]={color[0],color[1],color[2],alpha};
+   astate->sp_default->set_u(sp_u_name::f_color_alpha, &alpha);
+   astate->glapi->glEnable(GL_BLEND);
+   astate->glapi->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
   astate->sp_default->set_u(sp_u_name::v_translate, (GLfloat*)(pos.data()));
   astate->sp_default->set_u(sp_u_name::f_scale, (GLfloat*)(&radius));
-  astate->sp_default->set_u(sp_u_name::v_color, (GLfloat*)(color.data()));
+  astate->sp_default->set_u(sp_u_name::v_color, my_color);
 
   matrix4<float> mat_model_view_inv_tr =
       (astate->camera->m_mat_view).inverse().transpose();

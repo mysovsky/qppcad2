@@ -335,18 +335,33 @@ void qbinded_color3_input_t::load_value_ex() {
 void qbinded_color3_input_t::mousePressEvent(QMouseEvent *event) {
 
   if (event->button() == Qt::LeftButton) {
-      const QColor color = QColorDialog::getColor(m_stored_color, this, "Select Color");
-      if (color.isValid() && m_binded_value) {
-          (*m_binded_value)[0] = color.redF();
-          (*m_binded_value)[1] = color.greenF();
-          (*m_binded_value)[2] = color.blueF();
-          load_value_ex();
-          on_value_changed();
-          app_state_t::get_inst()->make_viewport_dirty();
-          update();
-        }
-    }
+    int alpha=128;
+    QColor tmp_color(m_stored_color.redF(),m_stored_color.greenF(),m_stored_color.blueF(),alpha);
+    QColorDialog dialog(this);
+    dialog.setOption(QColorDialog::ShowAlphaChannel, true);
+    dialog.setOption(QColorDialog::DontUseNativeDialog, true);
+    dialog.setOption(QColorDialog::NoButtons,false);
+    dialog.setCurrentColor(tmp_color); // Initial color
 
+    if (dialog.exec() == QDialog::Accepted) {
+      QColor color = dialog.selectedColor();
+      //qDebug() << "Selected RGBA:" << color.red() << color.green() 
+      //       << color.blue() << color.alpha();
+      (*m_binded_value)[0] = color.redF();
+      (*m_binded_value)[1] = color.greenF();
+      (*m_binded_value)[2] = color.blueF();
+      alpha = color.alphaF();      
+      if (color.isValid() && m_binded_value) {
+	load_value_ex();
+	on_value_changed();
+	app_state_t::get_inst()->make_viewport_dirty();
+	update();
+      }
+    }
+  }
+    //    const QColor color = QColorDialog::getColor(tmp_color, this, "Select Color",
+    //						QColorDialog::ShowAlphaChannel | QColorDialog::DontUseNativeDialog);
+    // const QColor color = QColorDialog::getRgba(m_stored_color, this, "Select Color");  
 }
 
 void qbinded_color3_input_t::paintEvent(QPaintEvent *event) {

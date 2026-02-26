@@ -13,6 +13,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QFrame>
+//#include <QRgba>
 #include <geom/xgeom.hpp>
 #include <qppcad/ws_item/ws_item.hpp>
 
@@ -233,7 +234,7 @@ namespace qpp {
 
       public:
 
-        QColor m_stored_color;
+      QColor m_stored_color;
 
         explicit qbinded_color3_input_t(QWidget *parent = nullptr);
         void load_value_ex() override;
