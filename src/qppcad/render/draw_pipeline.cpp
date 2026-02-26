@@ -90,9 +90,9 @@ void draw_pipeline_t::render_atom (const vector3<float> &color,
 
   float alpha = 0.5;
   GLfloat my_color[]={color[0],color[1],color[2],alpha};
-   astate->sp_default->set_u(sp_u_name::f_color_alpha, &alpha);
-   astate->glapi->glEnable(GL_BLEND);
-   astate->glapi->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  astate->sp_default->set_u(sp_u_name::f_color_alpha, &alpha);
+  astate->glapi->glEnable(GL_BLEND);
+  astate->glapi->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   astate->sp_default->set_u(sp_u_name::v_translate, (GLfloat*)(pos.data()));
   astate->sp_default->set_u(sp_u_name::f_scale, (GLfloat*)(&radius));

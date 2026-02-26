@@ -26,6 +26,7 @@ shader_program_t *shader_generators::gen_sp_default () {
   sp->u_on(sp_u_name::v_translate);
   sp->u_on(sp_u_name::f_scale);
   sp->u_on(sp_u_name::v_color);
+  sp->u_on(sp_u_name::f_color_alpha);
   return sp;
 
 }

@@ -5,6 +5,7 @@ uniform float f_specular_intensity;
 uniform float f_specular_alpha;
 in vec3 fs_normal;
 in vec3 fs_position;
+uniform float f_color_alpha;
 out vec4 color;
 
 void main(void){
@@ -21,6 +22,6 @@ void main(void){
 
   color = vec4(pow(linear_color.r, gamma.r),
                pow(linear_color.g, gamma.g),
-               pow(linear_color.b, gamma.b), 1.0);
+               pow(linear_color.b, gamma.b), f_color_alpha);
 }
 )"
