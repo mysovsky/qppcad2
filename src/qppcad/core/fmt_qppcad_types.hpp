@@ -17,6 +17,7 @@ struct formatter<qpp::cad::sflow_parameter_e> : formatter<int> {
     }
 };
 
+//Shared Pointer (Yeah, I don't know why, but fmt/std.h don't have that one ;(
 template <typename T>
 struct formatter<std::shared_ptr<T>> : formatter<const void*> {
     auto format(const std::shared_ptr<T>& ptr, format_context& ctx) const {
