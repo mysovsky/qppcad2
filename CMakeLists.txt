@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 3.2)
 project(qppcad CXX C)
 
+find_package(Python REQUIRED COMPONENTS Interpreter Development)
+
 set(CMAKE_BUILD_TYPE "Debug")
 #set(CMAKE_BUILD_TYPE "Release")
 
@@ -37,7 +39,6 @@ include_directories(src/)
 include_directories(data/)
 include_directories(deps/qpp/src/modules)
 include_directories(deps/qpp/deps/pybind11/include)
-include_directories(deps/qpp/deps/pybind11_eigen_wrp)
 include_directories(deps/qpp/deps)
 include_directories(deps/qpp/deps/fmtlib/include)
 include_directories(deps/qpp/deps/pugixml/src)
@@ -135,7 +136,7 @@ add_executable(
     src/qppcad/core/qpp_object.cpp
     )
 
-target_link_libraries(sflow-tests qpp )
+target_link_libraries(sflow-tests qpp Python::Python)
 qt5_use_modules(sflow-tests Core Gui Widgets)
 
 #build qppcad application
