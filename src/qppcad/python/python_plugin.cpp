@@ -217,6 +217,7 @@ py::object  plugin_param_t::get_pyval(){
     break;
   }
   }
+  return py::none();
 }
 
 // --------------------------------------------------------------

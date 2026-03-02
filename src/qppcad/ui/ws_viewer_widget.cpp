@@ -316,7 +316,7 @@ void ws_viewer_widget_t::wheelEvent(QWheelEvent *event) {
 
   if (astate->camera) {
       astate->camera->update_camera_zoom(
-            event->delta() / 180.0f * astate->m_middle_mb_translate_mode);
+            event->angleDelta().y() / 180.0f * astate->m_middle_mb_translate_mode);
       astate->camera->update_camera();
       astate->make_viewport_dirty();
     }

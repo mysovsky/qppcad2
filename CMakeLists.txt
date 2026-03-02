@@ -136,8 +136,7 @@ add_executable(
     src/qppcad/core/qpp_object.cpp
     )
 
-target_link_libraries(sflow-tests qpp Python::Python)
-qt5_use_modules(sflow-tests Core Gui Widgets)
+target_link_libraries(sflow-tests qpp Python::Python Qt5::Core Qt5::Gui Qt5::Widgets)
 
 #build qppcad application
 add_executable(
@@ -190,8 +189,6 @@ add_executable(
     ${QRCS}
     )
 
-qt5_use_modules(qppcad Core OpenGL Gui Widgets)
-
 if(WIN32)
    target_link_libraries(qppcad
     qpp
@@ -207,6 +204,8 @@ else()
     target_link_libraries(qppcad
     qpp
     pugixml
+    Qt5::Core
+    Qt5::Gui  
     Qt5::Widgets
     Qt5::OpenGL
     Qt5::Charts

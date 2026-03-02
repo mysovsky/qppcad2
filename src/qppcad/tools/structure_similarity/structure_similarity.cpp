@@ -23,7 +23,7 @@ void structure_similarity_tool_t::exec(ws_item_t *item, uint32_t _error_ctx) {
 
 structure_similarity_widget_t::structure_similarity_widget_t() : QDialog () {
 
-  Qt::WindowFlags flags = 0;
+  Qt::WindowFlags flags = Qt::WindowFlags();
   flags |= Qt::WindowMaximizeButtonHint;
   flags |= Qt::WindowCloseButtonHint;
   setWindowFlags(flags);

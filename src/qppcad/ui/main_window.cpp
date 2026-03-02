@@ -185,7 +185,7 @@ void build_plugins_menu(QMenu * menu, std::shared_ptr<plugin_tree_t> p){
       std::string ms = ptr -> plugin ->  plug_menu_name;
       plugin_act -> setText( ms!="" ? ms.c_str() : s.c_str());
       menu -> addAction(plugin_act);
-      if (ptr -> plugin -> status != plugin_manager_t::plugmgr_ok)
+      if (ptr -> plugin -> status != python_plugin_t::plugin_status_ok)
 	QObject::connect(plugin_act,
 			 &QAction::triggered,
 			 [s,ptr]() {
