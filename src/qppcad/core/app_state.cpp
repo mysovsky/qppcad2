@@ -103,15 +103,15 @@ namespace qpp {
       m_app_palette.setColor(QPalette::Disabled, QPalette::HighlightedText,
                              QColor(127,127,127));
 
-      m_bgfg_light_pal.setColor(QPalette::Foreground, QColor(110, 110, 110));
-      m_bgfg_light_pal.setColor(QPalette::Background, QColor(110, 110, 110));
+      m_bgfg_light_pal.setColor(QPalette::WindowText, QColor(110, 110, 110));
+      m_bgfg_light_pal.setColor(QPalette::Window, QColor(110, 110, 110));
 
-      m_bg_light_pal.setColor(QPalette::Background, QColor(100, 100, 100));
+      m_bg_light_pal.setColor(QPalette::Window, QColor(100, 100, 100));
 
-      m_bg_embwnd_pal.setColor(QPalette::Background, QColor(40, 40, 40));
+      m_bg_embwnd_pal.setColor(QPalette::Window, QColor(40, 40, 40));
 
-      m_bgfg_embwnd_pal.setColor(QPalette::Foreground, QColor(80, 80, 80));
-      m_bgfg_embwnd_pal.setColor(QPalette::Background, QColor(110, 110, 110));
+      m_bgfg_embwnd_pal.setColor(QPalette::WindowText, QColor(80, 80, 80));
+      m_bgfg_embwnd_pal.setColor(QPalette::Window, QColor(110, 110, 110));
 
     }
 

@@ -13,7 +13,7 @@ node_book_graphics_view_t::node_book_graphics_view_t(QGraphicsScene *scene, QWid
 
   setRenderHints(QPainter::Antialiasing |
       QPainter::TextAntialiasing |
-      QPainter::HighQualityAntialiasing |
+      QPainter::Antialiasing |
       QPainter::SmoothPixmapTransform);
 
   setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

@@ -249,22 +249,22 @@ void structure_similarity_widget_t::set_out_table_data(geom_view_t *g1,
 
   QTableWidgetItem *dp_lr = new QTableWidgetItem(QString("%1").arg(_dp_l));
   dp_lr->setTextAlignment(Qt::AlignCenter);
-  if (_dp_l > 0.001f) dp_lr->setBackgroundColor(Qt::red);
+  if (_dp_l > 0.001f) dp_lr->setBackground(Qt::red);
   str_sim_table->setItem(table_idx, 3, dp_lr);
 
   QTableWidgetItem *dp_x = new QTableWidgetItem(QString("%1").arg(_dp[0]));
   dp_x->setTextAlignment(Qt::AlignCenter);
-  if (abs(_dp[0]) > 0.001f) dp_x->setBackgroundColor(Qt::red);
+  if (abs(_dp[0]) > 0.001f) dp_x->setBackground(Qt::red);
   str_sim_table->setItem(table_idx, 4, dp_x);
 
   QTableWidgetItem *dp_y = new QTableWidgetItem(QString("%1").arg(_dp[1]));
   dp_y->setTextAlignment(Qt::AlignCenter);
-  if (abs(_dp[1]) > 0.001f) dp_y->setBackgroundColor(Qt::red);
+  if (abs(_dp[1]) > 0.001f) dp_y->setBackground(Qt::red);
   str_sim_table->setItem(table_idx, 5, dp_y);
 
   QTableWidgetItem *dp_z = new QTableWidgetItem(QString("%1").arg(_dp[2]));
   dp_z->setTextAlignment(Qt::AlignCenter);
-  if (abs(_dp[2]) > 0.001f) dp_z->setBackgroundColor(Qt::red);
+  if (abs(_dp[2]) > 0.001f) dp_z->setBackground(Qt::red);
   str_sim_table->setItem(table_idx, 6, dp_z);
 
 }

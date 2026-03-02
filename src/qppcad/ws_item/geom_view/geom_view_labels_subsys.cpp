@@ -88,7 +88,7 @@ void geom_view_labels_subsys_t::render_labels(QPainter &painter) {
                 }
 
               transform.reset();
-              transform.translate((*proj_pos)[0] - fmetric.width(label_qs) / 2,
+              transform.translate((*proj_pos)[0] - fmetric.horizontalAdvance(label_qs) / 2,
                                   (*proj_pos)[1] - font_rec.center().y());
 
               painter.setTransform(transform);
@@ -180,7 +180,7 @@ void geom_view_labels_subsys_t::render_in_place_overlay(QPainter &painter) {
       QPainterPath text_path;
       QFontMetrics fmetric(text_font);
       painter.setRenderHint(QPainter::Antialiasing);
-      text_path.addText((sph.left() + sph.right()) / 2 - fmetric.width(text) / 2,
+      text_path.addText((sph.left() + sph.right()) / 2 - fmetric.horizontalAdvance(text) / 2,
                         sph.bottom() - fmetric.height() / 2 + 2,
                         text_font,
                         text);

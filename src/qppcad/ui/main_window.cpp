@@ -156,7 +156,7 @@ bool consider_ws_add(py::object & obj){
 }
 
 std::string use_plugin_results(py::object & results){
-  if (results == py::none())
+  if (results.is(py::none()))
     return "";
   std::string s;
   if (py::isinstance<py::tuple>(results)){
@@ -654,7 +654,7 @@ void main_window_t::init_widgets() {
   tp_edit_mode = new QButtonGroup(nullptr);
   tp_edit_mode->setExclusive(true);
   connect(tp_edit_mode,
-          static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked),
+          static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::idClicked),
           this,
           &main_window_t::ws_edit_mode_selector_button_clicked);
 
@@ -691,7 +691,7 @@ void main_window_t::init_widgets() {
   tp_edit_mode_end->setFixedWidth(3);
   tp_edit_mode_end->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Maximum);
   connect(tp_edit_mode,
-          static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked),
+          static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::idClicked),
           this,
           &main_window_t::ws_edit_mode_selector_button_clicked);
 

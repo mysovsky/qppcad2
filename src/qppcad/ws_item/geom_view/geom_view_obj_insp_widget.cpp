@@ -324,7 +324,7 @@ void geom_view_obj_insp_widget_t::construct_display_tab() {
   tdisp_switch = new QButtonGroup;
   tdisp_switch->setExclusive(true);
 
-  connect(tdisp_switch, static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonPressed),
+  connect(tdisp_switch, static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::idPressed),
           this, &geom_view_obj_insp_widget_t::disp_switch_current_changed);
 
   QHBoxLayout *tmp_lt = new QHBoxLayout;
@@ -638,7 +638,7 @@ void geom_view_obj_insp_widget_t::construct_measure_tab() {
   tms_switch = new QButtonGroup;
   tms_switch->setExclusive(true);
 
-  connect(tms_switch, static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonPressed),
+  connect(tms_switch, static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::idPressed),
           this, &geom_view_obj_insp_widget_t::msr_switch_current_changed);
 
   QHBoxLayout *tmp_lt = new QHBoxLayout;
@@ -873,9 +873,9 @@ void geom_view_obj_insp_widget_t::construct_modify_tab() {
   tm_bc_rot_axis->addItem("X");
   tm_bc_rot_axis->addItem("Y");
   tm_bc_rot_axis->addItem("Z");
-  tm_bc_rot_axis->setItemData(0, QBrush(Qt::red), Qt::TextColorRole);
-  tm_bc_rot_axis->setItemData(1, QBrush(Qt::green), Qt::TextColorRole);
-  tm_bc_rot_axis->setItemData(2, QBrush(Qt::blue), Qt::TextColorRole);
+  tm_bc_rot_axis->setItemData(0, QBrush(Qt::red), Qt::ForegroundRole);
+  tm_bc_rot_axis->setItemData(1, QBrush(Qt::green), Qt::ForegroundRole);
+  tm_bc_rot_axis->setItemData(2, QBrush(Qt::blue), Qt::ForegroundRole);
 
   tm_bc_rot_angle = new QDoubleSpinBox;
   tm_bc_rot_angle->setButtonSymbols(QAbstractSpinBox::NoButtons);
@@ -1152,7 +1152,7 @@ void geom_view_obj_insp_widget_t::update_from_ws_item() {
             color_bck.setRgbF(it->second[0], it->second[1], it->second[2]);
           else color_bck.setRgbF(bc[0], bc[1], bc[2]);
 
-          n_clr->setBackgroundColor(color_bck);
+          n_clr->setBackground(color_bck);
           tg_type_summary_tbl->setItem(i, 4, n_clr);
 
 	  // asm

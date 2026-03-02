@@ -581,8 +581,8 @@ void qbinded_xgeom_color3_input_t::load_value() {
 
       m_stored_color.setRgbF(_r, _g, _b);
       QPalette pal = palette();
-      pal.setColor(QPalette::Background, m_stored_color);
-      pal.setColor(QPalette::Foreground, Qt::white);
+      pal.setColor(QPalette::Window, m_stored_color);
+      pal.setColor(QPalette::WindowText, Qt::white);
       setAutoFillBackground(true);
       setPalette(pal);
 

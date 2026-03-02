@@ -20,7 +20,7 @@ ptable_rich_widget_t::ptable_rich_widget_t(QWidget *parent) : QDialog(parent) {
   construct_widgets();
 
   connect(m_btn_grp,
-          QOverload<int>::of(&QButtonGroup::buttonClicked),
+          QOverload<int>::of(&QButtonGroup::idClicked),
           this,
           &ptable_rich_widget_t::btn_grp_clicked);
 

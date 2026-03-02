@@ -45,7 +45,7 @@ void ws_viewer_widget_t::draw_text_logo(QPainter &painter) {
   QString logo_string = tr("qpp::cad, git rev.:%1")
                         .arg(QString::fromStdString(build_info_helper::get_git_version()));
 
-  int c_x = painter.window().width() - fm.width(logo_string) - 10;
+  int c_x = painter.window().width() - fm.horizontalAdvance(logo_string) - 10;
   int c_y = painter.window().height() - fm.ascent() + 20;
 
   painter.setPen(logo_color);

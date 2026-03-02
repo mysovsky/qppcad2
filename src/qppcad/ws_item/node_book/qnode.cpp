@@ -363,7 +363,7 @@ void qnode_t::paint(QPainter *painter,
       QString _pin_name = QString::fromStdString(m_sf_node->m_out_types[i].m_sck_name);
 
       QPoint out_sck_pos = {
-        m_width - 5 - fm.width(_pin_name),
+        m_width - 5 - fm.horizontalAdvance(_pin_name),
         static_cast<int>(m_label_height + m_dm_o + (m_socket_size * 2 + m_socket_spacing)
         * static_cast<int>(i) + fm.height() * 0.55)
       };
