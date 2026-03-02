@@ -83,12 +83,12 @@ void draw_pipeline_t::begin_atom_render (float specular_power, float specular_al
 }
 
 void draw_pipeline_t::render_atom (const vector3<float> &color,
+				   float alpha,
                                    const vector3<float> &pos,
                                    const float radius) {
 
   app_state_t* astate = app_state_t::get_inst();
 
-  float alpha = 0.5;
   GLfloat my_color[]={color[0],color[1],color[2],alpha};
   astate->sp_default->set_u(sp_u_name::f_color_alpha, &alpha);
   astate->glapi->glEnable(GL_BLEND);
@@ -214,6 +214,7 @@ void draw_pipeline_t::begin_render_2c_bond(float specular_power, float specular_
 
 void draw_pipeline_t::render_2c_bond(const vector3<float> &color1,
                                      const vector3<float> &color2,
+				     float alpha,
                                      const vector3<float> &bond_start,
                                      const vector3<float> &bond_end,
                                      const float bond_radius) {
@@ -236,6 +237,10 @@ void draw_pipeline_t::render_2c_bond(const vector3<float> &color1,
   matrix4<float> mat_model_view = astate->camera->m_mat_view * mat_model;
   matrix4<float> mat_model_view_proj = astate->camera->m_proj_view * mat_model;
 
+  astate->sp_2c_cylinder->set_u(sp_u_name::f_color_alpha, &alpha);
+  astate->glapi->glEnable(GL_BLEND);
+  astate->glapi->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  //astate->sp_2c_cylinder->set_u(sp_u_name::f_color2_alpha, &alpha2);
   astate->sp_2c_cylinder->set_u(sp_u_name::m_model_view_proj, mat_model_view_proj.data());
   astate->sp_2c_cylinder->set_u(sp_u_name::m_model_view, mat_model_view.data());
   astate->sp_2c_cylinder->set_u(sp_u_name::m_view_proj, astate->camera->m_proj_view.data());

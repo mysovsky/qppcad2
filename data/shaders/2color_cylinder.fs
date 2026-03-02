@@ -10,6 +10,7 @@ uniform float f_specular_alpha;
 in vec3 fs_normal;
 in vec3 fs_position;
 in float cylinder_primordial_z;
+uniform float f_color_alpha;
 out vec4 color;
 
 void main(void){
@@ -26,9 +27,10 @@ void main(void){
   vec3 gamma = vec3(1.0/2.2, 1.0/2.2, 1.0/2.2);
   float fs_color_mix = round(cylinder_primordial_z);	
   vec3 tmp_color = v_color2*fs_color_mix + v_color1*(1-fs_color_mix);
+  //float  mix_alpha =  f_color2_alpha*fs_color_mix + (1-fs_color_mix)*f_color1_alpha;
   vec4 linear_color =  vec4(tmp_color, 1.0) * diffuse + vec4(1.0, 1.0, 1.0, 1.0) * specular;
   color = vec4(pow(linear_color.r, gamma.r),
                pow(linear_color.g, gamma.g),
-               pow(linear_color.b, gamma.b), 1.0);
+               pow(linear_color.b, gamma.b), f_color_alpha);
 }
 )"

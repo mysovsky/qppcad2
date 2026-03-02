@@ -1,5 +1,5 @@
 import pyqpp as pq
-
+import numpy as np
 from math import tanh,sqrt
 
 def colmix(c1,c2,scheme,xaux,x):
@@ -18,8 +18,9 @@ def colvectors(geom, vec, color1, color2, scheme, xaux):
     ir = 8
     ig = 9
     ib = 10
-    c1 = pq.vector3f(color1)
-    c2 = pq.vector3f(color2)
+    ia = 11
+    c1 = np.array(color1)
+    c2 = np.array(color2)
     d = [x.norm() for x in vec.vectors]
     d0 = max(d)
     for i in range(len(geom)):
@@ -27,6 +28,8 @@ def colvectors(geom, vec, color1, color2, scheme, xaux):
         geom.field[ir,i]=c[0]
         geom.field[ig,i]=c[1]
         geom.field[ib,i]=c[2]
+        geom.field[ia,i]=c[3]
+        vec.colors[i] = pq.vector3f(c[0],c[1],c[2])
 
         
     

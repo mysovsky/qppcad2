@@ -382,6 +382,7 @@ namespace qpp {
 
         //asm
         void atomic_radius_modified(int i, int j, double d);
+        void atomic_alpha_modified(int i, int j, double d);
 
     };
 

@@ -62,10 +62,11 @@ geom_view_t::geom_view_t(): ws_item_t() {
    "r",//8
    "g",//9
    "b",//10
-   "ltext",//11
-   "ov",//12
-   "atom_r", // 13
-   "tag" //14
+   "a",//11
+   "ltext",//12
+   "ov",//13
+   "atom_r", // 14
+   "tag" //15
   },
 
   {type_string, //0
@@ -79,10 +80,11 @@ geom_view_t::geom_view_t(): ws_item_t() {
    type_real, //8
    type_real, //9
    type_real, //10
-   type_string, //11
-   type_bool, // 12
-   type_real, // 13
-   type_string //14
+   type_real, //11
+   type_string, //12
+   type_bool, // 13
+   type_real, // 14
+   type_string //15
    }
         );
 

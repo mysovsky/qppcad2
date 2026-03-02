@@ -107,10 +107,11 @@ namespace qpp {
     const int xgeom_ccr          = 8;
     const int xgeom_ccg          = 9;
     const int xgeom_ccb          = 10;
-    const int xgeom_label_text   = 11;
-    const int xgeom_override     = 12;
-    const int xgeom_atom_r       = 13;
-    const int xgeom_external     = 14;
+    const int xgeom_alpha        = 11;
+    const int xgeom_label_text   = 12;
+    const int xgeom_override     = 13;
+    const int xgeom_atom_r       = 14;
+    const int xgeom_external     = 15;
     const int xgeom_shadow       = -1;
 
     const int max_sel_in_deque = 4;
@@ -140,6 +141,7 @@ namespace qpp {
         std::unordered_set<size_t> m_atom_type_to_hide;
         std::unordered_set<size_t> m_atom_type_to_hide_bond;
         std::unordered_map<size_t, vector3<float> > m_type_color_override;
+        std::unordered_map<size_t, float > m_type_alpha_override;
         std::unordered_map<size_t, float > m_type_radius_override;
 
         float m_shading_specular_power{12.0f};

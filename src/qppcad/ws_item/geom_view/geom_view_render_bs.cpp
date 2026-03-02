@@ -168,10 +168,12 @@ void geom_view_render_bs::render_atom (geom_view_t &al,
   float dr_rad = 0.4f;
   float pre_rad = 0.4f;
   vector3<float> color(0.0, 0.0, 1.0);
+  float alpha = 1.0;
 
   if (ap_idx) {
       pre_rad = ptable::get_inst()->arecs[*ap_idx - 1].m_radius;
       color = ptable::get_inst()->arecs[*ap_idx - 1].m_color_jmol;
+      alpha = ptable::get_inst()->arecs[*ap_idx - 1].m_color_alpha;
     }
 
   if (al.hardcoded_xfields && al.m_geom->xfield<bool>(xgeom_override, at_num)) {
@@ -181,6 +183,11 @@ void geom_view_render_bs::render_atom (geom_view_t &al,
   if (!al.m_type_color_override.empty()) {
       auto it = al.m_type_color_override.find(al.m_geom->typetable()->type(at_num));
       if (it != al.m_type_color_override.end()) color = it->second;
+    }
+
+  if (!al.m_type_alpha_override.empty()) {
+      auto it = al.m_type_alpha_override.find(al.m_geom->typetable()->type(at_num));
+      if (it != al.m_type_alpha_override.end()) alpha = it->second;
     }
   
   if (!al.m_type_radius_override.empty()) {
@@ -196,15 +203,16 @@ void geom_view_render_bs::render_atom (geom_view_t &al,
       color[0] = al.m_geom->xfield<float>(xgeom_ccr, at_num);
       color[1] = al.m_geom->xfield<float>(xgeom_ccg, at_num);
       color[2] = al.m_geom->xfield<float>(xgeom_ccb, at_num);
+      alpha = al.m_geom->xfield<float>(xgeom_alpha, at_num);
     }
-
+  // asm --- selection color
   if (al.m_parent_ws->m_edit_type == ws_edit_e::edit_content) {
       if (al.m_atom_idx_sel.find(atom_index_set_key(at_num, at_index)) !=
           al.m_atom_idx_sel.end() && al.m_selected)
         color = vector3<float>(0.43f, 0.55f, 0.12f);
     }
 
-  astate->dp->render_atom(color, al.m_geom->pos(at_num, at_index) + al.m_pos, dr_rad);
+  astate->dp->render_atom(color, alpha, al.m_geom->pos(at_num, at_index) + al.m_pos, dr_rad);
 
 }
 
@@ -283,14 +291,18 @@ void geom_view_render_bs::render_bond (geom_view_t &al,
 
   auto ap_idx1 = ptable::number_by_symbol(atomic_name_to_symbol((al.m_geom->atom(at_num1))));
   vector3<float> bcolor1(0.0, 0.0, 1.0);
+  float balpha1 =1.0;
   if (ap_idx1) {
       bcolor1 = ptable::get_inst()->arecs[*ap_idx1 - 1].m_color_jmol;
+      balpha1 = ptable::get_inst()->arecs[*ap_idx1 - 1].m_color_alpha;
     }
 
   auto ap_idx2 = ptable::number_by_symbol(atomic_name_to_symbol((al.m_geom->atom(at_num2))));
   vector3<float> bcolor2(0.0, 0.0, 1.0);
+  float balpha2 =1.0;
   if (ap_idx1) {
       bcolor2 = ptable::get_inst()->arecs[*ap_idx2 - 1].m_color_jmol;
+      balpha2 = ptable::get_inst()->arecs[*ap_idx2 - 1].m_color_alpha;
     }
 
   if (!al.m_type_color_override.empty()) {
@@ -302,15 +314,26 @@ void geom_view_render_bs::render_bond (geom_view_t &al,
         bcolor2 = it2->second;
     }
 
+  if (!al.m_type_alpha_override.empty()) {
+      auto it1 = al.m_type_alpha_override.find(al.m_geom->typetable()->type(at_num1));
+      if (it1 != al.m_type_alpha_override.end())
+        balpha1 = it1->second;
+      auto it2 = al.m_type_alpha_override.find(al.m_geom->typetable()->type(at_num2));
+      if (it2 != al.m_type_alpha_override.end())
+        balpha2 = it2->second;
+    }
+
   if (al.m_color_mode == geom_view_color_e::color_from_xgeom) {
     astate -> tlog("suspision 3");
       bcolor1[0] = al.m_geom->xfield<float>(xgeom_ccr, at_num1);
       bcolor1[1] = al.m_geom->xfield<float>(xgeom_ccg, at_num1);
       bcolor1[2] = al.m_geom->xfield<float>(xgeom_ccb, at_num1);
+      balpha1 = al.m_geom->xfield<float>(xgeom_alpha, at_num1);
 
       bcolor2[0] = al.m_geom->xfield<float>(xgeom_ccr, at_num2);
       bcolor2[1] = al.m_geom->xfield<float>(xgeom_ccg, at_num2);
       bcolor2[2] = al.m_geom->xfield<float>(xgeom_ccb, at_num2);
+      balpha2 = al.m_geom->xfield<float>(xgeom_alpha, at_num2);
     }
 
   if (al.hardcoded_xfields && al.m_geom->xfield<bool>(xgeom_override, at_num1)) {
@@ -327,7 +350,7 @@ void geom_view_render_bs::render_bond (geom_view_t &al,
       bcolor2[2] = al.m_geom->xfield<float>(xgeom_ccb, at_num2);
     }
 
-  astate->dp->render_2c_bond(bcolor1, bcolor2,
+  astate->dp->render_2c_bond(bcolor1, bcolor2, (balpha1+balpha2)*0.5,
                              al.m_geom->pos(at_num1, at_index1) + al.m_pos,
                              al.m_geom->pos(at_num2, at_index2) + al.m_pos,
                              al.m_bond_scale_factor);

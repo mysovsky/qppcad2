@@ -264,6 +264,7 @@ shader_program_t *shader_generators::gen_sp_2c_cylinder() {
   //sp->u_on(sp_u_name::v_light_pos);
   sp->u_on(sp_u_name::v_color1);
   sp->u_on(sp_u_name::v_color2);
+  sp->u_on(sp_u_name::f_color_alpha);
 
   return sp;
 

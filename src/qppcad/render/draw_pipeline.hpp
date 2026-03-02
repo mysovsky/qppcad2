@@ -46,6 +46,7 @@ namespace qpp {
 
         void begin_atom_render (float specular_power, float specular_alpha);
         void render_atom (const vector3<float> &color,
+			  float alpha,
                           const vector3<float> &pos,
                           const float radius);
         void end_atom_render();
@@ -75,6 +76,7 @@ namespace qpp {
         void begin_render_2c_bond(float specular_power, float specular_alpha);
         void render_2c_bond(const vector3<float> &color1,
                             const vector3<float> &color2,
+			    float alpha,
                             const vector3<float> &bond_start,
                             const vector3<float> &bond_end,
                             const float bond_radius);
