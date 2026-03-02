@@ -5,8 +5,10 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
+#include <fmt/std.h>
 #include <chrono>
 #include <ctime>
 #include <set>
@@ -83,5 +85,8 @@ namespace qpp {
   } // namespace qpp::cad
 
 } // namespace qpp
+
+//So fmt will see all namespaces
+#include <qppcad/core/fmt_qppcad_types.hpp> 
 
 #endif

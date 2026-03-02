@@ -1,4 +1,5 @@
 #include <qppcad/sflow/sflow.hpp>
+#include <qppcad/core/fmt_qppcad_types.hpp>
 
 using namespace qpp;
 using namespace qpp::cad;

@@ -3,6 +3,7 @@
 #include <geom/shape.hpp>
 #include <qppcad/core/app_state.hpp>
 #include <qppcad/ws_item/geom_view/geom_view_tools.hpp>
+#include <data/fmt_qpp_types.hpp>
 
 using namespace qpp;
 using namespace qpp::cad;

@@ -65,6 +65,8 @@
 #include <io/write_coord.hpp>
 #include <io/adme.hpp>
 
+#include <data/fmt_qpp_types.hpp>
+
 using namespace qpp;
 using namespace qpp::cad;
 
