@@ -257,13 +257,14 @@ void python_plugin_t::load_header(){
   //"\n--- parameters:\n";
   description = description + "\nDesription of parameters:\n";
 
-  //astate -> tlog("name= {} menu name= {} function= {}\n parameters:\n", plug_name, plug_menu_name, func_call);
+  astate -> tlog("name= {} menu name= {} function= {}\n parameters:\n", plug_name, plug_menu_name, func_call);
   try {
     for (json::iterator it = jparams.begin(); it != jparams.end(); ++it){    
       basic_types t;
       for (int i=0; i<type_data::type_name.size(); i++)
-	if ( (*it)["type"] == type_data::type_name[i]){
+	if ( (*it)["type"] == type_data::type_name[basic_types(i)]){
 	  t = basic_types(i);
+	  astate -> tlog("type name= {} type= {} \n", (STRING_EX)(it.value()["type"]),t);
 	  break;
 	}
       
@@ -272,6 +273,16 @@ void python_plugin_t::load_header(){
       p -> default_sval = it.value()["default"];
       p -> fromString( p -> default_sval );
       p -> browse = "";
+      p -> choice = {};
+      if (it.value()["choice"].size()>0)
+	for (json::iterator itch = it.value()["choice"].begin();
+	     itch != it.value()["choice"].end(); ++itch){
+	  STRING_EX s=itch.value();
+	  p -> choice.push_back(s);	  
+	}
+
+      astate -> tlog("{} {} {} {} {} {}\n", p->type, p->name, p->description, p->pos, p->default_sval, p->sval);
+      
       extract_json(it.value(), "browse", p -> browse);
       if ( p -> type != type_string)
 	p -> browse = "";

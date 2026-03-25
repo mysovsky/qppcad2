@@ -2674,7 +2674,7 @@ void geom_view_obj_insp_widget_t::type_summary_clicked(const QModelIndex &index)
       if (it != b_al->m_type_color_override.end())
         _stored_color = QColor::fromRgbF(it->second[0], it->second[1], it->second[2]);
 
-      const QColor clr = QColorDialog::getColor(_stored_color, this, "Select Color");
+      const QColor clr = QColorDialog::getColor(_stored_color, nullptr, "Select Color");
       if (clr.isValid()) {
 
           if (it != b_al->m_type_color_override.end()) b_al->m_type_color_override.erase(it);

@@ -5,6 +5,7 @@
 #include <QCoreApplication>
 #include <QTableWidgetItem>
 #include <QFileDialog>
+#include <QPainter>
 
 using namespace qpp;
 using namespace qpp::cad;
@@ -43,15 +44,15 @@ QVariant plugin_param_model_t::data(const QModelIndex &index, int role) const {
       
     case 2 :
       if (plugin -> params[i] -> type == type_bool)
-	return QVariant();
+		return QVariant();
       else
-	return QString(plugin->params[i]->sval.c_str());
+		return QString(plugin->params[i]->sval.c_str());
       break;
       
     default:
       return QVariant();
           break;
-    }
+    }    
   }
   else if (j == 2 && plugin -> params[i] -> type == type_bool
 	   && role == Qt::CheckStateRole) {
@@ -164,6 +165,35 @@ std::vector<std::shared_ptr<ws_item_t> > plugin_param_editor_t::list_ws_items(){
   return  cur_ws -> m_ws_items;
 }
 
+colorTableCell::colorTableCell(QTableView* _ptbl, const QModelIndex & _I)
+    : QWidget(_ptbl->viewport())
+{
+    param_tbl = _ptbl;
+    I = _I;
+}
+
+void colorTableCell::setColor(QColor col) {
+    color = col;
+    update();
+}
+
+void colorTableCell::paintEvent(QPaintEvent *event) {
+    QPainter painter(this);
+    painter.fillRect(rect(), color);
+}
+
+void colorTableCell::mouseReleaseEvent(QMouseEvent *event) {
+    QColor newcolor = QColorDialog::getColor(color);
+    app_state_t *astate = app_state_t::get_inst();
+    if (newcolor.isValid()) {
+        astate->tlog("color valid {} {} {}", color.redF(), color.greenF(), color.blueF());
+        color = newcolor;
+        setColor(newcolor);
+    } else {
+        astate->tlog("color invalid");
+    }
+}
+
 plugin_param_editor_t::plugin_param_editor_t(std::shared_ptr<python_plugin_t> p){
 
   plugin = p;
@@ -221,17 +251,17 @@ plugin_param_editor_t::plugin_param_editor_t(std::shared_ptr<python_plugin_t> p)
 	 
        }
        
-      QObject::connect( cmb_itm,
-			static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-			[this, i, ws_items, astate](int idx){
-			  this -> plugin -> params[i] -> value = std::static_pointer_cast<geom_view_t>(ws_items[idx]) -> m_geom;
-			  astate -> tlog("plug param edit combo : {}",
-			  		 std::get<std::shared_ptr<xgeometry<float> > >(this -> plugin -> params[i] -> value) -> nat());
-			});
-      plugin -> params[i] -> value = std::static_pointer_cast<geom_view_t>(ws_items[0]) -> m_geom;
-      
-      auto I = param_mdl -> index(i,2);
-      param_tbl -> setIndexWidget(I, cmb_itm);
+       QObject::connect( cmb_itm,
+			 static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+			 [this, i, ws_items, astate](int idx){
+			   this -> plugin -> params[i] -> value = std::static_pointer_cast<geom_view_t>(ws_items[idx]) -> m_geom;
+			   astate -> tlog("plug param edit combo : {}",
+					  std::get<std::shared_ptr<xgeometry<float> > >(this -> plugin -> params[i] -> value) -> nat());
+			 });
+       plugin -> params[i] -> value = std::static_pointer_cast<geom_view_t>(ws_items[0]) -> m_geom;
+       
+       auto I = param_mdl -> index(i,2);
+       param_tbl -> setIndexWidget(I, cmb_itm);
      }
      else if (plugin -> params[i] -> type == type_qpp_atom_vectors){
        auto cmb_itm = new QComboBox;
@@ -246,19 +276,64 @@ plugin_param_editor_t::plugin_param_editor_t(std::shared_ptr<python_plugin_t> p)
 	 
        }
        
-      QObject::connect( cmb_itm,
-			static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-			[this, i, ws_items, astate](int idx){
-			  this -> plugin -> params[i] -> value =
-			    std::static_pointer_cast<arrow_array_view_t>(ws_items[idx]) -> m_binded_vectors;
-			  astate -> tlog("plug param edit combo : {}",
-			  		 std::get<std::shared_ptr<geom_atom_vectors<float> > >(this -> plugin -> params[i] -> value) -> vectors.size());
-			});
-      plugin -> params[i] -> value = std::static_pointer_cast<geom_view_t>(ws_items[0]) -> m_geom;
-      
-      auto I = param_mdl -> index(i,2);
-      param_tbl -> setIndexWidget(I, cmb_itm);
-      }
+       QObject::connect( cmb_itm,
+			 static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+			 [this, i, ws_items, astate](int idx){
+			   this -> plugin -> params[i] -> value =
+			     std::static_pointer_cast<arrow_array_view_t>(ws_items[idx]) -> m_binded_vectors;
+			   astate -> tlog("plug param edit combo : {}",
+					  std::get<std::shared_ptr<geom_atom_vectors<float> > >(this -> plugin -> params[i] -> value) -> vectors.size());
+			 });
+       plugin -> params[i] -> value = std::static_pointer_cast<geom_view_t>(ws_items[0]) -> m_geom;
+       
+       auto I = param_mdl -> index(i,2);
+       param_tbl -> setIndexWidget(I, cmb_itm);
+     }
+     else if (plugin -> params[i] -> type == basic_types::type_qpp_color){
+       // Color selection button
+       QString bt_clr_str = "";
+       //QTableWidgetItem *bt_clr = new QTableWidgetItem(bt_clr_str);
+       /*
+	 QPushButton *bt_clr = new QPushButton(bt_clr_str);*/
+       vector3<float> btc(1.0, 0.0, 1.0);
+       QColor color_bck(btc[0],btc[1],btc[2]);   
+       auto I = param_mdl -> index(i,2);
+       auto cll = new colorTableCell(param_tbl,I); //param_tbl->indexWidget(I);
+       cll->setColor(color_bck);
+       param_tbl->setIndexWidget(I, cll);
+       /*
+       QObject::connect( fuckQt,
+			 &QWidget::clicked,
+			 [ fuckQt,color_bck, astate](){
+			   color_bck = QColorDialog::getColor(color_bck);
+			   auto hren = fuckQt -> palette();
+			   hren.setColor(QPalette::Button, color_bck);
+			   fuckQt->setAutoFillBackground(true);
+			   fuckQt->setPalette(hren);
+			   fuckQt->update();
+			   });*/
+     }
+     else if (plugin -> params[i] -> choice.size() > 0){
+       auto cmb_itm = new QComboBox;
+       
+       astate -> tlog("n ws items={}",ws_items.size());
+       for (auto c: plugin -> params[i] -> choice)
+	 {
+	   cmb_itm -> addItem(tr(c.c_str()));
+	   astate -> tlog("cmb_itm {}",c.c_str());
+	 }  
+       
+       QObject::connect( cmb_itm,
+			 static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+			 [this, i, ws_items, astate](int idx){
+			   this -> plugin -> params[i] -> value = idx;			     
+			   astate -> tlog("plug param edit combo : {}", idx);
+			 });
+       plugin -> params[i] -> value = std::static_pointer_cast<geom_view_t>(ws_items[0]) -> m_geom;
+       
+       auto I = param_mdl -> index(i,2);
+       param_tbl -> setIndexWidget(I, cmb_itm);
+     }
   
   ifile = -1;
   for (int ii = 0; ii < plugin -> params.size(); ii++)

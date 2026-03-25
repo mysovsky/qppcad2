@@ -8,6 +8,7 @@
 #include <QHBoxLayout>
 #include <QAbstractTableModel>
 #include <QTableView>
+#include <QColorDialog>
 
 namespace qpp {
 
@@ -65,6 +66,24 @@ namespace qpp {
       void browse_button_clicked();
       
     };
+
+    class colorTableCell: public QWidget{
+  
+      Q_OBJECT
+
+    public:
+      QColor color;
+      QTableView *param_tbl;
+      QModelIndex I;
+
+      colorTableCell(QTableView*, const QModelIndex &);
+      
+      void setColor(QColor col);
+      
+      virtual void mouseReleaseEvent(QMouseEvent *event) override;
+
+	  void paintEvent(QPaintEvent *event) override;	 
+};
     
   } // namespace qpp::cad
 
