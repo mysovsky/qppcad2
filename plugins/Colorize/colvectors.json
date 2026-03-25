@@ -1,8 +1,8 @@
 {
     "name"       : "colvectors",
     "file"       : "colvectors",
-    "menu name"  : "Colorize atoms by vector field absolute values",
-    "description": "Set partial atomic charges for each of atomic species.\nThis might be useful if this information somehow is not loaded from input file",
+    "menu name"  : "Colorize atoms by vector field",
+    "description": "Colorize atoms by vector field absolute values",
     "function"   : "colvectors",
     "parameters" : {
 	"geom" : {
@@ -18,21 +18,22 @@
 	    "position" : 2
 	},
 	"color1" : {
-	    "type" : "list(float)",
+	    "type" : "qpp.color",
 	    "description" : "Color 1 as list of rgba floats",
-	    "default" : "",
+	    "default" : "1.0,1.0,1.0",
 	    "position" : 3
 	},
 	"color2" : {
-	    "type" : "list(float)",
-	    "description" : "Color 1 as list of rgba floats",
-	    "default" : "",
+	    "type" : "qpp.color",
+	    "description" : "Color 2 as list of rgba floats",
+	    "default" : "2.0,0,0,1.0",
 	    "position" : 4
 	},
 	"scheme" : {
 	    "type" : "int",
-	    "description" : "Colorization scheme: 0 - linear, 1 - sqrt, 2  - tanh. For 1 or 2 specify the next paameter",
+	    "description" : "Choice of colorization scheme: 0 - linear, 1 - sqrt, 2  - tanh. For 1 or 2 specify the next parameter",
 	    "default" : "0",
+	    "choice":["linear","sqrt", "tanh"],
 	    "position" : 5
 	},
 	"xaux" : {

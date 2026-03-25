@@ -34,7 +34,8 @@ namespace qpp {
 			 std::vector<double>, std::vector<float>, std::vector<int>,
 			 std::vector<char>,  std::vector<std::string >,
 			 std::shared_ptr<xgeometry<float > >,
-			 std::shared_ptr<qpp::geom_atom_vectors<float> > >plugin_param_value_t;
+			 std::shared_ptr<qpp::geom_atom_vectors<float> >,
+			 vector3<double>,  vector3<float> >plugin_param_value_t;
     
     // --------------------------------------------------------------
     
@@ -48,6 +49,8 @@ namespace qpp {
 
       plugin_param_value_t value;
       std::string default_sval, sval;
+
+      std::vector<STRING_EX> choice;
 
       plugin_param_t(basic_types t, const std::string & n, const std::string & d);
 
