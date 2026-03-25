@@ -13,14 +13,15 @@ def colmix(c1,c2,scheme,xaux,x):
         return c1+(c2-c1)*(tanh(k*(x-x0))+1)/2
 
 
-def colvectors(geom, vec, color1, color2, scheme, xaux):
-    #return geom, vec, color1, color2, scheme, xcol
+def colvectors(geom, vec, color1,alpha1, color2,alpha2, scheme, xaux):
+    #return geom, vec, color1, color2, scheme, xaux
+    #return [(type(a),a) for a in args]
     ir = 8
     ig = 9
     ib = 10
     ia = 11
-    c1 = np.array(color1)
-    c2 = np.array(color2)
+    c1 = np.array([*color1,alpha1])
+    c2 = np.array([*color2,alpha2])
     d = [x.norm() for x in vec.vectors]
     d0 = max(d)
     for i in range(len(geom)):

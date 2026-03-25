@@ -216,6 +216,10 @@ py::object  plugin_param_t::get_pyval(){
     return py::cast(bb);
     break;
   }
+  case type_qpp_color:{
+    vector3<float> cc = std::get<vector3<float>>(value);
+    return py::cast(cc);
+  }
   }
   return py::none();
 }
@@ -261,13 +265,13 @@ void python_plugin_t::load_header(){
   try {
     for (json::iterator it = jparams.begin(); it != jparams.end(); ++it){    
       basic_types t;
-      for (int i=0; i<type_data::type_name.size(); i++)
-	if ( (*it)["type"] == type_data::type_name[basic_types(i)]){
-	  t = basic_types(i);
+      for (const auto &tp : type_data::type_name)
+	if ( (*it)["type"] == tp.second){
+	  t = tp.first;
 	  astate -> tlog("type name= {} type= {} \n", (STRING_EX)(it.value()["type"]),t);
 	  break;
 	}
-      
+    
       auto p = std::make_shared<plugin_param_t>(t, it.key(), it.value()["description"]);
       p -> pos = it.value()["position"];
       p -> default_sval = it.value()["default"];

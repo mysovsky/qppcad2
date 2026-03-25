@@ -19,28 +19,40 @@
 	},
 	"color1" : {
 	    "type" : "qpp.color",
-	    "description" : "Color 1 as list of rgba floats",
+	    "description" : "Color 1 as list of rgb floats",
 	    "default" : "1.0,1.0,1.0",
 	    "position" : 3
 	},
+	"alpha1" : {
+	    "type" : "float",
+	    "description" : "alpha channel for color1",
+	    "default" : "1.0",
+	    "position" : 4
+	},
 	"color2" : {
 	    "type" : "qpp.color",
-	    "description" : "Color 2 as list of rgba floats",
+	    "description" : "Color 2 as list of rgb floats",
 	    "default" : "2.0,0,0,1.0",
-	    "position" : 4
+	    "position" : 5
+	},
+	"alpha2" : {
+	    "type" : "float",
+	    "description" : "alpha channel for color2",
+	    "default" : "1.0",
+	    "position" : 6
 	},
 	"scheme" : {
 	    "type" : "int",
 	    "description" : "Choice of colorization scheme: 0 - linear, 1 - sqrt, 2  - tanh. For 1 or 2 specify the next parameter",
 	    "default" : "0",
 	    "choice":["linear","sqrt", "tanh"],
-	    "position" : 5
+	    "position" : 7
 	},
 	"xaux" : {
 	    "type" : "list(float)",
 	    "description" : "Auxirlary real parameters for nonlinear colorization schemes",
 	    "default" : "0.0",
-	    "position" : 6
+	    "position" : 8
 	}
     }
 }

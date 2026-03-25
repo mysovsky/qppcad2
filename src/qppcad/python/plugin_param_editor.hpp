@@ -75,14 +75,18 @@ namespace qpp {
       QColor color;
       QTableView *param_tbl;
       QModelIndex I;
+      plugin_param_t *color_param;
+      
 
-      colorTableCell(QTableView*, const QModelIndex &);
+      colorTableCell(QTableView*, const QModelIndex &, plugin_param_t *);
       
       void setColor(QColor col);
       
       virtual void mouseReleaseEvent(QMouseEvent *event) override;
-  
-};
+
+
+      void paintEvent(QPaintEvent *event) override;	 
+    };
     
   } // namespace qpp::cad
 

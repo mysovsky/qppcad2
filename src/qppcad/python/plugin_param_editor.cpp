@@ -5,6 +5,7 @@
 #include <QCoreApplication>
 #include <QTableWidgetItem>
 #include <QFileDialog>
+#include <QPainter>
 
 using namespace qpp;
 using namespace qpp::cad;
@@ -43,9 +44,9 @@ QVariant plugin_param_model_t::data(const QModelIndex &index, int role) const {
       
     case 2 :
       if (plugin -> params[i] -> type == type_bool)
-	return QVariant();
+		return QVariant();
       else
-	return QString(plugin->params[i]->sval.c_str());
+		return QString(plugin->params[i]->sval.c_str());
       break;
       
     default:
@@ -163,12 +164,12 @@ std::vector<std::shared_ptr<ws_item_t> > plugin_param_editor_t::list_ws_items(){
   //  return list;
   return  cur_ws -> m_ws_items;
 }
-
+/*
 colorTableCell::colorTableCell(QTableView* _ptbl, const QModelIndex & _I){
   param_tbl = _ptbl;
   I = _I;
 }
-      
+    
 void colorTableCell::setColor(QColor col){
   color = col;
   auto hren = palette();
@@ -184,14 +185,45 @@ void  colorTableCell::mouseReleaseEvent(QMouseEvent *event) {
   if (newcolor.isValid()){ 
     astate->tlog("color valid {} {} {}", color.redF(), color.greenF(),color.blueF());
     color = newcolor;
-    setColor(newcolor)
+    setColor(newcolor);
   }
   else
     astate->tlog("color invalid");
   param_tbl->setIndexWidget(I, this);
 }
 
+*/
+colorTableCell::colorTableCell(QTableView* _ptbl, const QModelIndex & _I, plugin_param_t *_prm)
+    : QWidget(_ptbl->viewport())
+{
+    param_tbl = _ptbl;
+    I = _I;
+    color_param = _prm;
+}
 
+void colorTableCell::setColor(QColor col) {
+    color = col;
+    update();
+    vector3<float> cl(color.redF(), color.greenF(), color.blueF());
+    color_param -> value = cl;
+}
+
+void colorTableCell::paintEvent(QPaintEvent *event) {
+    QPainter painter(this);
+    painter.fillRect(rect(), color);
+}
+
+void colorTableCell::mouseReleaseEvent(QMouseEvent *event) {
+    QColor newcolor = QColorDialog::getColor(color);
+    app_state_t *astate = app_state_t::get_inst();
+    if (newcolor.isValid()) {
+        astate->tlog("color valid {} {} {}", color.redF(), color.greenF(), color.blueF());
+        color = newcolor;
+        setColor(newcolor);
+    } else {
+        astate->tlog("color invalid");
+    }
+}
 
 plugin_param_editor_t::plugin_param_editor_t(std::shared_ptr<python_plugin_t> p){
 
@@ -297,7 +329,7 @@ plugin_param_editor_t::plugin_param_editor_t(std::shared_ptr<python_plugin_t> p)
        vector3<float> btc(1.0, 0.0, 1.0);
        QColor color_bck(btc[0],btc[1],btc[2]);   
        auto I = param_mdl -> index(i,2);
-       auto cll = new colorTableCell(param_tbl,I); //param_tbl->indexWidget(I);
+       auto cll = new colorTableCell(param_tbl,I, plugin->params[i].get()); //param_tbl->indexWidget(I);
        cll->setColor(color_bck);
        param_tbl->setIndexWidget(I, cll);
        /*
@@ -325,10 +357,11 @@ plugin_param_editor_t::plugin_param_editor_t(std::shared_ptr<python_plugin_t> p)
        QObject::connect( cmb_itm,
 			 static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
 			 [this, i, ws_items, astate](int idx){
-			   this -> plugin -> params[i] -> value = idx;			     
+			   this -> plugin -> params[i] -> value = idx;
+			   this -> plugin -> params[i] -> sval = t2s(idx);
 			   astate -> tlog("plug param edit combo : {}", idx);
 			 });
-       plugin -> params[i] -> value = std::static_pointer_cast<geom_view_t>(ws_items[0]) -> m_geom;
+       plugin -> params[i]-> fromString(plugin -> params[i]-> default_sval);
        
        auto I = param_mdl -> index(i,2);
        param_tbl -> setIndexWidget(I, cmb_itm);
