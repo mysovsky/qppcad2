@@ -4,23 +4,19 @@
 #include <cassert>
 #pragma push_macro("slots")
 #undef slots
-#include <pybind11/pybind11.h>
 #include <pybind11/embed.h>
+#include <pybind11/pybind11.h>
 #pragma pop_macro("slots")
 
 #include <QStringList>
-#include <filesystem>
-#include <variant>
-#include <map>
 #include <data/types.hpp>
+#include <filesystem>
 #include <geom/atom_vectors.hpp>
+#include <variant>
 
 #include <qppcad/core/json_adapter.hpp>
-#include <qppcad/ws_item/geom_view/geom_view.hpp>
 #include <qppcad/ws_item/arrow_array/arrow_array.hpp>
-
-//#include <nlohmann/json.hpp>
-//using json = nlohmann::json;
+#include <qppcad/ws_item/geom_view/geom_view.hpp>
 
 namespace fs = std::filesystem;
 
@@ -28,149 +24,140 @@ namespace py = pybind11;
 
 namespace qpp {
 
-  namespace cad {
+namespace cad {
 
-    typedef std::variant<double, float, int, bool, std::string,
-			 std::vector<double>, std::vector<float>, std::vector<int>,
-			 std::vector<char>,  std::vector<std::string >,
-			 std::shared_ptr<xgeometry<float > >,
-			 std::shared_ptr<qpp::geom_atom_vectors<float> >,
-			 vector3<double>,  vector3<float> >plugin_param_value_t;
-    
-    // --------------------------------------------------------------
-    
-    struct plugin_param_t{
-      
-      basic_types type;
-      std::string name;
-      std::string description;
-      int pos;
-      std::string browse;
+typedef std::variant<double, float, int, bool, std::string, std::vector<double>,
+                     std::vector<float>, std::vector<int>, std::vector<char>,
+                     std::vector<std::string>,
+                     std::shared_ptr<xgeometry<float>>,
+                     std::shared_ptr<qpp::geom_atom_vectors<float>>,
+                     vector3<double>, vector3<float>>
+    plugin_param_value_t;
 
-      plugin_param_value_t value;
-      std::string default_sval, sval;
+// --------------------------------------------------------------
 
-      std::vector<STRING_EX> choice;
+struct plugin_param_t {
 
-      plugin_param_t(basic_types t, const std::string & n, const std::string & d);
+  basic_types type;
+  std::string name;
+  std::string description;
+  int pos;
+  std::string browse;
 
-      bool fromString(const std::string & s);
+  plugin_param_value_t value;
+  std::string default_sval, sval;
 
-      py::object get_pyval();
-      
-    };
+  std::vector<STRING_EX> choice;
 
+  plugin_param_t(basic_types t, const std::string &n, const std::string &d);
 
-    // --------------------------------------------------------------
+  bool fromString(const std::string &s);
 
-    class python_plugin_t{
+  py::object get_pyval();
+};
 
-      py::module mod;
-        
-    public:
+// --------------------------------------------------------------
 
-      //constexpr static std::vector<std::string> parm_types =
-      // {"bool", "int", "float", "vector3(int)", "vector3(float)" };
+class python_plugin_t {
 
-      enum plugin_status : int{
-	plugin_status_ok                = 0,
-	plugin_status_hdr_error         = 1,
-	plugin_status_module_not_found  = 2,
-	plugin_status_load_error        = 3,
-	plugin_status_run_error         = 4
-      };
-      
-      std::string plug_name;
-      std::string module_name;
-      std::vector<std::string> module_name_decomp;
-      fs::path path;
-      std::string plug_menu_name;
-      std::string description;
-  
-      std::string func_call;
-      std::vector<std::shared_ptr<plugin_param_t> > params;
-      
-      plugin_status status{plugin_status_ok};
-      std::string error_msg;
+  py::module mod;
 
-      python_plugin_t(const std::string & _name,
-		      const std::string & _module_name,
-		      const std::string & _path);
+public:
+  enum plugin_status : int {
+    plugin_status_ok = 0,
+    plugin_status_hdr_error = 1,
+    plugin_status_module_not_found = 2,
+    plugin_status_load_error = 3,
+    plugin_status_run_error = 4
+  };
 
-      void load_header();
-      
-      void load_module();
-      
-      py::object run();
-      
-    };
+  std::string plug_name;
+  std::string module_name;
+  std::vector<std::string> module_name_decomp;
+  fs::path path;
+  std::string plug_menu_name;
+  std::string description;
 
-    // ----------------------------
-    
-    struct plugin_tree_t;
+  std::string func_call;
+  std::vector<std::shared_ptr<plugin_param_t>> params;
 
-    struct plugin_tree_t {
-      std::string name, module_name;
-      std::vector<std::shared_ptr<plugin_tree_t> > nested;
-      std::shared_ptr<python_plugin_t> plugin {nullptr};
+  plugin_status status{plugin_status_ok};
+  std::string error_msg;
 
-      plugin_tree_t(const std::string & _name);
+  python_plugin_t(const std::string &_name, const std::string &_module_name,
+                  const std::string &_path);
 
-      void build_nested(std::vector<std::vector<std::string> > & list, int lvl);
+  void load_header();
 
-      void sort();
+  void load_module();
 
-      void bind_plugins(const std::vector<std::shared_ptr<python_plugin_t> > & pluglist );
-  
-      void print(int offset=0);
-    };
+  py::object run();
+};
 
-    //----------------------------------
+// ----------------------------
 
-    class plugin_manager_t{
+struct plugin_tree_t;
 
-    public:
+struct plugin_tree_t {
+  std::string name, module_name;
+  std::vector<std::shared_ptr<plugin_tree_t>> nested;
+  std::shared_ptr<python_plugin_t> plugin{nullptr};
 
-      enum plugmgr_status : int{
-	plugmgr_ok                        = 0,
-	plugmgr_plugin_folder_not_found   = 1,
-	plugmgr_plugins_missing           = 2, 
-	plugmgr_hdr_error                 = 3,
-	plugmgr_module_not_found          = 4,
-	plugmgr_load_error                = 5,
-	plugmgr_run_error                 = 6	
-      };
-  
-      std::string plugdir;
-      fs::path plug_path;
-      std::vector<std::shared_ptr<python_plugin_t> > pluglist;
-      std::shared_ptr<plugin_tree_t> plug_tree;
+  plugin_tree_t(const std::string &_name);
 
-      plugmgr_status status{plugmgr_ok};
-      std::string error_msg{""};
-      std::string error_descr{""};
-  
-      plugin_manager_t(const std::string & _plugdir);
-      void locate_plugins();
-      void load_plugins();
-      void init();
-    };
+  void build_nested(std::vector<std::vector<std::string>> &list, int lvl);
 
-    // ---------------------------------------------------------------------------
-    
-    template<class T>
-    std::string extract_json(json & data, const std::string & key, T & variable){
-      try {    
-	variable = data[key];
-	return "";
-      }
-      catch (json::type_error & err){
-	return err.what();
-      }
-    }
+  void sort();
 
-    
-  } // namespace qpp::cad
+  void
+  bind_plugins(const std::vector<std::shared_ptr<python_plugin_t>> &pluglist);
+
+  void print(int offset = 0);
+};
+
+//----------------------------------
+
+class plugin_manager_t {
+
+public:
+  enum plugmgr_status : int {
+    plugmgr_ok = 0,
+    plugmgr_plugin_folder_not_found = 1,
+    plugmgr_plugins_missing = 2,
+    plugmgr_hdr_error = 3,
+    plugmgr_module_not_found = 4,
+    plugmgr_load_error = 5,
+    plugmgr_run_error = 6
+  };
+
+  std::string plugdir;
+  fs::path plug_path;
+  std::vector<std::shared_ptr<python_plugin_t>> pluglist;
+  std::shared_ptr<plugin_tree_t> plug_tree;
+
+  plugmgr_status status{plugmgr_ok};
+  std::string error_msg{""};
+  std::string error_descr{""};
+
+  plugin_manager_t(const std::string &_plugdir);
+  void locate_plugins();
+  void load_plugins();
+  void init();
+};
+
+// ---------------------------------------------------------------------------
+
+template <class T>
+std::string extract_json(json &data, const std::string &key, T &variable) {
+  try {
+    variable = data[key];
+    return "";
+  } catch (json::type_error &err) {
+    return err.what();
+  }
+}
+
+} // namespace cad
 
 } // namespace qpp
 

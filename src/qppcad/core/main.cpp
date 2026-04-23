@@ -44,9 +44,6 @@ int main (int argc, char **argv){   //, char **envp) {
 
 	  app_state_t *astate = app_state_t::get_inst();
 
-	  //astate->tlog("@GIT_REVISION={}, @BUILD_DATE={}",
-	  //             build_info_helper::get_git_version(), build_info_helper::get_git_version());
-
 	  astate->init_managers();
 	  astate->ws_mgr->init_ws_item_bhv_mgr();
 	  astate->load_settings();
@@ -61,15 +58,12 @@ int main (int argc, char **argv){   //, char **envp) {
 			file_format = parser.value(target_fmt_option).toStdString();
 
 		  for (auto &rec : args) {
-		//astate->tlog("@DEBUG: passed to load_from_file_autodeduce, path={}, ff={}",
-		//                       rec.toStdString(), file_format.empty() ? "NONE" : file_format);
 			  astate->ws_mgr->load_from_file_autodeduce(rec.toStdString(), file_format);
 			}
 
 		} else {
 
 		  if (parser.isSet(target_fmt_option)) {
-		//astate->tlog("ERROR: Invalid input");
 			  return 0;
 			}
 
@@ -78,7 +72,6 @@ int main (int argc, char **argv){   //, char **envp) {
 	  QSurfaceFormat format;
 	  format.setDepthBufferSize(24);
 
-	  //format.setStencilBufferSize(8);
 	  format.setSamples(astate->m_num_samples);
 	  format.setVersion(3, 3);
 	  format.setProfile(QSurfaceFormat::CoreProfile);
@@ -96,7 +89,6 @@ int main (int argc, char **argv){   //, char **envp) {
 
 	  QString family = QFontDatabase::applicationFontFamilies(fnt_id[0]).at(0);
 	  astate->m_font_name = family;
-	  //astate->tlog("Font used : {}", astate->m_font_name.toStdString());
 
 	  QIcon icon("://images/icon.svg");
 	  app.setWindowIcon(icon);
@@ -106,21 +98,8 @@ int main (int argc, char **argv){   //, char **envp) {
 	  QString style_sheet = QLatin1String(file.readAll());
 	  app.setStyleSheet(style_sheet);
 
-	  // ---------- asm
-	  /*
-	  for (char **env = envp; *env != 0; env++)
-		{
-		  char *thisEnv = *env;
-		  astate -> tlog("{}\n", thisEnv);    
-		}
-	  */
-
-	  //astate -> m_plugins_dir = "hrenhren";
 	  astate -> plug_mgr = std::make_unique<plugin_manager_t>(astate -> m_plugins_dir);
 	  astate -> plug_mgr -> init();
-	  //astate -> tlog("plugmgr status: {}\n", astate -> plug_mgr -> status);
-	  //astate -> log(astate -> plug_mgr -> error_msg);
-	  // asm ------------
 
 	  main_window_t w;
 	  astate->hotkey_mgr->m_main_window = &w;

@@ -3,7 +3,6 @@
 #include <qppcad/core/qppcad.hpp>
 #include <qppcad/render/mesh.hpp>
 #include <qppcad/render/shader_program.hpp>
-#include <string>
 #include <Eigen/Eigen>
 #include <geom/lace3d.hpp>
 

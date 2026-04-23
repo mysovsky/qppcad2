@@ -11,18 +11,6 @@
 using namespace qpp;
 using namespace qpp::cad;
 
-/*
-void pyqpp_linalg_export(py::module m);
-void pyqpp_opaque_types_export(py::module m);
-void pyqpp_cell_export(py::module m);
-void pyqpp_geom_export(py::module m);
-void pyqpp_xgeom_export(py::module m);
-void pyqpp_builders_export(py::module m);
-void pyqpp_autosymm_export(py::module m);
-void pyqpp_ccd_export(py::module m);
-void pyqpp_neighbours_export(py::module m);
-*/
-
 qpp::xgeometry<float >* claim_xgeom() {
 
   app_state_t *astate = app_state_t::get_inst();

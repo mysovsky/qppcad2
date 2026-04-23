@@ -202,12 +202,6 @@ void volume_helper::polygonise_vol_mc(mesh_t &mesh,
               mesh.vertecies.push_back(p2[2]);
               //emit normals
 
-              //n_ot = an.normalized();
-              //n_ot = (p1-p0).cross(p2-p0).normalized();
-              //              vector3<float> n0 = p0.normalized();
-              //              vector3<float> n1 = p1.normalized();
-              //              vector3<float> n2 = p2.normalized();
-
               mesh.normals.push_back(n0[0]);
               mesh.normals.push_back(n0[1]);
               mesh.normals.push_back(n0[2]);

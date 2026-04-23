@@ -1,90 +1,86 @@
-#include <qppcad/core/embedded_cluster_tools.hpp>
-#include <grow/builders.hpp>
-#include <geom/shape.hpp>
-#include <qppcad/core/app_state.hpp>
-#include <qppcad/ws_item/geom_view/geom_view_tools.hpp>
 #include <data/fmt_qpp_types.hpp>
+#include <geom/shape.hpp>
+#include <grow/builders.hpp>
+#include <qppcad/core/app_state.hpp>
+#include <qppcad/core/embedded_cluster_tools.hpp>
+#include <qppcad/ws_item/geom_view/geom_view_tools.hpp>
 
 using namespace qpp;
 using namespace qpp::cad;
 
-void embedded_cluster_tools::find_high_symmetry_qm_cluster(geom_view_t *uc,
-                                                           vector3<float> sphere_center,
-                                                           float qm_r_start_scan,
-                                                           float qm_r_end_scan,
-                                                           float symm_tolerance,
-                                                           size_t total_steps) {
+void embedded_cluster_tools::find_high_symmetry_qm_cluster(
+    geom_view_t *uc, vector3<float> sphere_center, float qm_r_start_scan,
+    float qm_r_end_scan, float symm_tolerance, size_t total_steps) {
 
   if (qm_r_start_scan > qm_r_end_scan) {
-      throw std::runtime_error("qm_r_start_scan > qm_r_end_scan!");
-    }
+    throw std::runtime_error("qm_r_start_scan > qm_r_end_scan!");
+  }
 
   if (!uc) {
-      throw std::runtime_error("uc == nullptr");
-    }
+    throw std::runtime_error("uc == nullptr");
+  }
 
   float dr = (qm_r_end_scan - qm_r_start_scan) / float(total_steps);
 
   for (size_t i = 0; i < total_steps; i++) {
 
-      xgeometry<float > g_all_m(0);
-      g_all_m.set_format({"charge"},{type_real});
-      g_all_m.additive(xgeom_charge) = true;
-      *g_all_m.tol_geom = 0.01f;
+    xgeometry<float> g_all_m(0);
+    g_all_m.set_format({"charge"}, {type_real});
+    g_all_m.additive(xgeom_charge) = true;
+    *g_all_m.tol_geom = 0.01f;
 
-      float cluster_r = qm_r_start_scan + dr * i;
-      shape_sphere<float> sp(cluster_r, sphere_center);
-      qpp::fill(g_all_m, *uc->m_geom, sp, crowd_ignore | fill_cells);
+    float cluster_r = qm_r_start_scan + dr * i;
+    shape_sphere<float> sp(cluster_r, sphere_center);
+    qpp::fill(g_all_m, *uc->m_geom, sp, crowd_ignore | fill_cells);
 
-      py::print(fmt::format("find_hs: i={} r={} nat={}", i, cluster_r, g_all_m.nat()));
-
-    }
-
+    py::print(
+        fmt::format("find_hs: i={} r={} nat={}", i, cluster_r, g_all_m.nat()));
+  }
 }
 
 void embedded_cluster_tools::gen_spherical_cluster(geom_view_t *uc,
                                                    vector3<float> displ,
-                                                   float cluster_r,
-                                                   float cls_r,
-                                                   bool generate_qm ,
-                                                   float qm_r,
+                                                   float cluster_r, float cls_r,
+                                                   bool generate_qm, float qm_r,
                                                    bool do_legacy) {
 
   if (!uc || uc->m_role != geom_view_role_e::r_uc) {
-      //throw py::error_already_set();
-      throw std::runtime_error("uc || uc->m_role != geom_view_role_t::role_uc");
-    }
+    throw std::runtime_error("uc || uc->m_role != geom_view_role_t::role_uc");
+  }
 
   if (cls_r > cluster_r) {
-      //throw py::error_already_set();
-      throw std::runtime_error("cls_r > cluster_r");
-    }
+    throw std::runtime_error("cls_r > cluster_r");
+  }
 
-  //try to find charges, classic and quantum geom_view`s
+  // try to find charges, classic and quantum geom_view`s
 
   std::shared_ptr<geom_view_t> ws_chg{nullptr};
   std::shared_ptr<geom_view_t> ws_cls{nullptr};
   std::shared_ptr<geom_view_t> ws_qm{nullptr};
 
   for (auto elem : uc->m_connected_items) {
-      std::shared_ptr<geom_view_t> as_al = std::dynamic_pointer_cast<geom_view_t>(elem);
-      if (as_al) {
-          if (as_al->m_role == geom_view_role_e::r_embc_chg) ws_chg = as_al;
-          if (as_al->m_role == geom_view_role_e::r_embc_cls) ws_cls = as_al;
-          if (as_al->m_role == geom_view_role_e::r_embc_qm)  ws_qm  = as_al;
-        }
+    std::shared_ptr<geom_view_t> as_al =
+        std::dynamic_pointer_cast<geom_view_t>(elem);
+    if (as_al) {
+      if (as_al->m_role == geom_view_role_e::r_embc_chg)
+        ws_chg = as_al;
+      if (as_al->m_role == geom_view_role_e::r_embc_cls)
+        ws_cls = as_al;
+      if (as_al->m_role == geom_view_role_e::r_embc_qm)
+        ws_qm = as_al;
     }
+  }
 
   uc->m_is_visible = false;
 
   if (ws_chg == nullptr) {
-      ws_chg = std::make_shared<geom_view_t>();
-      uc->m_parent_ws->add_item_to_ws(ws_chg);
-    } else {
-      ws_chg->m_tws_tr->do_action(act_lock);
-      ws_chg->m_tws_tr->do_action(act_clear_all);
-      ws_chg->m_geom->clear();
-    }
+    ws_chg = std::make_shared<geom_view_t>();
+    uc->m_parent_ws->add_item_to_ws(ws_chg);
+  } else {
+    ws_chg->m_tws_tr->do_action(act_lock);
+    ws_chg->m_tws_tr->do_action(act_clear_all);
+    ws_chg->m_geom->clear();
+  }
 
   ws_chg->m_tws_tr->do_action(act_lock);
   ws_chg->m_role = geom_view_role_e::r_embc_chg;
@@ -92,26 +88,26 @@ void embedded_cluster_tools::gen_spherical_cluster(geom_view_t *uc,
   ws_chg->m_draw_bonds = false;
 
   if (ws_cls == nullptr) {
-      ws_cls = std::make_shared<geom_view_t>();
-      uc->m_parent_ws->add_item_to_ws(ws_cls);
-    } else {
-      ws_cls->m_tws_tr->do_action(act_lock);
-      ws_cls->m_tws_tr->do_action(act_clear_all);
-      ws_cls->m_geom->clear();
-    }
+    ws_cls = std::make_shared<geom_view_t>();
+    uc->m_parent_ws->add_item_to_ws(ws_cls);
+  } else {
+    ws_cls->m_tws_tr->do_action(act_lock);
+    ws_cls->m_tws_tr->do_action(act_clear_all);
+    ws_cls->m_geom->clear();
+  }
 
   ws_cls->m_tws_tr->do_action(act_lock);
   ws_cls->m_role = geom_view_role_e::r_embc_cls;
   ws_cls->m_name = fmt::format("{}_cls", uc->m_name);
 
   if (ws_qm == nullptr) {
-      ws_qm = std::make_shared<geom_view_t>();
-      uc->m_parent_ws->add_item_to_ws(ws_qm);
-    } else {
-      ws_qm->m_tws_tr->do_action(act_lock);
-      ws_qm->m_tws_tr->do_action(act_clear_all);
-      ws_qm->m_geom->clear();
-    }
+    ws_qm = std::make_shared<geom_view_t>();
+    uc->m_parent_ws->add_item_to_ws(ws_qm);
+  } else {
+    ws_qm->m_tws_tr->do_action(act_lock);
+    ws_qm->m_tws_tr->do_action(act_clear_all);
+    ws_qm->m_geom->clear();
+  }
 
   ws_qm->m_tws_tr->do_action(act_lock);
   ws_qm->m_name = fmt::format("{}_qm", uc->m_name);
@@ -119,46 +115,48 @@ void embedded_cluster_tools::gen_spherical_cluster(geom_view_t *uc,
 
   shape_sphere<float> sp(cluster_r, displ);
 
-  //copy uc to intermediate
+  // copy uc to intermediate
   xgeometry<float> gd_uc(3);
-  gd_uc.set_format({"charge"},{type_real});
+  gd_uc.set_format({"charge"}, {type_real});
   gd_uc.cell->DIM = 3;
-  //gd_uc.cell.DIM = 3;
+  // gd_uc.cell.DIM = 3;
   gd_uc.cell->v[0] = uc->m_geom->cell->v[0];
   gd_uc.cell->v[1] = uc->m_geom->cell->v[1];
   gd_uc.cell->v[2] = uc->m_geom->cell->v[2];
 
-  for (int i = 0 ; i < uc->m_geom->nat(); i++) {
-      gd_uc.add(uc->m_geom->atom(i), uc->m_geom->pos(i));
-      gd_uc.xfield<float>(xgeom_charge, i) = uc->m_geom->xfield<float>(xgeom_charge, i);
-    }
+  for (int i = 0; i < uc->m_geom->nat(); i++) {
+    gd_uc.add(uc->m_geom->atom(i), uc->m_geom->pos(i));
+    gd_uc.xfield<float>(xgeom_charge, i) =
+        uc->m_geom->xfield<float>(xgeom_charge, i);
+  }
 
-  //initialize result xgeometries
-  xgeometry<float > gd_chg(0);
+  // initialize result xgeometries
+  xgeometry<float> gd_chg(0);
 
-  //initialize intermidiates for charge counting
-  xgeometry<float > g_all_m(0);
+  // initialize intermidiates for charge counting
+  xgeometry<float> g_all_m(0);
 
-  g_all_m.set_format({"charge"},{type_real});
+  g_all_m.set_format({"charge"}, {type_real});
   g_all_m.additive(xgeom_charge) = true;
   *g_all_m.tol_geom = 0.01f;
 
-  gd_chg.set_format({"charge"},{type_real});
+  gd_chg.set_format({"charge"}, {type_real});
   gd_chg.additive(xgeom_charge) = true;
   *gd_chg.tol_geom = 0.01f;
 
   int mode_m = crowd_ignore | fill_cells;
 
   if (do_legacy) {
-      mode_m = mode_m | legacy_fill;
-    }
+    mode_m = mode_m | legacy_fill;
+  }
 
   qpp::fill(g_all_m, gd_uc, sp, mode_m);
 
-  //translate intermediates to zero
-  for (int i = 0 ; i < g_all_m.nat(); i++) g_all_m.coord(i) -= displ;
+  // translate intermediates to zero
+  for (int i = 0; i < g_all_m.nat(); i++)
+    g_all_m.coord(i) -= displ;
 
-  //performing charge addition
+  // performing charge addition
   tws_tree_t<float> sum_tree(g_all_m);
   sum_tree.do_action(act_unlock | act_rebuild_tree);
 
@@ -166,59 +164,62 @@ void embedded_cluster_tools::gen_spherical_cluster(geom_view_t *uc,
 
   for (int i = 0; i < g_all_m.nat(); i++) {
 
-      std::vector<tws_node_cnt_t<float> > res;
-      sum_tree.query_sphere(equality_dist, g_all_m.pos(i), res);
-      float accum_chg = 0;
+    std::vector<tws_node_cnt_t<float>> res;
+    sum_tree.query_sphere(equality_dist, g_all_m.pos(i), res);
+    float accum_chg = 0;
 
-      std::set<int> num_occur;
+    std::set<int> num_occur;
 
-      for (auto &elem : res) {
-          accum_chg += g_all_m.xfield<float>(xgeom_charge, elem.m_atm);
-          num_occur.insert(elem.m_atm);
-        }
-
-      if (!num_occur.empty() && i == *num_occur.begin()) {
-          gd_chg.add(g_all_m.atom(i), g_all_m.pos(i));
-          gd_chg.xfield<float>(xgeom_charge, gd_chg.nat()-1) = accum_chg;
-        }
-
+    for (auto &elem : res) {
+      accum_chg += g_all_m.xfield<float>(xgeom_charge, elem.m_atm);
+      num_occur.insert(elem.m_atm);
     }
 
-  //time to assign atoms to clusters
-  auto add_atom_to_xgeom = [](xgeometry<float > &g1,
-      xgeometry<float > &g2, int atom_id ) {
+    if (!num_occur.empty() && i == *num_occur.begin()) {
+      gd_chg.add(g_all_m.atom(i), g_all_m.pos(i));
+      gd_chg.xfield<float>(xgeom_charge, gd_chg.nat() - 1) = accum_chg;
+    }
+  }
+
+  // time to assign atoms to clusters
+  auto add_atom_to_xgeom = [](xgeometry<float> &g1, xgeometry<float> &g2,
+                              int atom_id) {
     g2.add(g1.atom(atom_id), g1.pos(atom_id));
-    g2.xfield<float>(xgeom_charge, g2.nat()-1) = g1.xfield<float>(xgeom_charge, atom_id);
+    g2.xfield<float>(xgeom_charge, g2.nat() - 1) =
+        g1.xfield<float>(xgeom_charge, atom_id);
   };
 
   for (int i = 0; i < gd_chg.nat(); i++) {
 
-      float r = gd_chg.pos(i).norm();
+    float r = gd_chg.pos(i).norm();
 
-      if (r >= cls_r) add_atom_to_xgeom(gd_chg, *ws_chg->m_geom, i);
+    if (r >= cls_r)
+      add_atom_to_xgeom(gd_chg, *ws_chg->m_geom, i);
 
-      if (generate_qm) {
-          if (r > -0.01f && r < qm_r) add_atom_to_xgeom(gd_chg, *ws_qm->m_geom, i);
-          if (r > qm_r + 0.01f && r < cls_r) add_atom_to_xgeom(gd_chg, *ws_cls->m_geom, i);
-        } else {
-          if (r > -0.01f && r < cls_r) add_atom_to_xgeom(gd_chg, *ws_cls->m_geom, i);
-        }
+    if (generate_qm) {
+      if (r > -0.01f && r < qm_r)
+        add_atom_to_xgeom(gd_chg, *ws_qm->m_geom, i);
+      if (r > qm_r + 0.01f && r < cls_r)
+        add_atom_to_xgeom(gd_chg, *ws_cls->m_geom, i);
+    } else {
+      if (r > -0.01f && r < cls_r)
+        add_atom_to_xgeom(gd_chg, *ws_cls->m_geom, i);
     }
+  }
 
+  if (generate_qm)
+    if (ws_qm->m_geom->nat() > 0)
+      ws_qm->m_tws_tr->do_action(act_unlock | act_rebuild_all);
 
-  if (generate_qm) if (ws_qm->m_geom->nat() > 0)
-    ws_qm->m_tws_tr->do_action(act_unlock | act_rebuild_all);
-
-  if (ws_chg->m_geom->nat() > 0) ws_chg->m_tws_tr->do_action(act_unlock | act_rebuild_all);
-  if (ws_cls->m_geom->nat() > 0) ws_cls->m_tws_tr->do_action(act_unlock | act_rebuild_all);
-
-  //if (generate_qm && )
+  if (ws_chg->m_geom->nat() > 0)
+    ws_chg->m_tws_tr->do_action(act_unlock | act_rebuild_all);
+  if (ws_cls->m_geom->nat() > 0)
+    ws_cls->m_tws_tr->do_action(act_unlock | act_rebuild_all);
 
   if (ws_chg->m_geom->nat() > 1800)
     ws_chg->m_render_style = geom_view_render_style_e::xatom_lines;
-  //qm->m_tws_tr->do_action(act_unlock | act_rebuild_all);
 
-  //add connection info
+  // add connection info
   ws_chg->add_connected_item(ws_cls);
   ws_chg->add_connected_item(ws_qm);
   ws_chg->add_connected_item(uc->shared_from_this());
@@ -238,35 +239,37 @@ void embedded_cluster_tools::gen_spherical_cluster(geom_view_t *uc,
   app_state_t *astate = app_state_t::get_inst();
   astate->astate_evd->cur_ws_changed();
 
-  //time to print dipole moments
+  // time to print dipole moments
 
   auto dm_chg = geom_view_tools_t::dipole_moment(ws_chg.get());
   auto dm_cls = geom_view_tools_t::dipole_moment(ws_cls.get());
-  auto dm_qm  = geom_view_tools_t::dipole_moment(ws_qm.get());
+  auto dm_qm = geom_view_tools_t::dipole_moment(ws_qm.get());
   auto dm_tot = dm_chg + dm_cls + dm_qm;
 
-  py::print(fmt::format("  chg_dipole_moment  = {}, {}, {}", dm_chg[0],  dm_chg[1],  dm_chg[2]));
-  py::print(fmt::format("  cls_dipole_moment  = {}, {}, {}", dm_cls[0],  dm_cls[1],  dm_cls[2]));
-  py::print(fmt::format("  qm_dipole_moment   = {}, {}, {}", dm_qm[0],   dm_qm[1],   dm_qm[2]));
-  py::print(fmt::format("  tot_dipole_moment  = {}, {}, {}", dm_tot[0],  dm_tot[1],  dm_tot[2]));
-
+  py::print(fmt::format("  chg_dipole_moment  = {}, {}, {}", dm_chg[0],
+                        dm_chg[1], dm_chg[2]));
+  py::print(fmt::format("  cls_dipole_moment  = {}, {}, {}", dm_cls[0],
+                        dm_cls[1], dm_cls[2]));
+  py::print(fmt::format("  qm_dipole_moment   = {}, {}, {}", dm_qm[0], dm_qm[1],
+                        dm_qm[2]));
+  py::print(fmt::format("  tot_dipole_moment  = {}, {}, {}", dm_tot[0],
+                        dm_tot[1], dm_tot[2]));
 }
 
-//embc.gen_sph(pq.vector3f(0,0,0), 16, 9)
 void embedded_cluster_tools::gen_spherical_cluster_cur(vector3<float> displ,
                                                        float cluster_r,
                                                        float cls_r,
                                                        bool do_legacy) {
   app_state_t *astate = app_state_t::get_inst();
 
-  auto [cur_ws, cur_it, as_al, ok] = astate->ws_mgr->get_sel_tpl_itmc<geom_view_t>();
+  auto [cur_ws, cur_it, as_al, ok] =
+      astate->ws_mgr->get_sel_tpl_itmc<geom_view_t>();
 
   if (!ok) {
-      return;
+    return;
   }
 
   gen_spherical_cluster(as_al, displ, cluster_r, cls_r, do_legacy);
-
 }
 
 void embedded_cluster_tools::gen_spherical_cluster_cur_qm(vector3<float> displ,
@@ -276,37 +279,41 @@ void embedded_cluster_tools::gen_spherical_cluster_cur_qm(vector3<float> displ,
                                                           bool do_legacy) {
   app_state_t *astate = app_state_t::get_inst();
 
-  auto [cur_ws, cur_it, as_al, ok] = astate->ws_mgr->get_sel_tpl_itmc<geom_view_t>();
+  auto [cur_ws, cur_it, as_al, ok] =
+      astate->ws_mgr->get_sel_tpl_itmc<geom_view_t>();
 
   if (!ok) {
-      throw std::runtime_error("Cannot deduce context for embedded cluster generation");
-    }
+    throw std::runtime_error(
+        "Cannot deduce context for embedded cluster generation");
+  }
 
   bool succes{false};
 
   if (as_al && as_al->m_role == geom_view_role_e::r_uc) {
-      succes = true;
-      gen_spherical_cluster(as_al, displ, cluster_r, cls_r, true, qm_r, do_legacy);
-      return;
-    }
+    succes = true;
+    gen_spherical_cluster(as_al, displ, cluster_r, cls_r, true, qm_r,
+                          do_legacy);
+    return;
+  }
 
-  //try to deduce uc from connected items
+  // try to deduce uc from connected items
   if (as_al && (as_al->m_role == geom_view_role_e::r_embc_qm ||
                 as_al->m_role == geom_view_role_e::r_embc_chg ||
-                as_al->m_role == geom_view_role_e::r_embc_cls ))
+                as_al->m_role == geom_view_role_e::r_embc_cls))
 
     for (auto elem : as_al->m_connected_items) {
-        auto con_al = elem->cast_as<geom_view_t>();
-        if (con_al && con_al->m_role == geom_view_role_e::r_uc) {
-            succes = true;
-            gen_spherical_cluster(con_al, displ, cluster_r, cls_r,
-                                  true, qm_r, do_legacy);
-            return;
-          }
+      auto con_al = elem->cast_as<geom_view_t>();
+      if (con_al && con_al->m_role == geom_view_role_e::r_uc) {
+        succes = true;
+        gen_spherical_cluster(con_al, displ, cluster_r, cls_r, true, qm_r,
+                              do_legacy);
+        return;
       }
+    }
 
-  if (!succes) throw std::runtime_error("Cannot deduce context for embedded cluster generation");
-
+  if (!succes)
+    throw std::runtime_error(
+        "Cannot deduce context for embedded cluster generation");
 }
 
 void embedded_cluster_tools::set_qm_cluster_r(std::shared_ptr<geom_view_t> qm,
@@ -314,57 +321,57 @@ void embedded_cluster_tools::set_qm_cluster_r(std::shared_ptr<geom_view_t> qm,
                                               float new_r) {
 
   if (!qm || !cls) {
-      throw std::runtime_error("!qm || !cls");
-    }
+    throw std::runtime_error("!qm || !cls");
+  }
 
-  //phase 1 : move atoms from cls to qm
+  // phase 1 : move atoms from cls to qm
 
-  std::vector<tws_node_cnt_t<float> > redu_cls;
+  std::vector<tws_node_cnt_t<float>> redu_cls;
 
   cls->m_tws_tr->query_sphere(new_r, vector3<float>(0), redu_cls);
-  std::set<int> redu_cls_set; //set for fast search
+  std::set<int> redu_cls_set; // set for fast search
 
-  for (auto &elem : redu_cls) redu_cls_set.insert(elem.m_atm);
+  for (auto &elem : redu_cls)
+    redu_cls_set.insert(elem.m_atm);
 
   for (int i = 0; i < cls->m_geom->nat(); i++)
     if (redu_cls_set.find(i) != redu_cls_set.end())
       qm->ins_atom(cls->m_geom->atom(i), cls->m_geom->pos(i));
 
-  //delete atoms from cls
+  // delete atoms from cls
   cls->delete_atoms(redu_cls_set);
 
-  //phase 2 : move atoms from qm to cls
-  std::vector<tws_node_cnt_t<float> > redu_qm;
+  // phase 2 : move atoms from qm to cls
+  std::vector<tws_node_cnt_t<float>> redu_qm;
   std::set<int> redu_qm_inside, redu_qm_outside;
 
-  //construct direct set - atoms inside sphere with r = new_r
+  // construct direct set - atoms inside sphere with r = new_r
   qm->m_tws_tr->query_sphere(new_r, vector3<float>(0), redu_qm);
-  for (auto &elem : redu_qm) redu_qm_inside.insert(elem.m_atm);
+  for (auto &elem : redu_qm)
+    redu_qm_inside.insert(elem.m_atm);
 
   // redu_qm_outside = set(ALL) - set(INSIDE)
   for (int i = 0; i < qm->m_geom->nat(); i++)
     if (redu_qm_inside.find(i) == redu_qm_inside.end()) {
-        cls->ins_atom(qm->m_geom->atom(i), qm->m_geom->pos(i));
-        cls->m_geom->xfield<float>(xgeom_charge, cls->m_geom->nat()-1) =
-            qm->m_geom->xfield<float>(xgeom_charge, i);
-        redu_qm_outside.insert(i);
-      }
-
-  qm->delete_atoms(redu_qm_outside);
-
-}
-
-void embedded_cluster_tools::move_sel_from_qm_to_cls(std::shared_ptr<geom_view_t> qm,
-                                                     std::shared_ptr<geom_view_t> cls) {
-  if (!cls || !qm) {
-      throw std::runtime_error("!chg || !cls || !qm");
-    } else {
-      for (auto &elem : qm->m_atom_idx_sel) {
-          cls->ins_atom(qm->m_geom->atom(elem.m_atm), qm->m_geom->pos(elem.m_atm));
-        }
-      qm->delete_selected_atoms();
+      cls->ins_atom(qm->m_geom->atom(i), qm->m_geom->pos(i));
+      cls->m_geom->xfield<float>(xgeom_charge, cls->m_geom->nat() - 1) =
+          qm->m_geom->xfield<float>(xgeom_charge, i);
+      redu_qm_outside.insert(i);
     }
 
+  qm->delete_atoms(redu_qm_outside);
+}
+
+void embedded_cluster_tools::move_sel_from_qm_to_cls(
+    std::shared_ptr<geom_view_t> qm, std::shared_ptr<geom_view_t> cls) {
+  if (!cls || !qm) {
+    throw std::runtime_error("!chg || !cls || !qm");
+  } else {
+    for (auto &elem : qm->m_atom_idx_sel) {
+      cls->ins_atom(qm->m_geom->atom(elem.m_atm), qm->m_geom->pos(elem.m_atm));
+    }
+    qm->delete_selected_atoms();
+  }
 }
 
 void embedded_cluster_tools::move_sel_from_qm_to_cls_cur() {
@@ -373,26 +380,26 @@ void embedded_cluster_tools::move_sel_from_qm_to_cls_cur() {
 
   if (astate->ws_mgr->has_wss()) {
 
-      auto cur_ws = astate->ws_mgr->get_cur_ws();
+    auto cur_ws = astate->ws_mgr->get_cur_ws();
 
-      if (cur_ws) {
+    if (cur_ws) {
 
-          auto cur_it_al = std::static_pointer_cast<geom_view_t>(cur_ws->get_selected_sp());
+      auto cur_it_al =
+          std::static_pointer_cast<geom_view_t>(cur_ws->get_selected_sp());
 
-          std::shared_ptr<geom_view_t> uc{nullptr};
-          std::shared_ptr<geom_view_t> chg{nullptr};
-          std::shared_ptr<geom_view_t> cls{nullptr};
-          std::shared_ptr<geom_view_t> qm{nullptr};
+      std::shared_ptr<geom_view_t> uc{nullptr};
+      std::shared_ptr<geom_view_t> chg{nullptr};
+      std::shared_ptr<geom_view_t> cls{nullptr};
+      std::shared_ptr<geom_view_t> qm{nullptr};
 
-          deduce_embedding_context(uc, chg, cls, qm);
+      deduce_embedding_context(uc, chg, cls, qm);
 
-          if (!chg || !cls || !qm) throw std::runtime_error("!chg || !cls || !qm");
-          else move_sel_from_qm_to_cls(qm, cls);
-
-        }
-
+      if (!chg || !cls || !qm)
+        throw std::runtime_error("!chg || !cls || !qm");
+      else
+        move_sel_from_qm_to_cls(qm, cls);
     }
-
+  }
 }
 
 void embedded_cluster_tools::set_qm_cluster_r_cur(float new_r) {
@@ -401,100 +408,102 @@ void embedded_cluster_tools::set_qm_cluster_r_cur(float new_r) {
 
   if (astate->ws_mgr->has_wss()) {
 
-      auto cur_ws = astate->ws_mgr->get_cur_ws();
+    auto cur_ws = astate->ws_mgr->get_cur_ws();
 
-      if (cur_ws) {
+    if (cur_ws) {
 
-          auto cur_it_al = std::static_pointer_cast<geom_view_t>(cur_ws->get_selected_sp());
+      auto cur_it_al =
+          std::static_pointer_cast<geom_view_t>(cur_ws->get_selected_sp());
 
-          std::shared_ptr<geom_view_t> uc{nullptr};
-          std::shared_ptr<geom_view_t> chg{nullptr};
-          std::shared_ptr<geom_view_t> cls{nullptr};
-          std::shared_ptr<geom_view_t> qm{nullptr};
+      std::shared_ptr<geom_view_t> uc{nullptr};
+      std::shared_ptr<geom_view_t> chg{nullptr};
+      std::shared_ptr<geom_view_t> cls{nullptr};
+      std::shared_ptr<geom_view_t> qm{nullptr};
 
-          deduce_embedding_context(uc, chg, cls, qm);
+      deduce_embedding_context(uc, chg, cls, qm);
 
-          if (!chg || !cls || !qm) throw std::runtime_error("!chg || !cls || !qm");
-          else set_qm_cluster_r(qm, cls, new_r);
-
-        }
-
+      if (!chg || !cls || !qm)
+        throw std::runtime_error("!chg || !cls || !qm");
+      else
+        set_qm_cluster_r(qm, cls, new_r);
     }
-
+  }
 }
 
-void embedded_cluster_tools::deduce_embedding_context(std::shared_ptr<geom_view_t> &uc,
-                                                      std::shared_ptr<geom_view_t> &chg,
-                                                      std::shared_ptr<geom_view_t> &cls,
-                                                      std::shared_ptr<geom_view_t> &qm) {
+void embedded_cluster_tools::deduce_embedding_context(
+    std::shared_ptr<geom_view_t> &uc, std::shared_ptr<geom_view_t> &chg,
+    std::shared_ptr<geom_view_t> &cls, std::shared_ptr<geom_view_t> &qm) {
   app_state_t *astate = app_state_t::get_inst();
 
   if (astate->ws_mgr->has_wss()) {
 
-      auto cur_ws = astate->ws_mgr->get_cur_ws();
+    auto cur_ws = astate->ws_mgr->get_cur_ws();
 
-      if (cur_ws) {
+    if (cur_ws) {
 
-          auto cur_it_al = std::static_pointer_cast<geom_view_t>(cur_ws->get_selected_sp());
+      auto cur_it_al =
+          std::static_pointer_cast<geom_view_t>(cur_ws->get_selected_sp());
 
-          if (cur_it_al) {
+      if (cur_it_al) {
 
-              if (cur_it_al->m_role == geom_view_role_e::r_embc_qm) qm = cur_it_al;
-              if (cur_it_al->m_role == geom_view_role_e::r_embc_chg) chg = cur_it_al;
-              if (cur_it_al->m_role == geom_view_role_e::r_embc_cls) cls = cur_it_al;
-              if (cur_it_al->m_role == geom_view_role_e::r_uc) uc = cur_it_al;
+        if (cur_it_al->m_role == geom_view_role_e::r_embc_qm)
+          qm = cur_it_al;
+        if (cur_it_al->m_role == geom_view_role_e::r_embc_chg)
+          chg = cur_it_al;
+        if (cur_it_al->m_role == geom_view_role_e::r_embc_cls)
+          cls = cur_it_al;
+        if (cur_it_al->m_role == geom_view_role_e::r_uc)
+          uc = cur_it_al;
 
-              for (auto elem : cur_it_al->m_connected_items) {
-                  auto elem_al = std::static_pointer_cast<geom_view_t>(elem);
-                  if (elem_al && elem_al->m_role == geom_view_role_e::r_embc_qm)
-                    qm = elem_al;
-                  if (elem_al && elem_al->m_role == geom_view_role_e::r_embc_chg)
-                    chg = elem_al;
-                  if (elem_al && elem_al->m_role == geom_view_role_e::r_embc_cls)
-                    cls = elem_al;
-                  if (elem_al && elem_al->m_role == geom_view_role_e::r_uc) uc = elem_al;
-                }
-
-            }
-
+        for (auto elem : cur_it_al->m_connected_items) {
+          auto elem_al = std::static_pointer_cast<geom_view_t>(elem);
+          if (elem_al && elem_al->m_role == geom_view_role_e::r_embc_qm)
+            qm = elem_al;
+          if (elem_al && elem_al->m_role == geom_view_role_e::r_embc_chg)
+            chg = elem_al;
+          if (elem_al && elem_al->m_role == geom_view_role_e::r_embc_cls)
+            cls = elem_al;
+          if (elem_al && elem_al->m_role == geom_view_role_e::r_uc)
+            uc = elem_al;
         }
-
+      }
     }
-
+  }
 }
 
 vector3<float> embedded_cluster_tools::calc_dipole_moment() {
 
   app_state_t *astate = app_state_t::get_inst();
 
-  vector3<float> accum_dm{0,0,0};
+  vector3<float> accum_dm{0, 0, 0};
 
   if (astate->ws_mgr->has_wss()) {
 
-      auto cur_ws = astate->ws_mgr->get_cur_ws();
+    auto cur_ws = astate->ws_mgr->get_cur_ws();
 
-      if (cur_ws) {
-          auto cur_it_al = dynamic_cast<geom_view_t*>(cur_ws->get_selected());
-          if (cur_it_al) {
-              for (int i = 0; i < cur_it_al->m_geom->nat(); i++)
-                accum_dm += cur_it_al->m_geom->pos(i) *
-                            cur_it_al->m_geom->xfield<float>(xgeom_charge, i);
-            }
-        }
+    if (cur_ws) {
+      auto cur_it_al = dynamic_cast<geom_view_t *>(cur_ws->get_selected());
+      if (cur_it_al) {
+        for (int i = 0; i < cur_it_al->m_geom->nat(); i++)
+          accum_dm += cur_it_al->m_geom->pos(i) *
+                      cur_it_al->m_geom->xfield<float>(xgeom_charge, i);
+      }
     }
+  }
 
   return accum_dm;
-
 }
 
 void embedded_cluster_tools::generate_molcas_embc_sp_input(std::string outdir) {
 
   app_state_t *astate = app_state_t::get_inst();
 
-  if (!astate->ws_mgr->has_wss()) return;
+  if (!astate->ws_mgr->has_wss())
+    return;
 
   auto cur_ws = astate->ws_mgr->get_cur_ws();
-  if (!cur_ws) return;
+  if (!cur_ws)
+    return;
 
   std::shared_ptr<geom_view_t> uc{nullptr};
   std::shared_ptr<geom_view_t> chg{nullptr};
@@ -503,74 +512,63 @@ void embedded_cluster_tools::generate_molcas_embc_sp_input(std::string outdir) {
 
   deduce_embedding_context(uc, chg, cls, qm);
 
-  if (!chg || !cls || !qm) return;
+  if (!chg || !cls || !qm)
+    return;
 
   std::ofstream embc_inp(fmt::format("{}/inp", outdir));
   std::ofstream embc_chg(fmt::format("{}/embc_chg", outdir));
 
-  //generate main input file
+  // generate main input file
   fmt::print(embc_inp, "&GATEWAY\n");
 
-  //printing qm atoms
+  // printing qm atoms
   for (int i = 0; i < qm->m_geom->typetable()->n_types(); i++) {
 
-      fmt::print(embc_inp, "Basis set\n");
-      fmt::print(embc_inp, "{}.ANO-RCC-VDZP.\n", qm->m_geom->typetable()->atomic_type(i));
+    fmt::print(embc_inp, "Basis set\n");
+    fmt::print(embc_inp, "{}.ANO-RCC-VDZP.\n",
+               qm->m_geom->typetable()->atomic_type(i));
 
-      int local_type_c = 0;
-      for (int q = 0; q < qm->m_geom->nat(); q++)
-        if (qm->m_geom->typetable()->type(q) == i) {
-            local_type_c +=1 ;
-            fmt::print(
-                  embc_inp, "{}{} {} {} {}\n",
-                  qm->m_geom->typetable()->atomic_type(i),
-                  local_type_c,
-                  qm->m_geom->pos(q)[0],
-                  qm->m_geom->pos(q)[1],
-                  qm->m_geom->pos(q)[2]
-                );
-          }
+    int local_type_c = 0;
+    for (int q = 0; q < qm->m_geom->nat(); q++)
+      if (qm->m_geom->typetable()->type(q) == i) {
+        local_type_c += 1;
+        fmt::print(embc_inp, "{}{} {} {} {}\n",
+                   qm->m_geom->typetable()->atomic_type(i), local_type_c,
+                   qm->m_geom->pos(q)[0], qm->m_geom->pos(q)[1],
+                   qm->m_geom->pos(q)[2]);
+      }
 
-      fmt::print(embc_inp, "End Of Basis\n");
+    fmt::print(embc_inp, "End Of Basis\n");
+  }
 
-    }
-
-  //printing mm atoms
-  std::array<std::string, 7> map_type_to_sn = {"X", "Y", "L", "J", "M", "T", "E"};
+  // printing mm atoms
+  std::array<std::string, 7> map_type_to_sn = {"X", "Y", "L", "J",
+                                               "M", "T", "E"};
 
   for (int i = 0; i < cls->m_geom->typetable()->n_types(); i++) {
 
-      fmt::print(embc_inp, "Basis set\n");
-      fmt::print(embc_inp, "{}.ECP.Pascual.0s.0s.0e-AIMP-CaF2.\n", cls->m_geom->typetable()->atomic_type(i));
-      int local_type_c = 0;
+    fmt::print(embc_inp, "Basis set\n");
+    fmt::print(embc_inp, "{}.ECP.Pascual.0s.0s.0e-AIMP-CaF2.\n",
+               cls->m_geom->typetable()->atomic_type(i));
+    int local_type_c = 0;
 
-      for (int q = 0; q < cls->m_geom->nat(); q++)
-        if (cls->m_geom->typetable()->type(q) == i) {
-            local_type_c +=1 ;
-            fmt::print(
-                  embc_inp, "{}{} {} {} {}\n",
-                  map_type_to_sn[i],
-                  local_type_c,
-                  cls->m_geom->pos(q)[0],
-                  cls->m_geom->pos(q)[1],
-                 cls->m_geom->pos(q)[2]
-                );
-          }
+    for (int q = 0; q < cls->m_geom->nat(); q++)
+      if (cls->m_geom->typetable()->type(q) == i) {
+        local_type_c += 1;
+        fmt::print(embc_inp, "{}{} {} {} {}\n", map_type_to_sn[i], local_type_c,
+                   cls->m_geom->pos(q)[0], cls->m_geom->pos(q)[1],
+                   cls->m_geom->pos(q)[2]);
+      }
 
-      fmt::print(embc_inp, "End Of Basis\n");
+    fmt::print(embc_inp, "End Of Basis\n");
+  }
 
-    }
-
-  //printing charges
-  //x y z  c  0. 0. 0.
+  // printing charges
+  // x y z  c  0. 0. 0.
   for (int i = 0; i < chg->m_geom->nat(); i++)
-    fmt::print(
-          embc_chg, "{} {} {} {} 0. 0. 0.\n",
-          chg->m_geom->pos(i)[0],
-          chg->m_geom->pos(i)[1],
-          chg->m_geom->pos(i)[2],
-          chg->m_geom->xfield<float>(xgeom_charge, i)
-        );
+    fmt::print(embc_chg, "{} {} {} {} 0. 0. 0.\n", chg->m_geom->pos(i)[0],
+               chg->m_geom->pos(i)[1], chg->m_geom->pos(i)[2],
+               chg->m_geom->xfield<float>(xgeom_charge, i));
 
   fmt::print(embc_inp, "XField\n");
   fmt::print(embc_inp, "{}\n", chg->m_geom->nat());
@@ -580,19 +578,20 @@ void embedded_cluster_tools::generate_molcas_embc_sp_input(std::string outdir) {
   fmt::print(embc_inp, "AMFI\n");
   fmt::print(embc_inp, "&SCF\n");
   fmt::print(embc_inp, "CHARGE=1\n");
-
 }
 
-void embedded_cluster_tools::generate_orca_embc_sp_input(std::string outdir,
-                                                         std::vector<std::string> anion_list,
-                                                         bool merge_cls_and_chg) {
+void embedded_cluster_tools::generate_orca_embc_sp_input(
+    std::string outdir, std::vector<std::string> anion_list,
+    bool merge_cls_and_chg) {
 
   app_state_t *astate = app_state_t::get_inst();
 
-  if (!astate->ws_mgr->has_wss()) return;
+  if (!astate->ws_mgr->has_wss())
+    return;
 
   auto cur_ws = astate->ws_mgr->get_cur_ws();
-  if (!cur_ws) return;
+  if (!cur_ws)
+    return;
 
   std::shared_ptr<geom_view_t> uc{nullptr};
   std::shared_ptr<geom_view_t> chg{nullptr};
@@ -601,7 +600,8 @@ void embedded_cluster_tools::generate_orca_embc_sp_input(std::string outdir,
 
   deduce_embedding_context(uc, chg, cls, qm);
 
-  if (!chg || !cls || !qm) return;
+  if (!chg || !cls || !qm)
+    return;
 
   std::ofstream embc_inp(fmt::format("{}/orca.inp", outdir));
   std::ofstream embc_pc(fmt::format("{}/pointcharges.pc", outdir));
@@ -613,71 +613,53 @@ void embedded_cluster_tools::generate_orca_embc_sp_input(std::string outdir,
   fmt::print(embc_inp, "\n");
   fmt::print(embc_inp, "* xyz 0 1\n");
 
-  //printing qm atoms N x y z
+  // printing qm atoms N x y z
   for (int i = 0; i < qm->m_geom->nat(); i++)
-    fmt::print(
-          embc_inp, "{0} {1} {2} {3}\n",
-          qm->m_geom->typetable()->atomic_type(i),
-          qm->m_geom->pos(i)[0],
-          qm->m_geom->pos(i)[1],
-          qm->m_geom->pos(i)[2]
-        );
+    fmt::print(embc_inp, "{0} {1} {2} {3}\n",
+               qm->m_geom->typetable()->atomic_type(i), qm->m_geom->pos(i)[0],
+               qm->m_geom->pos(i)[1], qm->m_geom->pos(i)[2]);
 
-  //printing cls atoms N> q x y z
+  // printing cls atoms N> q x y z
   if (!merge_cls_and_chg) {
-      //fmt::print(embc_inp, "{}\n", cls->m_geom->nat());
-      for (int i = 0; i < cls->m_geom->nat(); i++) {
-	bool add_ecp = cls->m_geom->typetable()->atomic_type(i).find("F") == std::string::npos;
-          fmt::print(
-                embc_inp,
-                add_ecp ? "{0}> {1} {2} {3} {4} NewECP \"{0}_emb\" end\n" :
-                          "{0}> {1} {2} {3} {4} \n",
-                cls->m_geom->typetable()->atomic_type(i),
-                cls->m_geom->xfield<float>(xgeom_charge, i),
-                cls->m_geom->pos(i)[0],
-                cls->m_geom->pos(i)[1],
-                cls->m_geom->pos(i)[2]
-              );
-        }
-
-      //printing charges
-      //q x y z
-      fmt::print(embc_pc, "{}\n", chg->m_geom->nat());
-
-      for (int i = 0; i < chg->m_geom->nat(); i++)
-        fmt::print(
-              embc_pc, "{} {} {} {}\n",
-              chg->m_geom->xfield<float>(xgeom_charge, i),
-              chg->m_geom->pos(i)[0],
-              chg->m_geom->pos(i)[1],
-              chg->m_geom->pos(i)[2]
-            );
-
-    } else {
-
-      int total_charges = cls->m_geom->nat() + chg->m_geom->nat();
-      fmt::print(embc_pc, "{}\n", total_charges);
-
-      for (int i = 0; i < cls->m_geom->nat(); i++)
-        fmt::print(
-              embc_pc, "{} {} {} {}\n",
-              cls->m_geom->xfield<float>(xgeom_charge, i),
-              cls->m_geom->pos(i)[0],
-              cls->m_geom->pos(i)[1],
-              cls->m_geom->pos(i)[2]
-            );
-
-      for (int i = 0; i < chg->m_geom->nat(); i++)
-        fmt::print(
-              embc_pc, "{} {} {} {}\n",
-              chg->m_geom->xfield<float>(xgeom_charge, i),
-              chg->m_geom->pos(i)[0],
-              chg->m_geom->pos(i)[1],
-              chg->m_geom->pos(i)[2]
-            );
-
+    for (int i = 0; i < cls->m_geom->nat(); i++) {
+      bool add_ecp = cls->m_geom->typetable()->atomic_type(i).find("F") ==
+                     std::string::npos;
+      fmt::print(embc_inp,
+                 add_ecp ? "{0}> {1} {2} {3} {4} NewECP \"{0}_emb\" end\n"
+                         : "{0}> {1} {2} {3} {4} \n",
+                 cls->m_geom->typetable()->atomic_type(i),
+                 cls->m_geom->xfield<float>(xgeom_charge, i),
+                 cls->m_geom->pos(i)[0], cls->m_geom->pos(i)[1],
+                 cls->m_geom->pos(i)[2]);
     }
 
-  fmt::print(embc_inp, "end\n");
+    // printing charges
+    // q x y z
+    fmt::print(embc_pc, "{}\n", chg->m_geom->nat());
 
+    for (int i = 0; i < chg->m_geom->nat(); i++)
+      fmt::print(embc_pc, "{} {} {} {}\n",
+                 chg->m_geom->xfield<float>(xgeom_charge, i),
+                 chg->m_geom->pos(i)[0], chg->m_geom->pos(i)[1],
+                 chg->m_geom->pos(i)[2]);
+
+  } else {
+
+    int total_charges = cls->m_geom->nat() + chg->m_geom->nat();
+    fmt::print(embc_pc, "{}\n", total_charges);
+
+    for (int i = 0; i < cls->m_geom->nat(); i++)
+      fmt::print(embc_pc, "{} {} {} {}\n",
+                 cls->m_geom->xfield<float>(xgeom_charge, i),
+                 cls->m_geom->pos(i)[0], cls->m_geom->pos(i)[1],
+                 cls->m_geom->pos(i)[2]);
+
+    for (int i = 0; i < chg->m_geom->nat(); i++)
+      fmt::print(embc_pc, "{} {} {} {}\n",
+                 chg->m_geom->xfield<float>(xgeom_charge, i),
+                 chg->m_geom->pos(i)[0], chg->m_geom->pos(i)[1],
+                 chg->m_geom->pos(i)[2]);
+  }
+
+  fmt::print(embc_inp, "end\n");
 }

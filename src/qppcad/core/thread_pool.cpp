@@ -1,4 +1,4 @@
-#include <qppcad/thread_pool.hpp>
+#include <qppcad/core/thread_pool.hpp>
 
 using namespace qpp;
 using namespace qpp::cad;

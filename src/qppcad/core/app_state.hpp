@@ -150,7 +150,6 @@ namespace qpp {
       std::unique_ptr<plugin_manager_t> plug_mgr;
 
         std::vector<recent_file_record_t> m_recent_files;
-        // //       std::map<std::string, color_map_t> m_color_maps;
 
         std::vector<std::string> m_fixtures_dirs;
         bool m_fixtures_dir_is_set{false};

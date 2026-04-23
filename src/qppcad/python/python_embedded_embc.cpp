@@ -5,7 +5,6 @@
 #include <pybind11/stl.h>
 #pragma pop_macro("slots")
 
-//#include <qppcad/python_simple_query.hpp>
 #include <qppcad/core/embedded_cluster_tools.hpp>
 
 using namespace qpp;

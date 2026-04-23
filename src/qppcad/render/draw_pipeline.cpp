@@ -213,8 +213,8 @@ void draw_pipeline_t::begin_render_2c_bond(float specular_power, float specular_
 }
 
 void draw_pipeline_t::render_2c_bond(const vector3<float> &color1,
-                                     const vector3<float> &color2,
-				     float alpha,
+                                     const vector3<float> &color2,	
+                                     float alpha,
                                      const vector3<float> &bond_start,
                                      const vector3<float> &bond_end,
                                      const float bond_radius) {
@@ -454,9 +454,7 @@ void draw_pipeline_t::render_cube (const vector3<float> &cube_pos,
   astate->sp_mvp_ssl->set_u(sp_u_name::m_model_view, mat_model_view.data());
   astate->sp_mvp_ssl->set_u(sp_u_name::m_model_view_inv_tr, mat_model_view_inv_tr.data());
   astate->sp_mvp_ssl->set_u(sp_u_name::v_color, (GLfloat*)(cube_color.data()));
-  //glDisable(GL_CULL_FACE);
   astate->mesh_unit_cube->render();
-  //glEnable(GL_CULL_FACE);
 
 }
 
@@ -480,9 +478,7 @@ void draw_pipeline_t::render_cone (const vector3<float> &cone_pos,
   astate->sp_mvp_ssl->set_u(sp_u_name::m_model_view, mat_model_view.data());
   astate->sp_mvp_ssl->set_u(sp_u_name::m_model_view_inv_tr, mat_model_view_inv_tr.data());
   astate->sp_mvp_ssl->set_u(sp_u_name::v_color, (GLfloat*)(cone_color.data()));
-  //glDisable(GL_CULL_FACE);
   astate->mesh_unit_cone->render();
-  //glEnable(GL_CULL_FACE);
 
 }
 
@@ -601,20 +597,6 @@ void draw_pipeline_t::render_aabb_segmented (const vector3<float> &color,
   vector3<float> half_box_size = (box_max - box_min) * 0.5f;
   vector3<float> box_center    = (box_max + box_min) * 0.5f;
 
-  /*
-  sign = lambda x: (1, -1)[x<0]
-  dt = 0.4
-  for x in [-1,1]:
-      for y in [-1,1]:
-          for z in [-1,1]:
-                  print("{{{:6.6}f,{:6.6}f,{:6.6}f,{:6.6}f,{:6.6}f,{:6.6}f}},".format(
-                      float(x), float(y), float(z), x-sign(x)*dt, float(y), float(z)))
-                  print("{{{:6.6}f,{:6.6}f,{:6.6}f,{:6.6}f,{:6.6}f,{:6.6}f}},".format(
-                      float(x), float(y), float(z),  float(x),y-sign(y)*dt, float(z)))
-                  print("{{{:6.6}f,{:6.6}f,{:6.6}f,{:6.6}f,{:6.6}f,{:6.6}f}},".format(
-                      float(x), float(y), float(z),  float(x), float(y), z-sign(z)*dt))*/
-
-
   static float disp2[][6] = {
     {  -1.0f,  -1.0f,  -1.0f,  -0.6f,  -1.0f,  -1.0f},
     {  -1.0f,  -1.0f,  -1.0f,  -1.0f,  -0.6f,  -1.0f},
@@ -679,7 +661,6 @@ void draw_pipeline_t::render_line(const vector3<float> &color,
 
   app_state_t* astate = app_state_t::get_inst();
   glapi_t* glapi = astate->glapi;
-  //glapi->glLineWidth(line_width);
   astate->sp_unit_line->set_u(sp_u_name::v_color, (GLfloat*)color.data());
   astate->sp_unit_line->set_u(sp_u_name::v_line_start, (GLfloat*)line_start.data());
   astate->sp_unit_line->set_u(sp_u_name::v_line_end, (GLfloat*)line_end.data());
@@ -692,7 +673,6 @@ void draw_pipeline_t::end_render_line () {
 
   app_state_t* astate = app_state_t::get_inst();
   glapi_t* glapi = astate->glapi;
-  // glapi->glLineWidth(1.0f);
   astate->sp_unit_line->end_shader_program();
   astate->mesh_unit_line->end_render_batch();
 
@@ -716,7 +696,6 @@ void draw_pipeline_t::render_line_styled (const vector3<float> &color,
 
   app_state_t* astate = app_state_t::get_inst();
 
-  //glLineWidth(line_width);
   astate->sp_unit_line_styled->set_u(sp_u_name::v_color, (GLfloat*)color.data());
   astate->sp_unit_line_styled->set_u(sp_u_name::v_line_start, (GLfloat*)line_start.data());
   astate->sp_unit_line_styled->set_u(sp_u_name::v_line_end, (GLfloat*)line_end.data());
@@ -727,7 +706,6 @@ void draw_pipeline_t::render_line_styled (const vector3<float> &color,
 
 void draw_pipeline_t::end_render_line_styled () {
 
-  //glLineWidth(1.0f);
   app_state_t* astate = app_state_t::get_inst();
   astate->sp_unit_line_styled->end_shader_program();
   astate->mesh_unit_line->end_render_batch();
@@ -763,13 +741,7 @@ void draw_pipeline_t::render_screen_quad () {
 
   app_state_t* astate = app_state_t::get_inst();
   astate->sp_fbo_quad->begin_shader_program();
-  //glDisable(GL_DEPTH_TEST);
-
-  //glActiveTexture(GL_TEXTURE0);
-  //glBindTexture(GL_TEXTURE_2D, astate->frame_buffer->get_color_texture());
-
   astate->mesh_fbo_quad->render();
-  // glEnable(GL_DEPTH_TEST);
   astate->sp_fbo_quad->end_shader_program();
 
 }

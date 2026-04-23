@@ -58,8 +58,6 @@ bool workspace_t::set_selected_item(const size_t sel_idx, bool emit_signal) {
 
   unselect_all();
 
-  //astate->log(fmt::format("workspace_t::set_selected_item ({} {})", sel_idx, emit_signal));
-
   if (sel_idx < m_ws_items.size() && !m_ws_items.empty()) {
 
       m_ws_items[sel_idx]->m_selected = true;
@@ -75,13 +73,11 @@ bool workspace_t::set_selected_item(const size_t sel_idx, bool emit_signal) {
           m_gizmo->update_gizmo(0.1f, true);
         }
 
-      //astate->make_viewport_dirty();
       if (emit_signal) astate->astate_evd->cur_ws_selected_item_changed();
       return true;
 
     }
 
-  //astate->make_viewport_dirty();
   if (emit_signal) astate->astate_evd->cur_ws_selected_item_changed();
   return false;
 
@@ -276,7 +272,6 @@ void workspace_t::mouse_click(const float mouse_x, const float mouse_y, bool pre
     }
 
   if (m_gizmo->m_is_visible && m_gizmo->attached_item && m_gizmo->process_ray(&m_ray)) {
-    //astate->log("gizmo clicked");
         return;
       }
 
@@ -423,12 +418,6 @@ void workspace_t::load_ws_from_json(const std::string filename) {
                 }
 
             } else {
-	    /*
-	    astate->log(
-                    fmt::format("WARNING: Cannot find type for object \"{}\" in file \"{}\"!",
-                                object[JSON_WS_ITEM_NAME].get<std::string>(), filename)
-                    );
-	    */
 
             }
 
@@ -449,7 +438,6 @@ void workspace_t::load_ws_from_json(const std::string filename) {
 
     //revive ws_item_t class fields
     for (auto &rec : rep_info.m_fields) {
-        //astate->tlog("revive class field {}", rec.m_field_name);
         auto target_obj = get_by_name(rec.m_field_name);
         if (target_obj) *rec.m_field = target_obj;
       }
@@ -556,21 +544,18 @@ std::shared_ptr<ws_item_t> workspace_t::py_construct_item(std::string class_name
   app_state_t* astate = app_state_t::get_inst();
 
   if (!m_owner) {
-    //astate->log("ERROR: workspace_t::py_construct_item -> no ws mgr");
       return nullptr;
     }
 
   auto type_hash = astate->hash_reg->calc_hash_ub(class_name);
 
   if (!type_hash) {
-    //astate->log("ERROR: workspace_t::py_construct_item -> invalid hash");
       return nullptr;
     }
 
   auto new_item = m_owner->m_bhv_mgr->fbr_ws_item_by_type(type_hash);
 
   if (!new_item) {
-    //astate->log("ERROR: workspace_t::py_construct_item -> fabric error");
       return nullptr;
     }
 
@@ -644,24 +629,14 @@ opt<size_t> workspace_manager_t::get_cur_id() {
 
 bool workspace_manager_t::set_cur_id(const opt<size_t> ws_index) {
 
-  //c_app::log("set current called");
   app_state_t* astate = app_state_t::get_inst();
-
-  //astate->tlog("ws::set_cur_id({})", *ws_index);
 
   if (has_wss()) {
 
       if (ws_index && *ws_index < m_ws.size()) {
           m_cur_ws_id = opt<size_t>(ws_index);
-          //update_window_title();
           astate->camera = m_ws[*ws_index]->m_camera.get();
           astate->camera->update_camera();
-	  /*
-          astate->wlog("========================================================"
-                       "\n    Workspace changed: {}\n"
-                       "========================================================",
-                       m_ws[*ws_index]->m_ws_name);
-	  */
           astate->astate_evd->cur_ws_changed();
           return true;
 
@@ -743,29 +718,6 @@ void workspace_manager_t::init_default () {
   auto nb1_c = nb1->cast_as<node_book_t>();
   nb1_c->m_name = "nodebook1";
   m_ws.back()->add_item_to_ws(nb1);
-
-  //  auto g2 = m_bhv_mgr->fbr_ws_item_by_name("geom_view_t");
-  //  auto ag = shnfl<float>::group("C4v");
-  //  auto psg_prod = m_bhv_mgr->fbr_ws_item_by_name("pgf_producer_t");
-
-
-
-  //  auto psgv1 = m_bhv_mgr->fbr_ws_item_by_name("psg_view_t");
-  //  auto psgv1_c = psgv1->cast_as<psg_view_t>();
-  //  psgv1_c->m_ag =
-  //      std::make_shared<array_group<matrix3<float>>>(ag);
-  //  psgv1->m_name = "psg_c4v1";
-  //  psgv1_c->update_view();
-
-
-  //  g2->m_name = "g2_dst";
-  //  psg_prod->m_name = "psg_prod1";
-
-
-  //  m_ws.back()->add_item_to_ws(g2);
-  //  m_ws.back()->add_item_to_ws(psgv1);
-  //  m_ws.back()->add_item_to_ws(psg_prod);
-
 }
 
 void workspace_manager_t::render_cur_ws () {
@@ -807,9 +759,6 @@ void workspace_manager_t::render_cur_ws_overlay(QPainter &painter) {
 void workspace_manager_t::mouse_click ( bool pressed ) {
 
   app_state_t* astate = app_state_t::get_inst();
-
-  //astate->log(fmt::format("Mouse click {} {}", astate->mouse_x, astate->mouse_y));
-  //astate->log(fmt::format("Mouse click in ws {} {}", astate->mouse_x_dc, astate->mouse_y_dc));
 
   if (has_wss()) {
     get_cur_ws()->mouse_click(astate->mouse_x_dc, astate->mouse_y_dc, pressed);
@@ -1009,11 +958,7 @@ void workspace_manager_t::load_from_file_autodeduce(const std::string &file_name
   QString absolute_file_name = file_info.absoluteFilePath();
   auto absolute_file_name_native = absolute_file_name.toStdString();
 
-  //astate->tlog("@DEBUG: workspace_manager_t::load_from_file_autodeduce, {}",
-  //             absolute_file_name.toStdString());
-
   if (!QFileInfo(absolute_file_name).exists()) {
-    //astate->tlog("@ERROR while opening file \"{}\" - invalid name of the file", file_name);
       return;
     }
 

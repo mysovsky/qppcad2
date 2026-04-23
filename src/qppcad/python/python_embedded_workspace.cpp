@@ -80,16 +80,6 @@ std::shared_ptr<ws_item_t> construct_from_array_group(
 
 }
 
-  
-
-
-//void upd_oi(ws_item_t *_item) {
-
-//  if (_item && _item->m_selected)
-//    app_state_t::get_inst()->astate_evd->cur_ws_selected_item_need_to_update_obj_insp();
-
-//}
-
 void mvd() {
 
   app_state_t *astate = app_state_t::get_inst();
@@ -193,7 +183,6 @@ PYBIND11_EMBEDDED_MODULE(cad, m) {
   py_ws_item_t.def_readwrite("name", &ws_item_t::m_name)
               .def("get_cnt_count", &ws_item_t::get_content_count)
               .def("get_parent_ws", [](ws_item_t &wsi){return wsi.m_parent_ws;})
-             // .def_readwrite("m_pos", &ws_item_t::get_pos, &ws_item_t::set_pos)
               .def_readonly("genesis_file_name", &ws_item_t::m_genesis_file_name)
               .def_property("is_visible",
                             [](ws_item_t &src)

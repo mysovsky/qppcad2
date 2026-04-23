@@ -38,7 +38,6 @@ void camera_t::orthogonalize_gs () {
   else m_right.normalize();
 
   m_forward = m_look_up.cross(m_right);
-
 }
 
 void camera_t::rotate_camera_around_origin (const matrix3<float> &mat_rot,
@@ -174,10 +173,6 @@ void camera_t::update_camera () {
 
     float xpos =  x_scale * astate -> mouse_x_dc_old;
     float ypos =  y_scale * astate -> mouse_y_dc_old;
-    /*
-    float xpos =  astate -> mouse_x_dc_old;
-    float ypos =  astate -> mouse_y_dc_old;
-    */
     float rot_angle_x = astate->mouse_y - astate->mouse_y_old;
     float rot_angle_y = astate->mouse_x - astate->mouse_x_old;
     rot_angle_x  *= camera_t::mouse_senty_rot/camera_t::nav_div_step_rotation;
@@ -196,26 +191,6 @@ void camera_t::update_camera () {
       rotate_camera_around_axis(phi,ax);
     astate->make_viewport_dirty();    
     // ----------------- asm ---------------
-    /*
-      float rot_angle_x = y_dt / camera_t::nav_div_step_rotation;
-      float rot_angle_y = x_dt / camera_t::nav_div_step_rotation;
-
-      if (fabs(rot_angle_y) > camera_t::nav_thresh && !m_rotate_over) {
-          rotate_camera_orbit_yaw(rot_angle_y);
-          astate->make_viewport_dirty();
-        }
-
-      if (fabs(rot_angle_x) > camera_t::nav_thresh && !m_rotate_over) {
-          rotate_camera_orbit_pitch(rot_angle_x);
-          astate->make_viewport_dirty();
-        }
-
-      float med_rot = (rot_angle_y + rot_angle_x) * 0.5f;
-      if (fabs(med_rot) > camera_t::nav_thresh && m_rotate_over) {
-          rotate_camera_orbit_roll(med_rot);
-          astate->make_viewport_dirty();
-        }
-    */
 
     }
 
@@ -249,7 +224,6 @@ void camera_t::update_camera () {
       float right  =   x_scale * (m_ortho_scale);
       float bottom = - y_scale * (m_ortho_scale);
       float top    =   y_scale * (m_ortho_scale);
-      //std::cout<<"ortho_scale"<<m_ortho_scale<<std::endl;
       m_mat_proj = ortho<float>(left, right, bottom, top , m_znear_ortho, m_zfar_ortho);
 
     }

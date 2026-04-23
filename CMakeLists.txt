@@ -61,8 +61,6 @@ if(NOT OPENGL_FOUND)
 endif(NOT OPENGL_FOUND)
 set(GL_LIBRARY GL  X11)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
 
 if(WIN32)
   set(CMAKE_WIN32_EXECUTABLE ON)
@@ -89,6 +87,11 @@ find_package(Qt5Widgets CONFIG REQUIRED)
 find_package(Qt5OpenGL CONFIG REQUIRED)
 find_package(Qt5Svg)
 find_package(Qt5Charts)
+
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(_qppcad_qt_build_version ${Qt5Widgets_VERSION})
 

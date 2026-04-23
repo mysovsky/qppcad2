@@ -5,10 +5,7 @@
 #undef slots
 #include <pybind11/pybind11.h>
 #include <pybind11/embed.h>
-//#include <pybind11/eigen.h>
 #pragma pop_macro("slots")
-
-namespace py = pybind11;
 
 #include <qppcad/core/qppcad.hpp>
 #include <geom/lace3d.hpp>
@@ -74,7 +71,6 @@ namespace qpp {
         static py::str get_leader(std::shared_ptr<ws_item_t> ws_item);
         static py::bool_ is_instance_of_by_hash(size_t _type_hash);
         static py::bool_ is_instance_of_by_type_name(std::string _type_name);
-        //static void bopen(std::string _file_name);
         static vector3<float> gizmo_pos();
         static std::tuple<std::string, vector3<float> > get_point_sym_group(float tolerance);
 

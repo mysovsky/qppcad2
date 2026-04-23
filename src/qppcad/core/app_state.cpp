@@ -72,8 +72,6 @@ namespace qpp {
       ws_mgr     = std::make_shared<workspace_manager_t>(this);
       py_mgr     = std::make_unique<python_manager_t>();
       hotkey_mgr = std::make_shared<hotkey_manager_t>();
-      //plug_mgr   = std::make_unique<plugin_manager_t>(m_plugins_dir);
-
     }
 
     void app_state_t::init_styles() {
@@ -298,11 +296,9 @@ namespace qpp {
       
       auto iddir = m_env_str.find("DATA_DIR");
       if (iddir != m_env_str.end() )
-	m_data_dir = iddir -> second;
+      	m_data_dir = iddir -> second;
       else 
-	m_data_dir = fs::absolute(fs::path(m_qppcad_root_dir)/"data").string();
-
-      //tlog("ROOT DIR: {}\n PLUGINS DIR: {}\n DATA DIR: {}\n",m_qppcad_root_dir, m_plugins_dir, m_data_dir );
+      	m_data_dir = fs::absolute(fs::path(m_qppcad_root_dir)/"data").string();
 
     }
 
@@ -445,7 +441,6 @@ namespace qpp {
 
       QFileInfo file_info(QString::fromStdString(file_name));
       m_last_dir =  file_info.absoluteDir().path();
-      //tlog("M_LAST_DIR= {}", m_last_dir.toStdString());
 
       if (m_recent_files.size() >= max_recent_files)
         m_recent_files.erase(m_recent_files.begin(),
@@ -465,7 +460,6 @@ namespace qpp {
 
         }
 
-      //log(fmt::format("RECENT FILES ADD: {} {} {}", file_name, bhv_id, is_native));
       if (QFileInfo::exists(QString::fromStdString(file_name)) &&
           QFileInfo(QString::fromStdString(file_name)).isFile())
         m_recent_files.emplace_back(file_name, ff_id, is_native);
@@ -485,10 +479,8 @@ namespace qpp {
         }
 
       if (!m_fixtures_dir_is_set) {
-	//tlog("Fixture dir is not set!");
           return;
         } else {
-	//tlog("Fixtures dir size = {}", m_fixtures_dirs.size());
           ws_mgr->m_bhv_mgr->load_fixtures_from_path(m_fixtures_dirs);
         }
 

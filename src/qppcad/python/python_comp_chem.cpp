@@ -39,8 +39,6 @@ std::string cp2k_helper_t::gen_fixed_atoms_section(py::list &fixed_atoms) {
 
 std::string orca_helper_t::gen_multijob_from_anim(geom_view_t *gv, size_t anim_id) {
 
-  //app_state_t* astate = app_state_t::get_inst();
-
   std::string rets;
 
   if (!gv) {

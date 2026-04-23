@@ -1,23 +1,11 @@
 #ifndef QPP_QPPCAD
 #define QPP_QPPCAD
 #include <cstdint>
-#include <vector>
-#include <string>
-#include <fstream>
-#include <iostream>
-#include <memory>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 #include <fmt/std.h>
-#include <chrono>
 #include <ctime>
-#include <set>
 #include <optional>
-#include <algorithm>
-#include <functional>
-#include <tuple>
-#include <array>
-#include <unordered_set>
 #include <io/strfun.hpp>
 #include <qppcad/core/gitversion.h>
 

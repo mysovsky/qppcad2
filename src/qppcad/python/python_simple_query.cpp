@@ -1050,4 +1050,3 @@ void simple_query::copy_camera_from_ws(int ws_id) {
   cur_ws->copy_camera(ws_ref);
 
 }
-

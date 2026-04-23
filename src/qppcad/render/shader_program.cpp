@@ -1,6 +1,5 @@
 #include <qppcad/render/shader_program.hpp>
 #include <qppcad/core/app_state.hpp>
-//#include <qppcad/app.hpp>
 
 qpp::cad::shader_program_t::shader_program_t(const std::string &_program_name,
                                              const std::string &_vs_text,
@@ -33,9 +32,6 @@ qpp::cad::shader_program_t::shader_program_t(const std::string &_program_name,
   glapi->glGetShaderiv(vertexShaderID, GL_COMPILE_STATUS, &vs_proc_res);
   glapi->glGetShaderiv(fragmentShaderID, GL_COMPILE_STATUS, &fs_proc_res);
 
-  //astate->tlog("Program[{}] vs_sh_stat = {}, fs_sh_stat = {}",
-  //             program_name, vs_proc_res, fs_proc_res);
-
   glapi->glAttachShader(program_id, vertexShaderID);
   glapi->glAttachShader(program_id, fragmentShaderID);
   glapi->glBindAttribLocation(program_id, 0, "vs_position");
@@ -46,13 +42,10 @@ qpp::cad::shader_program_t::shader_program_t(const std::string &_program_name,
   glapi->glGetProgramiv(program_id, GL_LINK_STATUS, &proc_res);
   glapi->glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &infoLogLength);
 
-  //astate->tlog("Shader program[{}] compilation status: {}", program_name, proc_res);
-
   if (infoLogLength > 0) {
       std::vector<char> ProgramErrorMessage(infoLogLength+1);
       glapi->glGetProgramInfoLog(program_id, infoLogLength, nullptr, &ProgramErrorMessage[0]);
       std::string str(ProgramErrorMessage.begin(), ProgramErrorMessage.end());
-      //astate->tlog("Shader/Program compilation/linking failed: {}", str);
     }
 
   glapi->glDeleteShader(vertexShaderID);
@@ -68,7 +61,6 @@ void qpp::cad::shader_program_t::u_on(qpp::cad::sp_u_name _val) {
   unf_rec[_val].h_prog = glapi->glGetUniformLocation(program_id, map_u2s[_val].c_str());
 
   if (unf_rec[_val].h_prog == -1) {
-    //astate->tlog("WARNING: invalid uniform[{}] in program {}", map_u2s[_val], program_name);
     }
 }
 
@@ -114,7 +106,6 @@ void qpp::cad::shader_program_t::set_u_sampler(qpp::cad::sp_u_name _ut, GLint va
   glapi_t* glapi = astate->glapi;
 
   if (unf_rec[_ut].enabled) {
-      //qpp::cad::sp_u_type _utype = qpp::cad::map_u2at[_ut];
       GLint uloc = unf_rec[_ut].h_prog;
       glapi->glUniform1i(uloc, val);
     }
@@ -128,22 +119,8 @@ void qpp::cad::shader_program_t::begin_shader_program() {
 
   glapi->glUseProgram(program_id);
 
-  //  if (unf_rec[sp_u_name::v_light_pos].enabled)
-  //    set_u(sp_u_name::v_light_pos, c_app::get_state().light_pos_tr.data());
-
   if (unf_rec[sp_u_name::texture_0].enabled)
     glapi->glUniform1i(unf_rec[sp_u_name::texture_0].h_prog, 0);
-
-  //  if (unf_rec[sp_u_name::screen_width].enabled)
-  //    glUniform1i(unf_rec[sp_u_name::screen_width].h_prog,
-  //        int(astate->viewport_size_c(0)));
-
-  //  if (unf_rec[sp_u_name::screen_height].enabled)
-  //    glUniform1i(unf_rec[sp_u_name::screen_height].h_prog,
-  //        int(astate->viewport_size_c(1)));
-  //  if (unf_rec[sp_u_name::m_model_view_inv_tr].enabled && astate->camera) {
-  //      set_u(sp_u_name::m_model_view_inv_tr, astate->camera->m);
-  //    }
 
   if (unf_rec[sp_u_name::v_eye_pos].enabled && astate->camera) {
       set_u(sp_u_name::v_eye_pos, astate->camera->m_view_point.data());
@@ -158,6 +135,3 @@ void qpp::cad::shader_program_t::end_shader_program() {
   glapi->glUseProgram(0);
 
 }
-
-
-

@@ -40,10 +40,8 @@ std::string hotkey_entry_t::py_print() {
 void hotkey_entry_t::activated() {
 
   app_state_t *astate = app_state_t::get_inst();
- // astate->tlog("hotkey_entry_t::activated()");
 
   if (m_is_pycommand) {
-      //astate->tlog("hotkey_entry_t::activated(m_is_pycommand=true)");
       astate->py_mgr->execute(m_pycommand);
     }
 

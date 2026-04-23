@@ -126,8 +126,6 @@ mesh_t *mesh_generators::sphere(const int lat_bands, const int long_bands) {
 
   mesh_t* _mesh = new mesh_t();
 
-  //float radius = 1.0f;
-
   for (int lat_num = 0; lat_num <= lat_bands; lat_num++){
       float theta = lat_num * float(qpp::pi / lat_bands);
       float sin_theta = std::sin(theta);
@@ -147,13 +145,8 @@ mesh_t *mesh_generators::sphere(const int lat_bands, const int long_bands) {
           _mesh->vertecies.push_back(z);
 
           vector3<float> vx(x, y, z);
-          //vector3<float> norm = vx.normalized();
 
           for (int i = 0; i < 3; i++) _mesh->normals.push_back(vx(i));
-
-          //          _mesh->normalData.push_back((x+1.0)*0.5);
-          //          _mesh->normalData.push_back((y+1.0)*0.5);
-          //          _mesh->normalData.push_back((z+1.0)*0.5);
         }
     }
 
@@ -669,5 +662,4 @@ mesh_t *mesh_generators::cross_line_atom () {
   _mesh->mesh_rt = GL_LINES;
 
   return _mesh;
-
 }

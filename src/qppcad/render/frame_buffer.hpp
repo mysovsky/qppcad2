@@ -1,7 +1,7 @@
 #ifndef QPPCAD_FRAMEBUFFER
 #define QPPCAD_FRAMEBUFFER
 #include <qppcad/core/qppcad.hpp>
-#include <qppcad/frame_buffer_opengl.hpp>
+#include <qppcad/render/frame_buffer_opengl.hpp>
 
 namespace qpp {
 
