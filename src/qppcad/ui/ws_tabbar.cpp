@@ -8,11 +8,9 @@ ws_tabbar_t::ws_tabbar_t(QWidget *parent) : QTabBar (parent) {
 
   app_state_t *astate = app_state_t::get_inst();
 
-  //setFixedHeight(28);
   setDrawBase(false);
   setExpanding(false);
   setTabsClosable(true);
-  //setMovable(true);
 
   update_tabs();
   cur_ws_changed();
@@ -82,8 +80,6 @@ void ws_tabbar_t::tabs_closed(int index) {
 
 void ws_tabbar_t::cur_ws_changed() {
 
-  //update_tabs();
-
   app_state_t *astate = app_state_t::get_inst();
 
   blockSignals(true);
@@ -97,7 +93,6 @@ void ws_tabbar_t::cur_ws_changed() {
 void ws_tabbar_t::wss_changed_slot() {
 
   app_state_t *astate = app_state_t::get_inst();
-  //astate->tlog("@@@ DEBUG: ws_tabbar_t::wss_changed_slot()");
   update_tabs();
 
   blockSignals(true);
@@ -134,5 +129,4 @@ void ws_tabbar_t::tab_double_clicked(int index) {
       target_ws->m_ws_name = text.toStdString();
       astate->astate_evd->wss_changed();
     }
-
 }

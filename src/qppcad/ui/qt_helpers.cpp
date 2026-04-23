@@ -1,5 +1,4 @@
 #include <qppcad/ui/qt_helpers.hpp>
-#include <iostream>
 #include <QLabel>
 
 using namespace qpp;
@@ -43,7 +42,6 @@ void qt_hlp::form_lt_hide_row(QFormLayout *form_lt, QLabel *field_label, QWidget
 
   //the widget is already hidden
   if (row_ptr == -1) {
-      //std::cout << "::form_lt_hide_row row_ptr == -1" << std::endl;
       return;
     }
 
@@ -51,7 +49,6 @@ void qt_hlp::form_lt_hide_row(QFormLayout *form_lt, QLabel *field_label, QWidget
   field_widget->hide();
 
   form_lt->takeRow(row_ptr);
-
 }
 
 void qt_hlp::form_lt_insert_before(QFormLayout *form_lt,
@@ -69,7 +66,6 @@ void qt_hlp::form_lt_insert_before(QFormLayout *form_lt,
 
   //the widget is already shown
   if (row_ptr_self != -1) {
-      //std::cout << "::form_lt_insert_before row_ptr_self != -1" << std::endl;
       return;
     }
 
@@ -80,7 +76,6 @@ void qt_hlp::form_lt_insert_before(QFormLayout *form_lt,
       form_lt->getWidgetPosition(target, &row_ptr, &item_role_ptr);
 
       if (row_ptr == -1) {
-          //std::cout << "::form_lt_insert_before rrow_ptr == -1" << std::endl;
           row_ptr = form_lt->rowCount() - 1;
         }
     } else {
@@ -101,5 +96,4 @@ void qt_hlp::form_lt_ctrl_visibility(bool show,
 
   if (show) form_lt_insert_before(form_lt, target, field_label, field_widget);
   else form_lt_hide_row(form_lt, field_label, field_widget);
-
 }

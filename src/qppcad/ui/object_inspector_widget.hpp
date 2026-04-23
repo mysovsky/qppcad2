@@ -37,7 +37,6 @@ namespace qpp {
 
         //property view by ws_item type
         QWidget *none_item_placeholder;
-        //QWidget *ws_current_view{nullptr};
         std::shared_ptr<ws_item_obj_insp_widget_t> m_cur_obj_insp_widget{nullptr};
 
       public slots:

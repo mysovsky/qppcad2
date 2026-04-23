@@ -57,8 +57,6 @@ add_new_ws_item_widget_t::add_new_ws_item_widget_t() {
   button_lt->addStretch();
 
   gb_type_descr = new qspoiler_widget_t(tr("Type description"), nullptr, false);
-  //gb_type_descr->setMinimumWidth(240);
-  //gb_type_descr->setMaximumHeight(130);
   gb_type_descr_lt = new QVBoxLayout;
   gb_type_descr->add_content_layout(gb_type_descr_lt);
 
@@ -69,7 +67,6 @@ add_new_ws_item_widget_t::add_new_ws_item_widget_t() {
   gb_type_descr_lt->addStretch();
 
   gb_ctor = new qspoiler_widget_t(tr("Constructible types"), nullptr, false);
-  //gb_ctor->setMinimumWidth(240);
   gb_ctor_lt = new QVBoxLayout;
   gb_ctor->add_content_layout(gb_ctor_lt);
 
@@ -256,7 +253,6 @@ add_new_ws_item_widget_t::add_new_ws_item_widget_t() {
   //end of construct ag_labels
 
   gb_type_param = new qspoiler_widget_t(tr("Type parameters"), nullptr, false);
-  //gb_type_param->setMinimumWidth(360);
   gb_type_param_lt = new QFormLayout;
   gb_type_param->add_content_layout(gb_type_param_lt);
 

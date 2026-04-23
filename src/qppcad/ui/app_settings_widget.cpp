@@ -24,13 +24,11 @@ app_settings_widget_t::app_settings_widget_t(QWidget *parent) : QDialog (parent)
   settings_stacked_pages->setMinimumHeight(500);
 
   settings_page_general = new qspoiler_widget_t(tr("General settings"),this, false);
-  //settings_page_general->setMinimumWidth(200);
 
   settings_page_appearance = new QWidget;
   settings_page_appearance->setMinimumWidth(200);
   
   settings_page_mouse = mouse_settings();
-  //settings_page_mouse -> setMinimumWidth(200);
 
   settings_page_console = new QWidget;
   settings_page_console->setMinimumWidth(200);
@@ -114,8 +112,6 @@ qspoiler_widget_t* app_settings_widget_t::mouse_settings(){
 		"border: 1px solid #777;"
 		"}"
 		);
-  //auto bg_clr = QWidget::palette().color(QWidget::backgroundRole());
-  //auto fg_clr = QWidget::palette().color(QWidget::foregroundRole());
   
   auto lt = new QVBoxLayout;
   q -> add_content_layout(lt);

@@ -13,7 +13,6 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QFrame>
-//#include <QRgba>
 #include <geom/xgeom.hpp>
 #include <qppcad/ws_item/ws_item.hpp>
 

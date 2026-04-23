@@ -112,8 +112,6 @@ qbinded_combobox_t::qbinded_combobox_t(QWidget *parent) : QComboBox (parent) {
   setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
   setMaximumWidth(astate->size_guide.obj_insp_combo_max_w());
 
-  //lineEdit()->setAlignment(Qt::AlignCenter);
-
   connect(this,
           static_cast<void(qbinded_combobox_t::*)(int)>(&qbinded_combobox_t::currentIndexChanged),
           this,
@@ -345,8 +343,6 @@ void qbinded_color3_input_t::mousePressEvent(QMouseEvent *event) {
 
     if (dialog.exec() == QDialog::Accepted) {
       QColor color = dialog.selectedColor();
-      //qDebug() << "Selected RGBA:" << color.red() << color.green() 
-      //       << color.blue() << color.alpha();
       (*m_binded_value)[0] = color.redF();
       (*m_binded_value)[1] = color.greenF();
       (*m_binded_value)[2] = color.blueF();
@@ -359,9 +355,6 @@ void qbinded_color3_input_t::mousePressEvent(QMouseEvent *event) {
       }
     }
   }
-    //    const QColor color = QColorDialog::getColor(tmp_color, this, "Select Color",
-    //						QColorDialog::ShowAlphaChannel | QColorDialog::DontUseNativeDialog);
-    // const QColor color = QColorDialog::getRgba(m_stored_color, this, "Select Color");  
 }
 
 void qbinded_color3_input_t::paintEvent(QPaintEvent *event) {
@@ -885,5 +878,4 @@ void qbinded_float2_input_t::spinbox_value_changed(double newval) {
       on_value_changed();
       app_state_t::get_inst()->make_viewport_dirty();
     }
-
 }

@@ -22,7 +22,6 @@ QWidget *qrealspinbox_delegate_t::createEditor(QWidget *parent, const QStyleOpti
   editor->setMinimum(m_spinbox_min);
   editor->setMaximum(m_spinbox_max);
   editor->setSingleStep(m_spinbox_step);
-  //editor->setValue(index.data().toDouble());
   return editor;
 
 }

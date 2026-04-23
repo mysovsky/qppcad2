@@ -5,88 +5,86 @@
 #include <qppcad/ui/qbinded_inputs.hpp>
 #include <qppcad/ui/qspoiler_widget.hpp>
 
-#include <QWidget>
+#include <QApplication>
+#include <QComboBox>
 #include <QDialog>
-#include <QSpinBox>
-#include <QGroupBox>
-#include <QVBoxLayout>
+#include <QDialogButtonBox>
+#include <QDoubleSpinBox>
 #include <QFormLayout>
 #include <QGridLayout>
-#include <QPushButton>
-#include <QRadioButton>
-#include <QDialogButtonBox>
-#include <QApplication>
+#include <QGroupBox>
 #include <QLabel>
-#include <QComboBox>
 #include <QLineEdit>
 #include <QMessageBox>
-#include <QDoubleSpinBox>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QSpinBox>
+#include <QVBoxLayout>
+#include <QWidget>
 
 namespace qpp {
 
-  namespace cad {
+namespace cad {
 
-    class create_arrow_array_widget_t : public QDialog {
+class create_arrow_array_widget_t : public QDialog {
 
-      public:
+public:
+  QVBoxLayout *main_lt;
+  QHBoxLayout *data_lt;
+  QVBoxLayout *sub_data_lt;
+  QHBoxLayout *button_lt;
+  QPushButton *ok_button;
+  QPushButton *cancel_button;
 
-        QVBoxLayout *main_lt;
-        QHBoxLayout *data_lt;
-        QVBoxLayout *sub_data_lt;
-        QHBoxLayout *button_lt;
-        QPushButton *ok_button;
-        QPushButton *cancel_button;
+  qspoiler_widget_t *gb_ctor{nullptr};
+  QVBoxLayout *gb_ctor_lt{nullptr};
 
-        qspoiler_widget_t *gb_ctor{nullptr};
-        QVBoxLayout *gb_ctor_lt{nullptr};
-       
-        QRadioButton *rb_zero{nullptr};
-        QRadioButton *rb_field{nullptr};
-        QRadioButton *rb_frame{nullptr};
+  QRadioButton *rb_zero{nullptr};
+  QRadioButton *rb_field{nullptr};
+  QRadioButton *rb_frame{nullptr};
 
-      QCheckBox *cb_comass{nullptr};
-        qspoiler_widget_t * zero_descr, * field_selector, * frame_selector;
+  QCheckBox *cb_comass{nullptr};
+  qspoiler_widget_t *zero_descr, *field_selector, *frame_selector;
 
-        QRadioButton *rb_frame_firstlast, *rb_frame_currnext, *rb_frame_numbers;
-        QSpinBox *sb_frame1, *sb_frame2;
-	
-        qspoiler_widget_t *gb_type_descr{nullptr};
-        QVBoxLayout *gb_type_descr_lt{nullptr};
-        QLabel *type_descr_lbl{nullptr};
-      
-        qspoiler_widget_t *gb_type_param{nullptr};
-        QFormLayout *gb_type_param_lt{nullptr};
+  QRadioButton *rb_frame_firstlast, *rb_frame_currnext, *rb_frame_numbers;
+  QSpinBox *sb_frame1, *sb_frame2;
 
-        QLabel *type_param_name_lbl{nullptr};
-        QLineEdit *type_param_name{nullptr};
+  qspoiler_widget_t *gb_type_descr{nullptr};
+  QVBoxLayout *gb_type_descr_lt{nullptr};
+  QLabel *type_descr_lbl{nullptr};
 
-        std::vector<QComboBox*> fs_combo;
-        std::vector<int> ix_fields;
-      
-        int frame_count{0}, cur_frame{0};
-        bool anim_exists{false};
+  qspoiler_widget_t *gb_type_param{nullptr};
+  QFormLayout *gb_type_param_lt{nullptr};
 
-        std::shared_ptr<xgeometry<float> > geom;
-      
-        create_arrow_array_widget_t();
+  QLabel *type_param_name_lbl{nullptr};
+  QLineEdit *type_param_name{nullptr};
 
-        void set_cell_ctors_visibility(bool show);
-        void control_top_type_parameters_visibility();
+  std::vector<QComboBox *> fs_combo;
+  std::vector<int> ix_fields;
 
-      public slots:
+  int frame_count{0}, cur_frame{0};
+  bool anim_exists{false};
 
-        void ok_button_clicked();
-        void cancel_button_clicked();
+  std::shared_ptr<xgeometry<float>> geom;
 
-        void react_gb_zero_checked(bool checked);
-        void react_gb_field_checked(bool checked);
-        void react_gb_frame_checked(bool checked);      
+  create_arrow_array_widget_t();
 
-        void react_frame_rbs_checked(bool checked);      
+  void set_cell_ctors_visibility(bool show);
+  void control_top_type_parameters_visibility();
 
-    };
+public slots:
 
-  } // namespace qpp::cad
+  void ok_button_clicked();
+  void cancel_button_clicked();
+
+  void react_gb_zero_checked(bool checked);
+  void react_gb_field_checked(bool checked);
+  void react_gb_frame_checked(bool checked);
+
+  void react_frame_rbs_checked(bool checked);
+};
+
+} // namespace cad
 
 } // namespace qpp
 

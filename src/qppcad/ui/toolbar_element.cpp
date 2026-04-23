@@ -8,10 +8,6 @@ using namespace qpp::cad;
 
 toolbar_element_t::toolbar_element_t() {
 
-//  m_parent = parent;
-//  m_style = style;
-//  m_applicable_types = std::move(applicable_types);
-
 }
 
 void toolbar_element_t::init_element(QWidget *parent) {
