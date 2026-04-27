@@ -37,7 +37,6 @@ void pdos_view_extended_editor_t::bind_to_item(ws_item_t *_binding_item) {
     }
 
   m_binded_nx = as_nx;
-  //pdos_gen_chart_view->setChart(m_binded_nx->m_pdos_gen_chart);
 
   ws_item_extended_editor_t::bind_to_item(_binding_item);
 
@@ -53,15 +52,12 @@ void pdos_view_extended_editor_t::update_from_ws_item() {
 
   ws_item_extended_editor_t::update_from_ws_item();
   if (!m_binded_nx) return;
-  //if (pdos_gen_chart_view->chart()) pdos_gen_chart_view->chart()->zoomReset();
-
 }
 
 void pdos_view_extended_editor_t::unbind_item() {
 
   ws_item_extended_editor_t::unbind_item();
   m_binded_nx = nullptr;
-  //pdos_gen_chart_view->setChart(nullptr);
 
 }
 

@@ -51,7 +51,7 @@ bool pgf_producer_t::check_consistency() {
                           m_dst_gv != nullptr,
                           m_sg_psg != nullptr));
 
-  return m_src_gv && m_dst_gv && m_sg_psg /*&& m_src_gv->m_geom->DIM == m_dst_gv->m_geom->DIM*/;
+  return m_src_gv && m_dst_gv && m_sg_psg;
 
 }
 
@@ -61,10 +61,11 @@ void pgf_producer_t::compose_from_array_group() {
 
   m_imd.clear();
   m_imd.typetable()->clear();
-  if (m_sg_psg) m_imd.cell = std::shared_ptr<periodic_cell<float>>(new gen_cell<float, qpp::matrix3<float> >(m_sg_psg->m_ag->group));
+  if (m_sg_psg) m_imd.cell = std::shared_ptr<periodic_cell<float>>
+    (new gen_cell<float, qpp::matrix3<float> >(m_sg_psg->m_ag->group));
+
   m_imd.cell->auto_orders();
 
-  //m_orders_range.clear();
   m_orders_range.resize(m_imd.cell->DIM);
 
   astate->tlog("pgf_producer_t::compose_from_array_group() ->");

@@ -68,8 +68,6 @@ void qnode_connection_t::update_path(QPointF point, bool finalize) {
 
       QPointF cpos = mapFromScene(point);
 
-      //astate->tlog("CPOS.X = {}, CPOS.Y = {}", cpos.x(), cpos.y());
-
       qreal dx = cpos.x();
       qreal dy = cpos.y();
 

@@ -23,19 +23,9 @@ node_book_graphics_view_t::node_book_graphics_view_t(QGraphicsScene *scene, QWid
 
 }
 
-QRectF node_book_graphics_view_t::get_visible_rect() {
-
-//  QPointF a = mapToScene(QPoint(0, 0));
-//  QPointF b = mapToScene(QPoint(viewport()->width(), viewport()->height()));
-//
-//  return QRectF(a, b);
-  return viewport()->geometry();
-
-}
+QRectF node_book_graphics_view_t::get_visible_rect() { return viewport()->geometry(); }
 
 void node_book_graphics_view_t::wheelEvent(QWheelEvent *event) {
-
-  //setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 
   if (event && event->modifiers() == Qt::ControlModifier) {
 
@@ -59,11 +49,7 @@ void node_book_graphics_view_t::mouseMoveEvent(QMouseEvent *event) {
 
   viewport()->setCursor(Qt::ArrowCursor);
 
-  if (m_drag_view) {
-      //translate(1, 1);
-    }
   QGraphicsView::mouseMoveEvent(event);
-
 }
 
 void node_book_graphics_view_t::mousePressEvent(QMouseEvent *event) {
@@ -94,22 +80,6 @@ void node_book_graphics_view_t::mouseReleaseEvent(QMouseEvent *event) {
 
 }
 
-void node_book_graphics_view_t::resizeEvent(QResizeEvent *event) {
+void node_book_graphics_view_t::resizeEvent(QResizeEvent *event) { QGraphicsView::resizeEvent(event); }
 
-//  static bool first_resize = true;
-
-//  if (first_resize) {
-//    centerOn(width()/2 - 50, height()/2 - 50);
-//    first_resize = false;
-//  }
-
-  QGraphicsView::resizeEvent(event);
-
-}
-
-void node_book_graphics_view_t::mouseDoubleClickEvent(QMouseEvent *event) {
-
-  //assert(false);
-  QGraphicsView::mouseDoubleClickEvent(event);
-
-}
+void node_book_graphics_view_t::mouseDoubleClickEvent(QMouseEvent *event) { QGraphicsView::mouseDoubleClickEvent(event); }

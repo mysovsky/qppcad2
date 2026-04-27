@@ -141,7 +141,6 @@ void qnode_socket_t::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
           return;
         }
 
-      //m_connection = nullptr;
 
     } // if (m_connection)
 

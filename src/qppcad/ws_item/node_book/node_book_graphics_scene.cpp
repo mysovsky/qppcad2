@@ -182,13 +182,6 @@ void node_book_graphics_scene_t::notify_linked_nodes_about_unlinking(qnode_t *_n
               break;
             }
 
-            //              case sflow_parameter_e::sfpar_ws_item : {
-            //                  qbinded_ws_item_combobox_t *c_wsi =
-            //                      qobject_cast<qbinded_ws_item_combobox_t*>(wdgt);
-            //                  if (c_wsi) c_wsi->load_value();
-            //                  break;
-            //                }
-
           case sflow_parameter_e::sfpar_bool : {
               break;
             }
@@ -259,12 +252,7 @@ void node_book_graphics_scene_t::drawBackground(QPainter *painter, const QRectF 
 
 }
 
-bool node_book_graphics_scene_t::event(QEvent *event) {
-
-  //app_state_t *astate = app_state_t::get_inst();
-  return QGraphicsScene::event(event);
-
-}
+bool node_book_graphics_scene_t::event(QEvent *event) { return QGraphicsScene::event(event); }
 
 void node_book_graphics_scene_t::contextMenuEvent(QGraphicsSceneContextMenuEvent *event) {
 

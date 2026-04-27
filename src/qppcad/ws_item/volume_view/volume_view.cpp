@@ -5,10 +5,6 @@
 using namespace qpp;
 using namespace qpp::cad;
 
-void volume_view_t::mc_polygonise(float _isolevel) {
-  //volume_helper::polygonise_volume_mc_naive(*(m_first_mesh), m_volume, _isolevel, 100);
-}
-
 volume_view_t::volume_view_t() : ws_item_t () {
 
   set_default_flags(ws_item_flags_default |
@@ -40,7 +36,6 @@ void volume_view_t::render() {
           vector3<float> rot{0};
           vector3<float> color{0.5f};
 
-          //astate->glapi->glDisable(GL_CULL_FACE);
           if (m_volumes[i]->m_volume_type == ws_volume_t::volume_mo) {
               astate->dp->render_general_mesh(m_pos,
                                               scale,
@@ -68,9 +63,7 @@ void volume_view_t::render() {
                                               m_volumes[i]->m_alpha,
                                               custom_sp);
             }
-          //astate->glapi->glEnable(GL_CULL_FACE);
           astate->dp->end_render_general_mesh(custom_sp);
-
         }
 
       if (m_volumes[i]->m_need_to_regenerate) {

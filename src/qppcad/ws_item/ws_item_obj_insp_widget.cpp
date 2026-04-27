@@ -21,6 +21,7 @@ ws_item_tab_widget_t *ws_item_obj_insp_widget_t::def_tab(QString tab_name,
   tmp->tab_scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   tmp->tab_scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   tmp->tab_scroll->setWidgetResizable(true);
+  
   // todo: move to qss
   tmp->tab_scroll->setStyleSheet("QScrollArea {border:0;}");
 
@@ -179,7 +180,6 @@ ws_item_obj_insp_widget_t::ws_item_obj_insp_widget_t() {
   sp_info_widget = new qspoiler_widget_t(tr("Item Information"));
   tg_form_layout = new QFormLayout;
 
-  //pre_init_group_box(tg_info_widget, tg_form_layout);
   sp_info_widget->add_content_layout(tg_form_layout);
 
   ws_item_name = new QLabel;
@@ -234,7 +234,6 @@ ws_item_obj_insp_widget_t::ws_item_obj_insp_widget_t() {
   tg_actions_layout->addWidget(tg_actions_rename, 0, 1);
   tg_actions_layout->addWidget(tg_actions_clone,  0, 2);
 
-  //tg_actions->setMaximumHeight(90);
   //end group box Item actions
 
   connect(astate->astate_evd,

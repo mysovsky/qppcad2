@@ -22,7 +22,6 @@ psg_view_t::psg_view_t() {
   m_axes_color_by_order[7]  = { 166.0 / 255.0,  86.0 / 255.0,  40.0 / 255.0 };
   m_axes_color_by_order[8]  = { 247.0 / 255.0, 129.0 / 255.0, 191.0 / 255.0 };
   m_axes_color_by_order[9]  = { 166.0 / 255.0, 206.0 / 255.0, 227.0 / 255.0 };
-  //m_axes_color_by_order[10] = {  31.0 / 255.0, 120.0 / 255.0, 180.0 / 255.0 };
 
 }
 
@@ -194,8 +193,6 @@ void psg_view_t::updated_externally(uint32_t update_reason) {
 
   ws_item_t::updated_externally(update_reason);
   recalc_render_data();
- // update_axes_color();
-
 }
 
 void psg_view_t::on_leader_call() {
@@ -284,6 +281,3 @@ void psg_view_t::update_axes_color() {
       }
 
 }
-
-
-

@@ -30,8 +30,6 @@ volume_view_obj_insp_widget_t::volume_view_obj_insp_widget_t() {
   cb_current_volume->setFixedWidth(astate->size_guide.obj_insp_combo_max_w());
   cb_current_volume->setEditable(false);
 
-  //cb_current_volume->setMaximumWidth(def_control_width);
-
   gb_volume_detail_lt->addRow(tr("Current volume"), cb_current_volume);
   gb_volume_detail_lt->addRow(tr("Permanent"), vol_render_permanent);
   gb_volume_detail_lt->addRow(tr("Type"), general_volume_type);
@@ -135,5 +133,4 @@ void volume_view_obj_insp_widget_t::cur_volume_index_changed(int index) {
     }
 
   astate->make_viewport_dirty();
-
 }

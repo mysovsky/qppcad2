@@ -64,8 +64,6 @@ void pgf_producer_obj_insp_widget_t::bind_to_item(ws_item_t *_binding_item) {
 
   ws_item_obj_insp_widget_t::bind_to_item(_binding_item);
 
-  //update_cell_indexes_ranges();
-
 }
 
 void pgf_producer_obj_insp_widget_t::update_from_ws_item() {

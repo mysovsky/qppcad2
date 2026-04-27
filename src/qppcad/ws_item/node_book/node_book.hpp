@@ -7,8 +7,6 @@
 #include <pybind11/embed.h>
 #pragma pop_macro("slots")
 
-namespace py = pybind11;
-
 #include <qppcad/core/qppcad.hpp>
 #include <qppcad/ws_item/ws_item.hpp>
 #include <qppcad/ws_item/node_book/node_book_graphics_scene.hpp>

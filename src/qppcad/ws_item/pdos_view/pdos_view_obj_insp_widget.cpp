@@ -15,7 +15,6 @@ pdos_view_obj_insp_widget_t::pdos_view_obj_insp_widget_t() {
           &QPushButton::clicked,
           this,
           &pdos_view_obj_insp_widget_t::add_data_btn_clicked);
-  //tg_actions_add_channel->setFixedHeight(astate->size_guide.obj_insp_button_h());
 
   tg_actions_rebuild = new QPushButton(tr("Rebuild"));
   connect(tg_actions_rebuild,
@@ -25,7 +24,6 @@ pdos_view_obj_insp_widget_t::pdos_view_obj_insp_widget_t() {
 
   tg_actions_layout->addWidget(tg_actions_add_channel, 1, 0);
   tg_actions_layout->addWidget(tg_actions_rebuild, 1, 1);
-  //tg_actions_layout->setRowMinimumHeight(1, astate->size_guide.obj_insp_button_h()+5);
 
   m_data_target_menu = new QMenu(this);
   m_data_target_cp2k = new QAction(tr("CP2K"));

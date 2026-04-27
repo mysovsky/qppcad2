@@ -71,8 +71,6 @@ void traj_hl_t::on_leader_changed() {
 }
 
 void traj_hl_t::on_leader_call() {
-
-
 }
 
 void traj_hl_t::rebuild_line_mesh() {

@@ -10,10 +10,6 @@ node_book_extended_editor_t::node_book_extended_editor_t() {
   setLayout(main_lt);
 
   m_gr_view = new node_book_graphics_view_t;
-//  m_nodes_trv = new QTreeView;
-//  m_nodes_trv->setFixedWidth(250);
-
-//  main_lt->addWidget(m_nodes_trv);
   main_lt->addWidget(m_gr_view);
 
 }
